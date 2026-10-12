@@ -1,0 +1,52 @@
+{
+  "name": "learning-studio",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "lint": "oxlint",
+    "content:readings": "python -I scripts/export_readings.py",
+    "content:rubrics": "python -I scripts/export_rubrics.py",
+    "content:sysml": "python -I scripts/check_sysml.py",
+    "export:curriculum": "node scripts/export-curriculum.mjs",
+    "build:student": "tsc -b && vite build --mode student --outDir dist-student && node scripts/check-student-build.mjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/ibm-plex-sans-condensed": "^5.3.0",
+    "@radix-ui/react-dialog": "^1.3.0",
+    "@radix-ui/react-tabs": "^1.2.0",
+    "@radix-ui/react-tooltip": "^1.4.0",
+    "@xyflow/react": "^12.12.0",
+    "lucide-react": "^1.55.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-resizable-panels": "^4.14.4",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.64.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^30.1.2",
+    "oxlint": "^1.81.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.3"
+  }
+}

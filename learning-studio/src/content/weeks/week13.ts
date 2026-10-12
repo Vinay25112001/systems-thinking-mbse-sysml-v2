@@ -1,0 +1,571 @@
+// Week 13 — Analysis, change impact and model consistency; L13 impact analysis; Exam 2 (practical) in Session 2.
+// Complete module (definition of done: docs/AUTHORING_GUIDE.md). Source text is PARAPHRASED and page-cited inside the
+// verified register ranges; blocks that add instructor reasoning are marked 'mixed' and say where the source ends.
+// SysML listings live in sysml/week13/ and were run through the course-designated checker (OMG SysML v2 Pilot
+// Implementation release 2026-08). Every AeroLink number is FICTIONAL. Authoring notes, pages read, probe results and
+// open issues: docs/authoring/week13_notes.md. Pending independent and faculty review (DECISION_LOG A4).
+import type { LessonBlock, QuizQuestion, WeekContent } from '../schema'
+
+const blocks: LessonBlock[] = [
+  {
+    id: 'w13-outcomes',
+    kind: 'outcomes',
+    title: 'Learning outcomes for this week',
+    paragraphs: [
+      'This week contributes to B-CLO5 (use model-based traceability to analyse change), B-CLO4 (model correctly in SysML v2) and B-CLO3 (risk). Your model v0.4 now holds requirements, design, verification, measures and risks joined by links. This week you use those links to answer an engineering question: if one value changes, what else must be re-examined, which margins break, which verdicts no longer hold and which risks re-open? You also learn to tell a model that parses from a model that is consistent, and to record risk and cause–effect with the library metadata. Session 2 is Exam 2, a practical model examination (RB-14), whose T4 task is exactly this week’s impact analysis. The L13 impact report and its decision record feed CP5.',
+    ],
+    bullets: [
+      'B13.1 (Analyse) Determine the impact set of a proposed change by traversing the model’s relationships, show the method, and separate first-order from second-order effects.',
+      'B13.2 (Evaluate) Check model consistency and distinguish “the checker accepts it” from “it is consistent” and from “it is correct”.',
+      'B13.3 (Apply) Represent a risk with the library Risk metadata and its cause–effect chain with causation connections.',
+      'B13.4 (Understand) Explain resilience (avoid, withstand, recover) and the verification and validation challenges of AI-enabled functions, for the change you analyse.',
+      'Graduate task (required this week): commit-based change analysis with the Systems Modeling API versioning model (R88).',
+    ],
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+  {
+    id: 'w13-intuition',
+    kind: 'intuition',
+    title: 'Intuition: one number, five places',
+    paragraphs: [
+      'A building services engineer is told that the fire code now requires a 90 s alarm instead of 120 s. She changes the number in the specification. Three months later the commissioning test passes against the old 120 s procedure, the sensor supplier’s margin calculation still uses 120 s, and nobody re-assessed the evacuation risk. Nothing was hidden: every one of those documents named the alarm requirement. What was missing was a method that, starting from the changed number, walked to every place that depended on it and asked a specific question there.',
+      'A model makes that walk mechanical, but not automatic. AeroLink’s REQ-SYS-001 is linked to a charger that satisfies it, a test that verifies it, a TPM that tracks it, a parent it derives from and the risks about it. Each link tells you what kind of question to ask. Some answers are “still fine”, and the walk stops there; some are “this must change too”, and the walk continues. This week turns that judgement into a repeatable method, and shows what the checker can and cannot tell you along the way.',
+    ],
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+  {
+    id: 'w13-analysis',
+    kind: 'concept',
+    title: 'Analysis cases and calculations in SysML v2',
+    paragraphs: [
+      'An analysis case definition defines how the result of analysing some subject is computed, to meet an objective. The subject is declared as for a requirement, the result is declared as a return result, as for a calculation definition, and the objective is a requirement on the result of the analysis, which may contain assumed and required constraints (S10 sl.92). The steps of an analysis case are actions that together compute the result; S10’s example first solves for the power needed on a scenario and then computes fuel economy from that power profile, and further parameters can be declared in the case body (S10 sl.93). A usage carries out the analysis for a specific configuration: the subject and parameters are redefined automatically, and if the configuration’s attribute is set to the analysis result, the configuration is asserted to satisfy the requirement (S10 sl.94).',
+      'A trade-off study is an analysis whose objective is to select the best alternative from a set. The TradeStudies library provides a TradeStudy analysis definition: bind its subject to the alternatives, choose MinimizeObjective or MaximizeObjective, and redefine the evaluation function that scores each alternative (S10 sl.95). The library defines the objective as a requirement that the selected alternative has the best evaluation, and the result as the alternative that satisfies it (S10 sl.152). AeroLink’s DEC-001 in the reference model is such a study (Week 7’s scores, carried into v0.4).',
+      'Two consequences shape how the course uses analysis cases (instructor reasoning from these slides). First, an analysis case says how a number is obtained, so a TPM estimate can be a result with its inputs in the model instead of a number typed in by hand. Second, the objective is a requirement on the result, which makes it a place where a limit can be duplicated. If the objective repeats “0.20” while the requirement says “0.20”, the two can drift apart in the next change; binding the objective’s limit to the requirement’s attribute keeps one fact in one place.',
+    ],
+    citations: [{ reading: 'R75', pages: '92–95' }, { reading: 'R78', pages: '152' }],
+    provenance: 'mixed',
+  },
+  {
+    id: 'w13-worked-analysis',
+    kind: 'worked-example',
+    title: 'Worked example (a): an analysis case for TPM-003, compared with REQ-SYS-003',
+    paragraphs: [
+      'The listing aerolink_tpm003_landing_reserve_analysis.sysml computes TPM-003, the landing energy reserve on the 25 km design trip, which the reference records as a typed-in 23 % (FICTIONAL). Two calculation definitions hold the physics: TripEnergy adds terminal-phase and cruise energy (power × time), and LandingEnergyFraction returns the share of usable energy left after the trip (lines 30–41). The analysis definition LandingReserveAnalysis (lines 42–64) has the flight-planning function as its subject, an objective with an assumed constraint (capacity retained between 0 and 1) and a required constraint on the result, input parameters for the energy figures, and returns landingFraction (line 63).',
+      'The usage designTripAnalysis (lines 71–80) binds the configuration. Its minimumFraction is bound to REQ-SYS-003’s own attribute (line 73), so the limit is written once. The flight-operations part sets MOP-005 to the analysis result (line 69), as on S10 sl.94, and the context asserts satisfy REQ-SYS-003 (line 82). TPM-003’s margin is an expression (line 81), not a stored number. The inputs are new FICTIONAL teaching values chosen to reproduce the reference estimate; the table shows the computation, which you can repeat by hand or in the what-if analyser.',
+      'The comparison with the requirement is the point of the analysis. 23.0 % against a 20 % minimum is a margin of 3.0 percentage points on the estimate; with Week 5’s 1.5-point contingency the worst case is 21.5 %, still above 20 %. The same model also answers the reverse question: the reserve is lost once end-of-life capacity falls below 88.5 % of the beginning-of-life value (106.25 kWh), which is about the “more than 10 % fade” of R-002’s statement.',
+      'The checker accepted the listing with no messages. The probes in the second table show what that acceptance covers (release 2026-08, 2026-10-11; files in the notes). Names, references and some typing are checked; no expression is evaluated, no unit is checked for its kind, and no result is compared with any requirement. The satisfy on line 82 is an assertion the checker does not test: the model would pass just as well with a result of 9 %.',
+    ],
+    sysml: [{ file: 'week13/aerolink_tpm003_landing_reserve_analysis.sysml', caption: 'An analysis case that computes TPM-003 from energy inputs, binds its objective to REQ-SYS-003 and asserts the requirement on the result (S10 sl.92–94) (FICTIONAL values)', intent: 'conformant' }],
+    table: {
+      caption: 'The analysis by hand (FICTIONAL inputs; reproduced by src/activities/week13/logic.test.ts)',
+      header: ['Step', 'Expression', 'Value'],
+      rows: [
+        ['Trip energy', '400 kW × 6 min + 270 kW × 10 min', '40 + 45 = 85 kWh'],
+        ['Usable energy at end of life', '120 kWh × 0.92', '110.4 kWh'],
+        ['Landing fraction (TPM-003 estimate)', '(110.4 − 85) / 110.4', '0.230 = 23.0 %'],
+        ['Margin on the estimate; worst case', '23.0 − 20; (23.0 − 1.5) − 20', '3.0 points; 1.5 points'],
+        ['Capacity retained at which the reserve is lost', '85 / (1 − 0.20) / 120', '0.885 (88.5 %)'],
+      ],
+    },
+    citations: [{ reading: 'R75', pages: '92–94' }],
+    provenance: 'mixed',
+  },
+  {
+    id: 'w13-probes',
+    kind: 'concept',
+    title: 'What the checker does with analysis constructs',
+    paragraphs: [
+      'Read the table as evidence about one release of one tool, not as a rule of the language. Three patterns matter for your L13 model. A name that does not resolve fails: a misspelt result, an undefined unit such as kWh (write kW * h), or an enumeration value copied from a slide’s abbreviation. Some type mismatches give a warning but still pass: a number with no unit bound to a quantity, a result declared with the wrong type, a subject of the wrong definition. And everything about meaning passes in silence: a dimensionally wrong formula, a value in a unit of the wrong kind, a violated assumption, a reversed objective, a missing calculation argument, a literal limit that differs from the requirement, and a satisfy whose bound value violates the requirement.',
+    ],
+    table: {
+      caption: 'Recorded checker behaviour (release 2026-08, 2026-10-11; probe files a01–a14 and c01–c13 in the notes)',
+      header: ['Construct in an analysis listing', 'Recorded result'],
+      rows: [
+        ['Worked example (a) as written', 'PASS, no message'],
+        ['Objective names a misspelt result; no return result declared but used', 'FAIL: “Couldn’t resolve reference to Element …”'],
+        ['Input written as 130 [kWh]', 'FAIL: “Couldn’t resolve reference to Element ‘kWh’”'],
+        ['Unitless 18 bound to a DurationValue; result declared EnergyValue for a Real; subject bound to a part of another definition', 'PASS with WARNING “Bound features should have conforming types” (each)'],
+        ['Power + energy in one sum; 6 [kW] passed as a duration; capacity retained 8.5 against its assumption; objective reversed', 'PASS, no message (each)'],
+        ['Calculation called with one argument missing; objective with a literal 0.18 instead of the requirement’s 0.20', 'PASS, no message (each)'],
+        ['MOP-005 bound to 0.18 and satisfy REQ-SYS-003 (≥ 0.20) asserted', 'PASS, no message'],
+      ],
+    },
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+  {
+    id: 'w13-impact',
+    kind: 'concept',
+    title: 'Impact analysis by traversal: direction, order and stopping rules',
+    paragraphs: [
+      'An impact analysis starts from a changed element and asks which other elements must be re-examined. The naive method follows every link, in both directions, a fixed number of hops; the app’s engineering model offers that as impactSet. On the reference, REQ-SYS-001 reaches 9 elements in one hop, 28 in two and 63 in three, nearly a third of the 203 other elements. A set that large is not wrong so much as useless: it does not say what to do with each element, and the reviewer cannot tell which entries matter.',
+      'The course method (a convention, not taken from a reading) uses the meaning of each link type. For each link it asks whether the element at the other end depends on the changed element. A child requirement depends on its parent (derives-from, refines); both ends of satisfies, allocated-to, verifies, measures and performs depend on each other; a risk depends on its mitigator; the target of an affects link depends on its source, and a risk or technology assessment about the changed element is re-opened; a consumer depends on its producer (flows-to). Dependents form the first-order set, each with the question the link implies. An upstream element, such as the parent of a changed child or an assumption about it, is reviewed for consistency, but the walk does not continue through it.',
+      'Second order is a decision, not a hop count. Each first-order element is re-checked; if the check passes, nothing propagates from it. Only the elements that must change in response open a second hop. This is where the traversal meets engineering judgement, and it is what RB-9.5 rewards: an impact set derived from relationships with the method shown, second-order effects, consequences for verification and risk, and a recommendation.',
+      'Verification is the consequence most often missed. A verdict was obtained for a stated criterion on a stated configuration; DoD guidance asks that each design change be assessed against the qualified baseline and may require parts of the verification to be repeated (R49 p.150, a Week 12 reading). In the model this is a verifies link, so every VER that reaches the changed requirement goes on the re-run list.',
+    ],
+    citations: [{ reading: 'R49', pages: '150' }],
+    provenance: 'mixed',
+  },
+  {
+    id: 'w13-worked-impact',
+    kind: 'worked-example',
+    title: 'Worked example (b): REQ-SYS-001 tightened from 20 to 18 min, hop by hop',
+    paragraphs: [
+      'Suppose the city asks AeroLink to shorten the hub turnaround, and the team proposes tightening REQ-SYS-001 from 20 to 18 min (FICTIONAL). The explorer, run on the reference, gives 8 dependents at hop 1 and one upstream element. REQ-STK-005 is upstream: the child still contributes to the 25 min turnaround (5 + 18 ≤ 25), but the parent’s rationale, “25 min is the 20 min charge plus 5 min”, is now stale and should be corrected; nothing propagates through it.',
+      'The decisive first-order check is TPM-001. Its threshold becomes 18 min against an estimate of 18 min, so the margin on the estimate falls from 2 to 0 min; with Week 5’s month-9 contingency of 0.6 min the worst case is 18.6 min, a margin of −0.6 min, a breach under Week 5’s rule R1. The current charger design therefore cannot be shown to meet the new value, so PHY-003 must change (or the change is refused). Ticking PHY-003 opens six second-order elements. The most consequential is REQ-SYS-010, the vertiport charging power limit: a faster charge draws more power, and that limit is still TBD-02, pending U-002. R-005 (grid connection below hub demand) and R-001 re-open with it.',
+      'The recommendation follows from the numbers, not from the size of the set. Do not accept 18 min now; keep 20 min unless the charger supplier shows an estimated charge time of 17.4 min or less (so that the worst case, with the 0.6 min contingency, stays within 18 min; 16.4 min would be needed to sit at TPM-001’s 1 min alert floor), and unless the grid limit closes with headroom for the higher power. Record the decision as a DEC that affects the impacted elements, so the next reviewer can see why the requirement did not change.',
+    ],
+    table: {
+      caption: 'Impact of REQ-SYS-001 20 → 18 min on the reference model (course method; computed by the explorer and asserted in logic.test.ts)',
+      header: ['Hop', 'Element', 'Reached by', 'Question and result'],
+      rows: [
+        ['1', 'TPM-001, MOP-002', 'measures REQ-SYS-001', 'Threshold 20 → 18 min; margin on the estimate 2 → 0 min, worst case −0.6 min: breach (Week 5 rule R1)'],
+        ['1', 'VER-001', 'verifies REQ-SYS-001', 'Criterion “all 30 charges ≤ 20.0 min” must become 18.0; a charge of 19.2 min passed before and fails now: re-run'],
+        ['1', 'PHY-003, IF-005', 'satisfies REQ-SYS-001', 'Can the charger and the power interface deliver 18 min? Not shown (TPM-001): PHY-003 must change'],
+        ['1', 'FN-006', 'REQ-SYS-001 allocated to FN-006', 'Charge-aircraft function: still allocated correctly; re-check its timing'],
+        ['1', 'TECH-001, R-008', 'affect REQ-SYS-001', 'TRL 6 evidence was for 20 min; faster charging heats cells more (thermal runaway): re-assess'],
+        ['up', 'REQ-STK-005', 'REQ-SYS-001 derives from it', 'Still consistent (5 + 18 ≤ 25); rationale text stale: correct it'],
+        ['2', 'REQ-SYS-010, R-005, R-001', 'from PHY-003 (satisfies; affects)', 'Higher charge power against the unagreed grid limit (TBD-02, U-002)'],
+        ['2', 'LOG-002, FN-007, INFO-003', 'from PHY-003 (allocated-to; flows-to)', 'Fleet management, power sharing and charge-session data: re-check'],
+        ['—', 'Naive reach', 'impactSet, both directions', '9 / 28 / 63 elements within 1 / 2 / 3 hops, with no action attached'],
+      ],
+    },
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+  {
+    id: 'w13-consistency',
+    kind: 'concept',
+    title: 'Parses, consistent, correct: three different claims',
+    paragraphs: [
+      'Three claims are easy to merge. “The checker accepts it” means the text conforms to the language as this tool implements it: syntax, name resolution against the library, and the implementation’s own validation rules. “The model is consistent” means its facts do not contradict one another: the same quantity has one value wherever it appears, units fit their quantities, references point at the intended elements, and stated text agrees with modelled values. “The model is correct” means it matches the system and the stakeholders’ intent, which only verification and validation can support. Each claim needs different evidence, and a PASS supplies only the first.',
+      'The probes show where the line falls for the 2026-08 release. A satisfy usage asserts that the requirement is satisfied by the given feature (S06 p.168, a Week 8 reading), so a model whose own values violate it is inconsistent; the checker does not notice, because it evaluates no constraint. It also does not compare a TPM threshold with the limit of the requirement it measures, recompute a stored margin, read doc comments, or check that a unit belongs to the declared quantity kind. It does report a reference that no longer resolves, and it warns when two members of one package share a name or short name.',
+      'Two design habits shift work from the reviewer to the model (course practice). Write a derived value as an expression or a binding to its source, as worked example (a) does for the objective’s limit and the TPM-003 margin, so a change cannot leave a stale copy. And give every element one course ID that is never reused; a renumbered requirement then breaks loudly, as a dangling reference, instead of silently changing what an old ID means.',
+    ],
+    citations: [{ reading: 'R83', pages: '168' }],
+    provenance: 'mixed',
+  },
+  {
+    id: 'w13-worked-consistency',
+    kind: 'worked-example',
+    title: 'Worked example (c): a seeded fragment that passes, and one that fails',
+    paragraphs: [
+      'The listing aerolink_consistency_seeded.sysml is the change of worked example (b) applied badly: the team changed REQ-SYS-001’s value to 18 min and nothing else. It contains six seeded defects. The checker accepts it, with two warnings that point at one of them, the duplicated ID. A reviewer with the fragment table finds the rest. Load the fragment into the consistency review activity, count the defects you see before running the checks, and then compare.',
+      'The listing invalid_dangling_requirement_id.sysml shows the opposite case. The team issued a new ID, REQ-SYS-011, for the changed requirement (IDs are never reused), but left a satisfy naming REQ-SYS-001. The checker rejects line 23 because the short name no longer resolves. This is the only inconsistency in this week’s examples that the checker reports as an error, and it is reported only because a name stopped resolving, not because the tool understood the change.',
+    ],
+    sysml: [
+      { file: 'week13/aerolink_consistency_seeded.sysml', caption: 'Seeded fragment: REQ-SYS-001 changed to 18 min and nothing else; six defects for review practice (accepted by the checker with two warnings) (FICTIONAL values)', intent: 'conformant' },
+      { file: 'week13/invalid_dangling_requirement_id.sysml', caption: 'Teaching listing: a satisfy still names the old ID after the requirement was renumbered — rejected by the checker', intent: 'intentionally-invalid' },
+    ],
+    table: {
+      caption: 'The six seeded defects: what the checker did (release 2026-08) and what a reviewer sees',
+      header: ['Defect', 'Checker', 'Reviewer’s evidence'],
+      rows: [
+        ['REQ-SYS-001 value 18 min, but its name and doc still say 20 min', 'Silent', 'Statement and value disagree: which is the requirement?'],
+        ['TPM-001 threshold still 20 min', 'Silent', 'Threshold ≠ the limit of the requirement it measures'],
+        ['TPM-001 margin stored as 2 min', 'Silent', '18 − 18 = 0: the margin was computed against the old threshold'],
+        ['A new requirement given the ID REQ-SYS-001 in the same package', 'WARNING “Duplicate of other owned member name” (×2); silent if the two sit in different packages', 'Every reference to REQ-SYS-001 is now ambiguous'],
+        ['ratedPower : PowerValue = 400 [kW * h]', 'Silent', 'An energy unit on a power: kW and kWh confused'],
+        ['padWorkTime = 5 [s] while the doc says 5 min', 'Silent', 'Unit of the right kind, wrong scale; the 25 min arithmetic no longer adds up'],
+      ],
+    },
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+  {
+    id: 'w13-risk',
+    kind: 'worked-example',
+    title: 'Worked example (d): R-002 as risk metadata and a cause–effect chain',
+    paragraphs: [
+      'Metadata is additional data that annotates model elements. It is defined with a metadata definition and applied to one or more elements; at its simplest it tags elements so that tools can group them, and subsetting annotatedElement restricts what may be annotated (S10 sl.108). Nested features of a metadata definition must be bound to values in the annotation, an annotation in a namespace body is about that namespace by default, and @ is shorthand for the metadata keyword (S10 sl.109). The RiskMetadata library defines a Level as a Real from 0.0 to 1.0, standard low, medium and high levels of 0.25, 0.50 and 0.75, a RiskLevel with a probability and an optional impact, and a Risk metadata with total, technical, schedule and cost risk (S10 sl.147). ModelingMetadata adds StatusInfo (originator, owner, status such as tbd, tbr or tbc, and a risk), Rationale, Issue and Refinement (S10 sl.148).',
+      'Cause and effect has its own domain library. A Multicausation connects one or more cause occurrences to one or more effect occurrences, and a Causation is the binary case, one cause and one effect, although a cause can separately have several effects (S10 sl.158). #cause and #effect tag the ends of a multicausation, and CausationMetadata records whether the causation is necessary or sufficient and a probability (S10 sl.159).',
+      'The listing aerolink_r002_risk_causation.sysml applies both to R-002. The Risk annotation is about REQ-SYS-003, TPM-003 and the flight-operations part, which is RB-5.5’s linkage in the model. Its totalRisk carries the reference’s values, probability 0.6 and impact 0.8: the course 5 × 5 rating (likelihood 3, consequence 4) divided by 5. That mapping is the course’s; the library’s own medium level is 0.50, so do not present one scale as the other. The condition–if–then statement becomes two causations: capacity fade beyond 10 % causes a reserve shortfall, which causes shortened or cancelled flights. The first is marked sufficient but not necessary, because a strong headwind can also cause the shortfall. The checker accepted it with no messages, but it also accepts a probability of 1.5 and a reversed causation (probes r03, r05): the direction of cause and effect is the modeller’s claim.',
+      'The teaching listing invalid_risk_level_slide_abbreviation.sysml copies sl.147’s abbreviation LevelEnum::M. The checker rejects line 15, because the enumeration it loads defines medium, not M. Copying a slide literally is not the same as checking it.',
+    ],
+    sysml: [
+      { file: 'week13/aerolink_r002_risk_causation.sysml', caption: 'R-002 with the library Risk metadata about the elements it threatens, and its chain as causation connections with CausationMetadata and StatusInfo (S10 sl.147–148, 158–159) (FICTIONAL values)', intent: 'conformant' },
+      { file: 'week13/invalid_risk_level_slide_abbreviation.sysml', caption: 'Teaching listing: a risk level copied from the slide’s abbreviation LevelEnum::M — rejected by the checker', intent: 'intentionally-invalid' },
+    ],
+    citations: [{ reading: 'R77', pages: '108–109' }, { reading: 'R78', pages: '147–148' }, { reading: 'R78', pages: '158–159' }],
+    provenance: 'mixed',
+  },
+  {
+    id: 'w13-resilience-ai',
+    kind: 'concept',
+    title: 'Resilience and AI-enabled functions: what a change can break',
+    paragraphs: [
+      'SEBoK works with the INCOSE Resilient Systems Working Group definition: resilience is the ability to provide required capability when facing adversity, in both the reactive and the proactive perspective (R24 p.1203). Adversity is any condition that could degrade delivered capability, from inside the system or its environment; the proximate adversities are stresses and their effects on the system are strains (R24 p.1204). The taxonomy has three layers. The fundamental objectives are to avoid, withstand and recover from adversity (R24 p.1204). Means objectives, such as anticipate, constrain, degrade gracefully, monitor and tolerate, serve them (R24 p.1205–1206). Architecture, design and operational techniques, such as loss margins, modularity and loose coupling, realise the means; modularity is defined as composing a system so that a change to one component has minimal impact on the others (R24 p.1207).',
+      'Resilience is considered throughout the life cycle and, once its requirements exist, managed with the other requirements in the trade space (R24 p.1208). Candidate metrics include maximum outage period and depth and the expected availability of the required capability, and resilience requirements are often written as scenarios with a stated adversity, stress, capability, timeframe and target (R24 p.1209–1210). Applied to AeroLink (instructor reasoning): TPM-003’s margin is a loss margin against capacity fade; shortening or cancelling flights is graceful degradation; R-002’s trigger on the TPM-003 margin is monitoring. An impact analysis that removes a margin also removes resilience, which is worth one line in the recommendation.',
+      'SEBoK separates AI for SE (AI4SE), which uses AI to improve engineering practice, from SE for AI (SE4AI), which applies SE to intelligent systems (R31 p.1369–1370). It names three challenges for engineering intelligent systems: new failure modes (negative side effects, reward hacking, scalable oversight, unsafe exploration and distributional shift), unpredictable performance on unseen data in future operation, and a lack of trust because results must be explainable for expert judgement of compliance (R31 p.1371). The system’s intelligence is only as good as its training data (R31 p.1370). AeroLink’s AI-001 predictive maintenance is R-002’s treatment and learns from charge-session data; if the turnaround change raises charging power, its future inputs come from a duty it was not trained on, a distributional shift in the source’s terms, so its re-validation belongs in the impact set.',
+    ],
+    citations: [{ reading: 'R24', pages: '1203–1210' }, { reading: 'R31', pages: '1369–1371' }],
+    provenance: 'mixed',
+  },
+  {
+    id: 'w13-advanced',
+    kind: 'advanced',
+    title: 'Advanced analysis: baselines, commits, and why a diff is not an impact set',
+    paragraphs: [
+      'Model repositories record change as commits. In the Systems Modeling API and Services versioning model, a Commit lists the data created, updated or deleted in it as data versions, with a deletion recorded as a version with no payload, and its versioned data is the cumulative state of the project at that commit (R88 p.33). The versioned data is computed from the change set and from what the previous commits retained, and a commit with two parents must resolve every identity whose versions differ between them by listing it in its own change (R88 p.34). Commits are immutable and cannot be deleted in normal use; a branch is a mutable pointer to its head commit; a tag is an immutable pointer used for milestones, releases or baselines (R88 p.34–36).',
+      'Three consequences follow for impact analysis (instructor reasoning from these pages). First, a tag gives the baseline that a verdict refers to: VER-001’s pass was obtained on the model tagged at CP4, and an impact analysis compares the proposed state with that tag. Second, the difference between two commits is the seed of an impact analysis, not its result. In the worked history (commits.ts) the difference between the CP4 tag and the merged head is REQ-SYS-001, TPM-001 and TPM-003; VER-001 does not appear, because nobody edited it, yet the traversal puts it on the re-run list. Third, the merge rule is stricter than intuition suggests: a merge that lists only the identity both branches edited violates the rule for every other identity whose versions differ, so each must be decided, which is a small impact analysis in itself.',
+      'Impact sets also have errors in both directions (instructor reasoning). The naive traversal has high recall and low precision; the directed method raises precision but can miss a dependency the model never recorded, for example a charger power that is only described in a doc comment. A missing link is a modelling defect that the impact analysis exposes, not a reason to fall back on the naive set.',
+    ],
+    citations: [{ reading: 'R88', pages: '33–36' }],
+    provenance: 'mixed',
+  },
+  {
+    id: 'w13-application',
+    kind: 'application',
+    title: 'Aerospace and industry application',
+    paragraphs: [
+      'In a program, an impact analysis is the engineering content of a change request: what changes, what must be re-verified, which margins and risks move, and what the decision is conditioned on. Exam 2’s T4 asks for exactly this on an unseen model, and the CP5 panel will ask you to show your impact result live (B.6). The habit worth building is to state the method before the list, so that a reviewer can repeat it, and to state which re-checks passed, because a passed re-check is why the set stops.',
+    ],
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+  {
+    id: 'w13-lab',
+    kind: 'lab',
+    title: 'Lab L13 — impact analysis (out of class; kick-off in Session 1)',
+    paragraphs: [
+      'Choose one S04 Lab 13 question (battery range decreases, demand doubles, or a regulation changes) or an approved alternative. Start from your model v0.4 and its CP4 tag. Derive the impact set with the explorer on your workspace, decide which first-order elements must change, quantify the TPM consequences with the what-if analyser, review the changed fragment for consistency, write a recommendation, record it as a DEC and add a short evolution note on autonomous operations.',
+    ],
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+  {
+    id: 'w13-deliverable',
+    kind: 'deliverable',
+    title: 'Deliverable and assessment',
+    paragraphs: [
+      'Team: the L13 impact report (method, impact table, TPM what-if, verification re-run list, risk re-assessment, consistency review, recommendation, evolution note) and the DEC in the model, end of Week 13. L13 is formative now and assessed in CP5 under RB-9.5 (impact analysis, 25 points of RB-9). Individual: Exam 2 in Session 2 (RB-14, practical, closed-AI), the knowledge check, and a review-notebook entry with a time log. Graduate students: the commit-based change analysis (template section 7), read and scored formatively on RB-9.5.',
+    ],
+    citations: [],
+    provenance: 'instructor-authored',
+  },
+]
+
+const quiz: QuizQuestion[] = [
+  {
+    id: 'q13-1', bloom: 'Apply', objective: 'B13.1',
+    prompt: 'The city tightens the pad-edge limit: REQ-SYS-002 changes from 65 to 63 dBA. Using the course dependency table on the reference model, which first-order set is right?',
+    options: [
+      { id: 'a', text: 'The 18 elements within two hops in either direction, because noise touches the whole network', correct: false, explanation: 'That is the naive undirected reach; it attaches no question to any element and includes elements that do not depend on the limit.' },
+      { id: 'b', text: 'REQ-STK-002 first, then the design, because a child change must be re-derived from its parent', correct: false, explanation: 'The parent is upstream of the changed child: it is reviewed for consistency, but the change does not propagate through it.' },
+      { id: 'c', text: 'FN-005, MOP-004, PHY-001, R-003, TPM-002 and VER-002; REQ-STK-002 reviewed only', correct: true, explanation: 'Correct. Satisfies, allocated-to, measures and verifies make both ends dependent, and the risk about the requirement re-opens; the parent is upstream. The same verification logic applies as in Week 12: VER-002’s criterion was set for 65 dBA (R49 p.150).' },
+      { id: 'd', text: 'Only TPM-002 and VER-002, since those are the only elements that hold the number 65', correct: false, explanation: 'PHY-001 is asserted to satisfy the requirement, so it must be re-checked against the new limit, and R-003 is about it.' },
+    ],
+    cite: { reading: 'R49', pages: '150' },
+  },
+  {
+    id: 'q13-2', bloom: 'Analyse', objective: 'B13.1',
+    prompt: 'For the 63 dBA change, TPM-002’s estimate is 63.5 dBA with a 1.0 dBA contingency, so the team decides the aircraft (PHY-001) must change. Which second-order element deserves the first check, and why?',
+    options: [
+      { id: 'a', text: 'REQ-SYS-007 block time: a quieter procedure or rotor can change trip time and energy', correct: true, explanation: 'Correct. From PHY-001 the second hop reaches REQ-SYS-007 (it satisfies it), TECH-002, TECH-003, R-002, LOG-001 and INFO-002; a noise fix that slows or changes the aircraft acts on block time and energy first. How far a change spreads depends on how coupled the elements are (SEBoK’s modularity and loose coupling, R24 p.1207).' },
+      { id: 'b', text: 'None: a second hop is opened only for verification elements, never for design elements like PHY-001', correct: false, explanation: 'The course rule opens a second hop from any first-order element that must change; PHY-001 must, because TPM-002 is in breach.' },
+      { id: 'c', text: 'STK-004 and REQ-STK-002, since the community and its requirement are the source of the change', correct: false, explanation: 'Both are upstream of REQ-SYS-002; the question is what the aircraft change does to other requirements it satisfies.' },
+      { id: 'd', text: 'All 47 elements within three hops, checked in ID order', correct: false, explanation: 'The undirected three-hop reach has no order of importance and no reason attached to any entry.' },
+    ],
+    cite: { reading: 'R24', pages: '1207' },
+  },
+  {
+    id: 'q13-3', bloom: 'Evaluate', objective: 'B13.1',
+    prompt: 'A team answers “demand doubles” (A-006: 240 → 480 trips/day). Its report lists CRIT-001 and DEC-001 as the impact set and concludes: “two elements affected; no requirement changes.” Evaluate the report.',
+    options: [
+      { id: 'a', text: 'Sound: the traversal from A-006 gives exactly two dependents, and a derived set needs no further judgement', correct: false, explanation: 'The first hop is right, but the report never asks whether DEC-001 still holds; a derived first order is not the whole analysis.' },
+      { id: 'b', text: 'Too small: list every element within three hops of A-006 so that nothing is missed', correct: false, explanation: 'A larger undirected set is not more correct; it replaces the decision about DEC-001 with volume.' },
+      { id: 'c', text: 'Wrong start: a demand change should start from the stakeholders, not from an assumption', correct: false, explanation: 'A-006 is where the model records the planning demand, so it is the right seed.' },
+      { id: 'd', text: 'Incomplete: DEC-001 must change, which opens REQ-STK-004, ALT-004 and R-001', correct: true, explanation: 'Correct. DEC-001 states it is valid only near 240 trips/day, so the re-check fails; from DEC-001 the second hop reaches REQ-STK-004 (its capacity value derives from MGO-007’s 80 % rule), ALT-004 and R-001. Resilience requirements belong in the same trade space (R24 p.1208).' },
+    ],
+    cite: { reading: 'R24', pages: '1208' },
+  },
+  {
+    id: 'q13-4', bloom: 'Apply', objective: 'B13.2',
+    prompt: 'After a change, a team’s file has REQ-SYS-005 with maxLatency = 45 [s] (was 60), a doc that still says “within 60 s”, and MOP-001 described as “threshold 60 s”. The checker reports zero errors and zero warnings. What should the team conclude?',
+    options: [
+      { id: 'a', text: 'The change is complete, because the checker compares doc text with attribute values when it validates', correct: false, explanation: 'Doc text is a comment; the course probes found no comparison of text with values.' },
+      { id: 'b', text: 'The file parses, but its stated 60 s copies are inconsistent and only review finds them', correct: true, explanation: 'Correct. A PASS covers syntax, name resolution and the tool’s rules; agreement between statements and values is a consistency check a reviewer makes. Left as it is, a satisfy would assert the 45 s constraint (S06 p.168) while the agreed statement says 60 s.' },
+      { id: 'c', text: 'The value conflict would have produced the warning “Bound features should have conforming types”', correct: false, explanation: 'That warning concerns types, such as a unitless number bound to a quantity; 45 [s] and 60 [s] are both durations.' },
+      { id: 'd', text: 'Nothing is wrong: docs and measure descriptions are informal and need not match the model', correct: false, explanation: 'The requirement statement is what stakeholders agreed; if it says 60 s and the constraint says 45 s, the model contradicts itself.' },
+    ],
+    cite: { reading: 'R83', pages: '168' },
+  },
+  {
+    id: 'q13-5', bloom: 'Analyse', objective: 'B13.2',
+    prompt: 'Four edits are made to a passing model, one at a time. Based on the course probes of release 2026-08, which one makes the checker FAIL the file?',
+    options: [
+      { id: 'a', text: 'attribute maxPower : PowerValue = 350; (no unit)', correct: false, explanation: 'A unitless number bound to a quantity gave a warning, “Bound features should have conforming types”, and the file still passed.' },
+      { id: 'b', text: 'attribute maxPower : PowerValue = 350 [kW * h]; (an energy unit)', correct: false, explanation: 'A unit of the wrong kind passed with no message in the probes; only a reviewer catches it.' },
+      { id: 'c', text: 'satisfy Requirements::\'REQ-SYS-010\' after REQ-SYS-010 was renumbered REQ-SYS-013', correct: true, explanation: 'Correct. The short name no longer resolves, so the checker reports an error and the file fails, as with the dangling-reference listing; a satisfy must name a requirement (S06 p.168).' },
+      { id: 'd', text: 'A second requirement with the short name REQ-SYS-010 added in the same package as the first', correct: false, explanation: 'This gave the warning “Duplicate of other owned member name”; the file still passed.' },
+    ],
+    cite: { reading: 'R83', pages: '168' },
+  },
+  {
+    id: 'q13-6', bloom: 'Evaluate', objective: 'B13.2',
+    prompt: 'A team’s analysis case for TPM-002 binds in rotorTipSpeed = 140 [kW], returns 63.1 dBA (its doc says), binds MOP-004 to the result and asserts satisfy REQ-SYS-002. The checker reports PASS with no messages. What does this evidence support?',
+    options: [
+      { id: 'a', text: 'That REQ-SYS-002 is verified, since the analysis result is bound and the satisfy was accepted', correct: false, explanation: 'A satisfy asserts; verification needs evidence that the real system meets the requirement (S06 p.168, Week 12).' },
+      { id: 'b', text: 'That 63.1 ≤ 65 dBA holds, because the checker evaluates the calculation when it validates the usage', correct: false, explanation: 'The checker evaluates no expression; 63.1 dBA is the team’s claim, not the tool’s result.' },
+      { id: 'c', text: 'Nothing at all: a file with a power unit on a speed could not have passed, so the run was wrong', correct: false, explanation: 'The probes show exactly that: a unit of the wrong kind on a quantity input passes silently.' },
+      { id: 'd', text: 'Only that it resolves and types; the [kW] input and the 63.1 dBA still need review and a hand check', correct: true, explanation: 'Correct. The PASS says the text conforms; the wrong-kind input went undetected, and the result must be computed and reviewed before the satisfy is credible (S10 sl.92–94 define what the case computes, not that a tool computed it).' },
+    ],
+    cite: { reading: 'R75', pages: '92–94' },
+  },
+  {
+    id: 'q13-7', bloom: 'Apply', objective: 'B13.3',
+    prompt: 'R-005 (grid connection below hub demand) is rated likelihood 2, consequence 4 on the course 5 × 5 scale. Following the reference’s mapping, which library Risk annotation is right?',
+    options: [
+      { id: 'a', text: 'totalRisk = new RiskLevel(probability = 0.4, impact = 0.8);', correct: true, explanation: 'Correct. The reference divides the 5 × 5 ratings by 5 (a course mapping); a Level must lie between 0.0 and 1.0 (S10 sl.147).' },
+      { id: 'b', text: 'totalRisk = new RiskLevel(probability = 2, impact = 4);', correct: false, explanation: 'A Level is a Real from 0.0 to 1.0 (S10 sl.147); the checker does not evaluate that constraint, so it would pass silently and be wrong.' },
+      { id: 'c', text: 'totalRisk = RiskLevelEnum::L;', correct: false, explanation: 'L is the slide’s abbreviation; the checker rejected LevelEnum::M for the same reason, and the library values are low, medium and high.' },
+      { id: 'd', text: 'technicalRisk = LevelEnum::medium;', correct: false, explanation: 'technicalRisk is a RiskLevel (probability and impact), not a Level, and medium (0.50) is not the 0.4 the mapping gives.' },
+    ],
+    cite: { reading: 'R78', pages: '147' },
+  },
+  {
+    id: 'q13-8', bloom: 'Analyse', objective: 'B13.3',
+    prompt: 'A team models R-005 as a causation “connection curtailed → turnaround over 25 min”. R-005 says a curtailed connection does push turnaround over 25 min; a charger fault can do the same. How should its CausationMetadata be set?',
+    options: [
+      { id: 'a', text: 'isNecessary = true; isSufficient = false: long turnarounds need a curtailed connection', correct: false, explanation: 'A charger fault also causes long turnarounds, so curtailment is not necessary for them.' },
+      { id: 'b', text: 'probability = 0.4, copied from the 5 × 5 likelihood of R-005 divided by 5', correct: false, explanation: 'The likelihood is the chance the risk occurs; that is not the same quantity as the probability attached to the causation. Do not merge the two.' },
+      { id: 'c', text: 'isNecessary = false; isSufficient = true', correct: true, explanation: 'Correct. Curtailment alone produces the effect (sufficient), and another cause can produce it too (not necessary); CausationMetadata records both flags (S10 sl.159).' },
+      { id: 'd', text: 'No metadata: a causation connection already states whether the cause is necessary', correct: false, explanation: 'A Causation only connects a cause to an effect (S10 sl.158); necessity and sufficiency are recorded by the metadata.' },
+    ],
+    cite: { reading: 'R78', pages: '158–159' },
+  },
+  {
+    id: 'q13-9', bloom: 'Understand', objective: 'B13.4',
+    prompt: 'When a hub closes for weather, AeroLink keeps running a reduced timetable from the spokes instead of stopping service. Which fundamental objective and means objective of SEBoK’s resilience taxonomy does this serve?',
+    options: [
+      { id: 'a', text: 'Avoid, by evade: the network steers its aircraft away from the closed hub', correct: false, explanation: 'Evading avoids the adversity through design or action; here the closure has happened and capability is reduced.' },
+      { id: 'b', text: 'Recover, by repair: the hub is fixed and capability is replenished', correct: false, explanation: 'Nothing is repaired; recovery comes later, when the hub reopens.' },
+      { id: 'c', text: 'Avoid, by prevent: backup power keeps the hub open in bad weather', correct: false, explanation: 'Prevent precludes the strain; the hub is closed, so the strain is present.' },
+      { id: 'd', text: 'Withstand, by degrade gracefully: partial useful service instead of none', correct: true, explanation: 'Correct. Withstanding resists capability degradation under stress, and degrading gracefully moves to a desirable degraded state with partial useful function (R24 p.1204–1205).' },
+    ],
+    cite: { reading: 'R24', pages: '1204–1205' },
+  },
+  {
+    id: 'q13-10', bloom: 'Understand', objective: 'B13.4',
+    prompt: 'AI-002 forecasts demand from Year-1 bookings. In Year 2 an employer moves next to a spoke and demand on two vertiport pairs doubles. Which challenge from SEBoK’s AI article does this illustrate, and what does it imply for V&V?',
+    options: [
+      { id: 'a', text: 'Distributional shift: validation on past data cannot vouch for unseen future data; re-validate', correct: true, explanation: 'Correct. SEBoK lists distributional shift among the new failure modes and notes that ML performance on unseen future data is hard to predict, which challenges validation before operation (R31 p.1371).' },
+      { id: 'b', text: 'Reward hacking: the forecaster has learned to game the reward function it was trained against, inflating demand', correct: false, explanation: 'A supervised forecaster has no reward function to game; the inputs have changed, not the objective.' },
+      { id: 'c', text: 'Unsafe exploration: the model tries risky forecasts in operation to learn faster', correct: false, explanation: 'Exploration concerns learning by trial in operation, as in reinforcement learning; AI-002 does not act on the world.' },
+      { id: 'd', text: 'None: a forecast that was validated once is valid for the rest of the life cycle', correct: false, explanation: 'SEBoK’s point is the opposite: performance on future, unseen data is the hard part (R31 p.1371).' },
+    ],
+    cite: { reading: 'R31', pages: '1371' },
+  },
+  {
+    id: 'q13-11', bloom: 'Evaluate', objective: 'B13.2',
+    prompt: 'A team’s charge-time analysis case has an objective with require constraint { chargeTime <= 20 [min] }. Last week REQ-SYS-001 was changed to 18 min. The team computes the analysis by hand and gets 19 min, then records “analysis objective met; satisfy REQ-SYS-001 holds”. Which judgement is right?',
+    options: [
+      { id: 'a', text: 'Right: the objective is the requirement on the analysis, and it is met at 19 min', correct: false, explanation: 'The objective is a requirement on the result of the analysis (S10 sl.92), but this one still holds the old limit, so meeting it shows nothing about 18 min.' },
+      { id: 'b', text: 'Wrong: the objective’s literal limit drifted; REQ-SYS-001 is not met at 19 min', correct: true, explanation: 'Correct. A duplicated literal drifted from the requirement, so the satisfy now asserts something the team’s own number contradicts. Bind the objective’s limit to the requirement’s attribute.' },
+      { id: 'c', text: 'Right, provided the checker accepts the file, since it compares objectives with requirements', correct: false, explanation: 'The probes found a literal limit that differs from the requirement passing silently.' },
+      { id: 'd', text: 'Undecidable until VER-001 is re-run, because analyses cannot contradict requirements', correct: false, explanation: 'A computed 19 min against an 18 min limit is already a contradiction in the model; VER-001 must be re-run as well.' },
+    ],
+    cite: { reading: 'R75', pages: '92' },
+  },
+  {
+    id: 'q13-12', bloom: 'Apply', objective: 'B13.1',
+    prompt: 'The battery supplier lowers end-of-life capacity retained from 92 % to 88 %; nothing else changes. With worked example (a)’s energy model (120 kWh usable new, 85 kWh trip) and Week 5’s TPM-003 contingency of 1.5 points and alert floor of 1 point, what is TPM-003’s estimate and status?',
+    options: [
+      { id: 'a', text: '23.0 %, on track: the trip energy is unchanged, so the landing reserve is unchanged', correct: false, explanation: 'The reserve is a share of end-of-life usable energy, which falls to 105.6 kWh.' },
+      { id: 'b', text: '19.5 %, breach: margin −0.5 points on the estimate, −2.0 on the worst case', correct: true, explanation: 'Correct. (105.6 − 85) / 105.6 = 0.195; the worst case 18.0 % is below 20 %, so Week 5 rule R1 applies, and R-002’s trigger (margin below 1 point) fires.' },
+      { id: 'c', text: '19.0 %, breach: a 4-point fall in capacity is a 4-point fall in the reserve', correct: false, explanation: 'The relation is not one-to-one: the fraction is (E − 85) / E, which gives 19.5 %.' },
+      { id: 'd', text: '19.5 %, at risk: the shortfall is within the contingency, so it is not yet a breach', correct: false, explanation: 'The estimate itself is below 20 %; the contingency makes the worst case lower still, not higher.' },
+    ],
+    cite: { reading: 'R75', pages: '93' },
+  },
+]
+
+const week13: WeekContent = {
+  week: 13,
+  drivingQuestion:
+    'The city wants faster turnarounds and the battery supplier revises its fade data. Starting from one changed number, can you show from the model — not from memory — what else must be re-examined, which margins break, which verdicts no longer hold and which risks re-open, and can you tell a model that merely parses from one that is consistent?',
+  blocks,
+  activities: [
+    {
+      id: 'w13-act-impact',
+      title: 'Change-impact explorer',
+      component: 'w13-impact-explorer',
+      purpose: 'State a change, predict, then derive its impact set from the model: hop 1 by the course dependency table with the question each link implies, upstream elements for review, hop 2 only from the elements you decide must change, TPM margin consequences and the naive undirected reach for comparison; screen the recommendation, export the report and record the decision as a DEC with owner and provenance.',
+      instructions: [
+        'Practice on the reference: REQ-SYS-001 20 → 18 min. Predict the hop-1 count, derive, and tick PHY-003 as must-change.',
+        'Then switch off practice and run your L13 question on your own workspace; tick only the elements whose re-check fails, and say why in the report.',
+        'Write the recommendation until the screen shows ✓, export the report into L13 and record the DEC (initials and provenance required).',
+      ],
+      objectives: ['B13.1'],
+      inBlock: 'w13-worked-impact',
+    },
+    {
+      id: 'w13-act-whatif',
+      title: 'TPM margin what-if analyser',
+      component: 'w13-margin-whatif',
+      purpose: 'Edit TPM-001..003 thresholds, estimates and contingencies, or recompute TPM-003 from the analysis case’s energy inputs (S04 Lab 13 battery scenario included), and see margins on the estimate and the worst case, status by the Week 5 rules, the requirement tracked, the verification to re-run and the risks whose trigger fires. Teaching values, labelled analysis-computed.',
+      instructions: [
+        'Set TPM-001’s threshold to 18 and read the status; then load the battery scenario and read TPM-003 and R-002.',
+        'For your L13 question, change only what the question changes, and export the table into your report.',
+      ],
+      objectives: ['B13.1', 'B13.3'],
+      inBlock: 'w13-worked-analysis',
+    },
+    {
+      id: 'w13-act-consistency',
+      title: 'Consistency review of a model fragment',
+      component: 'w13-consistency-review',
+      purpose: 'Inspect a fragment table (one row per value-bearing feature), count the inconsistencies yourself, then run cited checks for dangling and duplicated IDs, units of the wrong kind or missing, statements that disagree with values, thresholds and criteria that differ from the requirement, stale margins and satisfied requirements the design values violate — each shown beside what the checker did with the same defect.',
+      instructions: [
+        'Load the seeded fragment, list the defects you find in your notes, enter your count and run the checks; compare item by item.',
+        'Load the reference TPM rows (they pass) and the repaired fragment; then enter the rows your L13 change touches and review them.',
+      ],
+      objectives: ['B13.2'],
+      inBlock: 'w13-worked-consistency',
+    },
+  ],
+  lab: {
+    id: 'L13',
+    title: 'Impact analysis: use the model to answer a change question',
+    setting: 'team',
+    durationMinutes: 25,
+    objectives: ['B13.1', 'B13.2', 'B13.3', 'B13.4'],
+    inputs: [
+      'Model v0.4 (L12), its checker log and its CP4 tag in the team repository; the workspace model',
+      'One S04 Lab 13 question: battery range decreases (TECH-002, R-002, REQ-SYS-003, TPM-003), demand doubles (A-006, MGO-007, REQ-STK-004, DEC-001) or a regulation changes (U-001, REQ-STK-003); or an approved alternative',
+      'Week 5 TPM contingencies and alert floors; the L12 verification cases',
+      'The listings of worked examples (a), (c) and (d) in sysml/week13; this week’s three activities',
+    ],
+    steps: [
+      { title: 'In class — kick-off (25 min, Session 1)', detail: 'Choose the question and state the change as “element, value from → to” in one line. Run the explorer on your workspace and save the first-order table. Assign one owner per consequence class: verification, measures, risks, design.' },
+      { title: 'Out of class — impact set (method shown)', detail: 'Re-check every first-order element and record the result. Tick as must-change only the elements whose re-check fails, and give the reason. Export the impact report with the method, both hops, the upstream list and the naive reach.' },
+      { title: 'Out of class — consequences', detail: 'Quantify each TPM with the what-if analyser (CBE and worst-case margins, status, triggered risks). List the VERs to re-run with the criterion that changes. Re-assess each risk reached (likelihood, consequence, trigger), using library Risk metadata and a causation for the main chain. Review the changed fragment with the consistency activity.' },
+      { title: 'Out of class — model update and checker run', detail: 'If the decision changes the model, apply it completely (values, docs, TPM, VER criteria, rationale) and run the checker: zero errors, every warning explained. If the decision is to refuse or defer, change nothing except the DEC and the rationale.' },
+      { title: 'Out of class — recommendation and DEC', detail: 'Write the recommendation (decision, affected IDs, condition or reason, one line on resilience) and record it as a DEC in the workspace with owner and provenance; add it to the SysML model as a @Rationale on the affected requirement or as an analysis with a doc.' },
+      { title: 'Out of class — evolution note (awareness, ≤ ½ page)', detail: 'Which elements would autonomous operation (TECH-003) touch, by the same traversal from TECH-003? Name one AI V&V challenge it raises (R31 p.1371) and one resilience means it needs (R24 p.1205–1206). This note feeds Week 14’s evolution increment (B14.1).' },
+    ],
+    artefacts: [
+      { idPrefix: 'Impact report', description: 'Change statement; method; first-order, upstream and second-order tables with the re-check result per element; TPM what-if; VER re-run list; risk re-assessment; consistency review; recommendation; evolution note', minimum: 'Impact set derived from model relationships with the method stated (RB-9.5); every first-order element has a recorded re-check; at least one second-order effect analysed or a reason why none' },
+      { idPrefix: 'DEC', description: 'The decision on the change, in the workspace with owner and provenance and affects links to the impacted elements, and as a rationale or analysis in the SysML model', minimum: 'One DEC whose text states the decision, the affected IDs and its condition' },
+      { idPrefix: 'R (metadata)', description: 'Library Risk metadata and at least one causation connection for the main cause–effect chain of the change', minimum: 'Accepted by the checker; the probability scale named (course mapping or library level)' },
+    ],
+    continuity:
+      'The impact report is the CP5 impact-analysis result that the panel asks to see live (B.6), scored by RB-9.5. The DEC and any model update become part of the CP5 model; a refused or deferred change leaves the model unchanged but adds the decision and its condition. The evolution note seeds Week 14’s evolution increment (B14.1), and Exam 2’s T4 uses the same method on an unseen model.',
+    tools: [
+      { label: 'AeroLink engineering model (workspace)', to: '/workspace/model' },
+      { label: 'Case brief and Data Sheet (FICTIONAL values)', to: '/workspace/aerolink' },
+    ],
+  },
+  assignment: {
+    id: 'L13',
+    title: 'L13 impact report and DEC; graduate commit-based change analysis',
+    mode: 'team',
+    due: 'Impact report, DEC and any model update: end of Week 13 (they carry into CP5, due Week 14). Graduate commit-based change analysis: end of Week 13.',
+    weight: 'L13 is formative now; it is assessed summatively in CP5 (14 % of the course grade) under RB-9.5 (impact analysis, 25 points of RB-9). Graduate analysis: review notebook (RB-16, 5 %), always read, with formative feedback on RB-9.5.',
+    instructions: [
+      'State the change in one line (element, value from → to) and the question it answers.',
+      'Derive the impact set with the explorer on your own model and record a re-check result for every first-order element.',
+      'Quantify the TPM, verification and risk consequences; review the changed fragment for consistency.',
+      'Recommend, record the DEC, and if the model changes, apply the change completely and run the checker (zero errors, warnings explained).',
+      'Add the evolution note on autonomous operations (≤ ½ page).',
+      'Graduate students: the commit-based change analysis (template section 7).',
+      'Log your hours in the review notebook (workload pilot, FD-22) and attach the team’s AI usage statement.',
+    ],
+    template: [
+      { heading: '1. Change and question (B13.1)', guidance: 'One line: element, value from → to, and the S04 Lab 13 question it answers. Name the baseline (the CP4 tag or commit) that the analysis compares against.' },
+      { heading: '2. Method and impact set (RB-9.5; B13.1)', guidance: 'The method in two sentences (dependency table; second hop only from must-change elements). The exported tables: hop 1 with the re-check result per element, upstream list, hop 2 with the reason each source must change, and the naive reach for comparison.' },
+      { heading: '3. Consequences for measures, verification and risk (RB-9.5; B13.3)', guidance: 'The what-if table (margins on the estimate and the worst case, status, rule). The VERs to re-run with the criterion that changes. Each risk reached: likelihood, consequence and trigger before and after; the library Risk annotation and one causation, with the listing lines.' },
+      { heading: '4. Consistency review (B13.2)', guidance: 'The changed fragment’s rows and the findings, your own count first. For each finding, the fix. State in one sentence what the checker run does and does not show for this change.' },
+      { heading: '5. Recommendation and DEC (RB-9.5)', guidance: 'Decision, affected IDs, condition or reason, and one line on what the change does to resilience (R24 p.1204–1207). The DEC ID and where its rationale sits in the SysML model.' },
+      { heading: '6. Evolution note: autonomous operations (awareness, B13.4)', guidance: '≤ ½ page: the first-order set from TECH-003, one AI V&V challenge (R31 p.1371) and one resilience means (R24 p.1205–1206).' },
+      { heading: '7. Graduate task: commit-based change analysis (individual, ½–1 page; R88 p.32–36)', guidance: 'Using the worked history (C1 tagged cp4-baseline; C2 on main; C3 on a branch; C4 merge) or your team’s own repository: (a) compute the versioned data at C4 by the p.34 rule and the difference from the CP4 tag; (b) say which identities the merge must list in its change set, and why the draft C4 violates the rule; (c) compare the difference with your traversal impact set: which elements appear only in the impact set, and why; (d) explain, with the p.36 table, why the baseline a verdict refers to is a tag and not a branch.' },
+      { heading: '8. AI usage statement (RB-12)', guidance: 'Tool, purpose, prompts, outputs and your evaluation. AI output is never evidence of an impact set, a margin or what the checker accepts; only the model, a recorded run and the cited sources count.' },
+    ],
+    rubrics: ['RB-9', 'RB-5', 'RB-12', 'RB-16'],
+    rubricScope:
+      'L13 (formative now, summative in CP5): RB-9.5 on the impact report and DEC (impact set derived by traversal with the method shown; second-order effects; consequences for verification and risk; recommendation). RB-5.5 (linkage of risks to affected elements in the model) as formative feedback on the risk annotations. Graduate commit-based change analysis: required this week (course workload option B: Week 12’s task was optional), read every time under the RB-16 graduate-task rule (DECISION_LOG W7), with formative feedback on RB-9.5 (does the analysis separate the change seed from the impact set and handle the merge correctly?), informing RB-16.1. Exam 2 is scored separately with RB-14. AI statement: RB-12.1–12.3.',
+    aiUse: 'AI tools may explain link types, critique a recommendation or suggest SysML syntax for metadata. Any AI-generated SysML must be accepted by the checker and explained line by line by its owner (RB-12.3). AI output is never evidence of an impact set, a margin, a verdict or what the checker accepts. Exam 2 is closed-AI. Tag any AI-suggested DEC AI-suggested-reviewed in the recorder.',
+    objectives: ['B13.1', 'B13.2', 'B13.3', 'B13.4'],
+  },
+  quiz,
+  instructorNotes: {
+    sessions: [
+      {
+        title: 'Session 1 — Worked impact example and L13 kick-off',
+        minutes: 75,
+        segments: [
+          { label: 'Analysis case for TPM-003', minutes: 15, notes: 'Worked example (a) on screen with S10 sl.92–94: subject, objective (assume/require), return result, the usage binding, satisfy on the result. Compute the table by hand with the class. Then show two probe rows: a 6 [kW] duration and a violated satisfy both pass.' },
+          { label: 'Worked impact: battery usable energy 15 % lower', minutes: 30, notes: 'The weekly plan’s example. Load the battery scenario in the what-if analyser: TPM-003 9.4 %, breach, R-002 fires. Run the explorer from TPM-003 (R-002, REQ-SYS-003; upstream MOP-005) and from TECH-002 (PHY-001, R-002, REQ-SYS-003, REQ-SYS-007; upstream A-004). Ask which re-checks fail and what must change; walk one second hop. Close with AI-001 (R-002’s treatment) and distributional shift (R31 p.1371), and with graceful degradation as the resilience reading (R24 p.1205).' },
+          { label: 'L13 kick-off', minutes: 25, notes: 'Teams choose the question, write the one-line change and run the explorer on their own workspace. Spot-check that each team states its method. Show the consistency activity with the seeded fragment for 5 minutes.' },
+          { label: 'Exit ticket and Exam 2 brief', minutes: 5, notes: 'One line: which first-order element of your change will fail its re-check, and why. Exam 2 logistics (RB-14 tasks, closed-AI, checker available).' },
+        ],
+      },
+      {
+        title: 'Session 2 — Exam 2 (practical model examination, RB-14)',
+        minutes: 75,
+        segments: [
+          { label: 'Set-up and instructions', minutes: 5, notes: 'Two model variants (RB-14). Checker available; no AI tools.' },
+          { label: 'Exam 2: T1 navigate, T2 semantics, T3 trace, T4 impact, T5 repair, T6 extend', minutes: 65, notes: 'T4 uses this week’s method on the unseen model; credit a stated method and a first-order set with reasons. The seeded defects for T5 should include one of the silent kinds from worked example (c).' },
+          { label: 'Submission and checker log', minutes: 5, notes: 'Students submit the repaired model and the checker output.' },
+        ],
+      },
+    ],
+    misconceptions: [
+      { claim: '“Impact analysis is a text search for the changed ID” (or a diff of the files).', correction: 'A search or a diff finds where the ID or value is written; impact follows dependencies. VER-001 contains no edited text after the REQ-SYS-001 change, yet its criterion is now wrong.', cite: { reading: 'R88', pages: '33–34' } },
+      { claim: '“Everything within N hops is impacted.”', correction: 'Undirected reach grows to a third of the model in three hops and attaches no question to any element. Direction and link meaning decide dependence, and second order opens only where a re-check fails (course method).' },
+      { claim: '“The checker passed, so the model is consistent.”', correction: 'A PASS covers syntax, name resolution and the tool’s rules. Values, units of the wrong kind, doc text and violated satisfy assertions passed silently in the probes; a satisfy asserts, it is not checked (S06 p.168).', cite: { reading: 'R83', pages: '168' } },
+      { claim: '“An analysis case computes its result when the file is validated.”', correction: 'The case defines how the result is computed (S10 sl.92); the course checker evaluates no expression. The number comes from your own calculation or an analysis tool, labelled as such.', cite: { reading: 'R75', pages: '92' } },
+      { claim: '“Library risk probability is the 5 × 5 likelihood.”', correction: 'The library Level is a Real from 0 to 1 with low/medium/high at 0.25/0.50/0.75 (S10 sl.147); the reference’s division by 5 is a course mapping. Name the scale you use.', cite: { reading: 'R78', pages: '147' } },
+      { claim: '“Resilience means redundancy.”', correction: 'Redundancy is one technique; the objectives are avoid, withstand and recover, served by means such as graceful degradation, monitoring and margins (R24 p.1204–1207). RB-15 calls “redundancy only” level 2.', cite: { reading: 'R24', pages: '1204–1207' } },
+      { claim: '“AI functions are verified like any software: test more cases.”', correction: 'SEBoK names new failure modes, unpredictable performance on unseen data and the need for explainable results for compliance judgement (R31 p.1371); more test cases from the past do not cover a distributional shift.', cite: { reading: 'R31', pages: '1371' } },
+    ],
+    facilitation: [
+      'The app does not run the checker. Every result in the probe tables was recorded with release 2026-08 on 2026-10-11 and describes that release only; if students ask whether something else passes, ask them to run it.',
+      'Expect teams to tick every first-order element as must-change, which rebuilds the naive set. Ask for the failed re-check behind each tick; credit a short second hop with reasons over a long one without.',
+      'Expect upstream elements in the impact set (the parent requirement, the assumption). Ask what about the parent must change; usually only its rationale text.',
+      'Expect “no impact on verification”. Point to verifies links: every VER of a changed requirement is re-run or its criterion re-stated.',
+      'The what-if analyser’s estimates are analysis-computed teaching values (DECISION_LOG A12); students must not present them as aircraft data.',
+      'Exam week: L13 has no in-class lab session beyond the 25-minute kick-off. Teams with a late v0.4 may run L13 on the reference v0.4 (recovery input, lab plan C.4) and say so.',
+      'Accessibility: activities use labelled controls and tables; statuses are written as words (BREACH, AT RISK, On track; ✗ Problem, ? Check), never colour alone.',
+    ],
+    answerKey: [
+      'Explorer (reference, REQ-SYS-001 20 → 18 min, PHY-003 must change): hop 1 = FN-006, IF-005, MOP-002, PHY-003, R-008, TECH-001, TPM-001, VER-001; upstream REQ-STK-005; hop 2 = FN-007, INFO-003, LOG-002, R-001, R-005, REQ-SYS-010; naive reach 9 / 28 / 63 of 203 (logic.test.ts). TPM-001: margin 2 → 0 on the estimate, −0.6 worst case, breach (R1). Model recommendation: keep 20 min unless the estimated charge time is ≤ 17.4 min (worst case ≤ 18 min; ≤ 16.4 min to be on track) and the grid limit (TBD-02) has headroom.',
+      'Starting points for the S04 Lab 13 questions (reference): TPM-003 → R-002, REQ-SYS-003 (upstream MOP-005); TECH-002 → PHY-001, R-002, REQ-SYS-003, REQ-SYS-007 (upstream A-004); A-006 → CRIT-001, DEC-001, and with DEC-001 must-change → ALT-004, R-001, REQ-STK-004; U-001 → CAP-005, CON-004, REQ-STK-003, REQ-SYS-004, SCN-005. Strong reports state which re-checks pass (and therefore stop the walk).',
+      'What-if: baseline worst-case margins 1.4 min, 0.5 dBA, 1.5 points, all on track (no history, so R3 is not applied; TPM-002 sits at its floor). Battery −15 %: TPM-003 9.4 %, margins −10.6 / −12.1, breach; R-002 fires on both margins. Cruise power +10 %: 18.9 %, breach. Reserve lost below 88.5 % capacity retained (90.2 % on the worst case).',
+      'Consistency (seeded fragment): six defects — stale name/doc on REQ-SYS-001, TPM-001 threshold 20, TPM-001 margin 2 (should be 0), duplicated ID REQ-SYS-001, 400 [kW * h] on a power, padWorkTime 5 [s] against “5 min”. The tool gives 9 findings from 5 checks (the duplicate is reported on both elements and as ambiguous on two references; the REQ-SYS-001 statement and name are two findings). Checker: PASS with two warnings for the duplicate only. Reference TPM rows and the repaired fragment give no findings.',
+      'Risk listing: the Risk annotation is about REQ-SYS-003, TPM-003 and flightOperations; probability 0.6 / impact 0.8 is the course mapping of L3/C4; fadeToShortfall is sufficient, not necessary; StatusInfo tbc with owner. Invalid listing: LevelEnum::M does not resolve (line 15); fix LevelEnum::medium.',
+      'Evolution note (model answer outline): from TECH-003 the first order is PHY-001 (affects); AI V&V challenge: trust and explainability for compliance judgement, or distributional shift in traffic; resilience means: neutral state or safe state, human participation (R24 p.1207), monitor.',
+      'Quiz key: q13-1 c; q13-2 a; q13-3 d; q13-4 b; q13-5 c; q13-6 d; q13-7 a; q13-8 c; q13-9 d; q13-10 a; q13-11 b; q13-12 b.',
+      'Graduate task model answer (worked history, commits.ts): (a) versioned data at C4 (resolved) = REQ-SYS-001 “18 min”, TPM-001 “threshold 18; estimate 18.4”, VER-001 unchanged “≤ 20.0 min”, TPM-003 “21.5 %”; difference from C1 = REQ-SYS-001, TPM-001, TPM-003. (b) The draft C4 lists only TPM-001; C2 and C3 also hold different versions of REQ-SYS-001 and TPM-003, so the p.34 invariant requires both in the change set (the spec’s rule, stricter than a three-way merge). (c) VER-001 (criterion still 20.0 min), PHY-003, IF-005, TECH-001, R-008 and FN-006 appear only in the impact set: nobody edited them, but they depend on the changed requirement. (d) A tag is immutable (p.35–36), so a verdict recorded against cp4-baseline always refers to the same versioned data; a branch head moves with every commit.',
+    ],
+    cautions: [
+      'This app cannot run the checker. All results quoted in the lesson and the notes were recorded with release 2026-08 on 2026-10-11 and describe that release only.',
+      'Course conventions, labelled in the lesson: the impact dependency table and the must-change rule for second order; the 5 × 5 to Level mapping (divide by 5) taken from the reference; the consistency checks of the fragment tool; reading “battery range decreases” as 15 % less usable energy. None is prescribed by the readings.',
+      'New FICTIONAL values introduced this week: the energy inputs of worked example (a) (120 kWh, 92 %, 400 kW × 6 min, 270 kW × 10 min), chosen to reproduce the reference TPM-003 estimate; the 18 min and 63 dBA change proposals; the commit history. The contingencies and alert floors are Week 5’s. When the eVTOL-sizer Parametric Analysis panel exists (DECISION_LOG A10–A12), its analysis-computed TPM-003 estimate may differ from 23 %; the lesson’s method does not depend on the number.',
+      'Source cautions. S10 sl.147 writes LevelEnum::L/M/H inside RiskLevelEnum while LevelEnum lists low, medium and high; the checker resolves only the latter (taught as the invalid listing). S10 sl.109 annotates the acceleration input with ToolVariable name “mass”, which looks like a slide slip; not used. SEBoK p.1207 calls functional (heterogeneous) redundancy “also called homogeneous redundancy”, which contradicts its own definition; not used in the lesson or quiz.',
+      'S06 p.168 (satisfy asserts) is cited from R83 (a Week 8 reading) and R49 p.150 (verification repeated after a design change) from Week 12; both are listed in references. R88 is the extension reading used by the graduate task and the advanced block only; no quiz item depends on it. R32 is extension; the lesson relies on R31 only.',
+      'Workload (AUTHORING_GUIDE §7 rule 3; adopted options B and C): designed to fit 9 h. Readings are narrowed to the pages the lesson depends on: R75 sl.92–95, R77 sl.108–109, R78 sl.147–148, 152 and 158–159 (11 slides), R24 p.1203–1205 and 1208–1210 with p.1206–1207 as a look-up glossary (6 pp), R31 p.1368–1371 (4 pp), ≈ 1.0 h. L13 out of class is budgeted at 2.5 h, not the lab plan’s 3 h: the explorer and the analyser compute the traversal and the margins, and the team-hour check (team of 4, 10 team-hours) is impact set and re-checks ≈ 3, consequences and risk metadata ≈ 3, recommendation and DEC ≈ 1.5, evolution note ≈ 1, report assembly ≈ 1.5. Exam 2 preparation is budgeted at 0.5 h; realistically ≥ 1 h, partly covered because the lesson activities and L13 rehearse T3 and T4. Realistic total ≈ 9.5 h; the lead may align the lab-plan L13 “Out 3”.',
+    ],
+  },
+  workload: [
+    { activity: 'In-class sessions (Session 1: worked impact example and L13 kick-off; Session 2: Exam 2)', hours: 2.5 },
+    { activity: 'Core readings narrowed to the pages the lesson uses: R75 sl.92–95, R77 sl.108–109, R78 sl.147–148, 152, 158–159 (11 slides at ≈ 30 sl/h); R24 p.1203–1205, 1208–1210 and R31 p.1368–1371 (10 pp at ≈ 15 pp/h)', hours: 1 },
+    { activity: 'Online lesson and the three activities (explorer and analyser practice on the reference; consistency review of the seeded fragment)', hours: 1 },
+    { activity: 'Knowledge check (12 items)', hours: 0.3 },
+    { activity: 'Exam 2 preparation: review of Weeks 9–12 model skills (realistic ≥ 1 h; see cautions)', hours: 0.5 },
+    { activity: 'L13 out of class: impact set with re-checks, consequences, risk metadata, consistency review, recommendation and DEC, evolution note (team share)', hours: 2.5 },
+    { activity: 'Graduate commit-based change analysis: R88 p.33–36 (4 pp) and ½–1 page answering (a)–(d)', hours: 1 },
+    { activity: 'Review notebook entry, time log and AI statement', hours: 0.2 },
+  ],
+  references: [
+    { reading: 'R88', pages: '32–36' },
+    { reading: 'R83', pages: '168' },
+    { reading: 'R49', pages: '150' },
+    { reading: 'R32', pages: '1374–1375' },
+  ],
+  review: { status: 'self-checked', openIssues: [] },
+}
+
+export default week13

@@ -1,0 +1,872 @@
+{
+  "tool": {
+    "name": "OMG SysML v2 Pilot Implementation (SysMLInteractive, Jupyter kernel jar)",
+    "release": "2026-08",
+    "kernelVersion": "0.62.0",
+    "kernelJar": "jupyter-sysml-kernel-0.62.0-all.jar",
+    "standardLibrary": "sysml.library bundled in jupyter-sysml-kernel-0.62.0.zip"
+  },
+  "java": {
+    "version": "21.0.12.1+1-LTS",
+    "vendor": "Eclipse Adoptium"
+  },
+  "timestamp": "2026-10-12T02:13:28+00:00",
+  "checks": "parse + name resolution against the standard library + pilot implementation validation rules (errors fail; warnings reported)",
+  "summary": {
+    "files": 55,
+    "PASS": 36,
+    "FAIL": 19,
+    "ERROR": 0
+  },
+  "files": [
+    {
+      "file": "sysml/instructor/week09/memo_d_model_answer.sysml",
+      "sha256": "8db2b51a90360e39d7b45c0a9bba7e1bf87eeba6fa7bfc68595d083843492833",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/instructor/week10/aerolink_grad_key_assume_require.sysml",
+      "sha256": "73c69a29f5d9880b5ea38e8f738add0c1f049d0522aec0ab5055ff3a6c95cf8b",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/instructor/week11/aerolink_grad_key_intent_interaction.sysml",
+      "sha256": "de015e87ecab7624f2e4f63058fd74b002ddf6ad5df7f975eb6cb7142713a95c",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/reference/aerolink_v01_skeleton.sysml",
+      "sha256": "0c26bffc6bd1a7cfc0fb3d006baf78972db4694fef7b88d44a4a3dfda76e013e",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/reference/aerolink_v02_req_structure.sysml",
+      "sha256": "e802203e19d226cc62d997d8ae7255ebd651e1cabfa7728b4a7304d8aa84b589",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/reference/aerolink_v03_behavior.sysml",
+      "sha256": "a0e371b1fe11ff16753e1971176a3b388ebece9b74377ef00395ae251ec87248",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/reference/aerolink_v04_full.sysml",
+      "sha256": "c3f78cdc9fe3f8c445946fb782cb9b61e2ac7319c3e21de5007872dddb56c2bb",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week05/aerolink_fleet.sysml",
+      "sha256": "8f3654c8716557034be5e2f21c4e4b6e4a3d7d126b7048db362302d71cf09e93",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week05/aerolink_tpm.sysml",
+      "sha256": "ee2f6511d3e4ff79a1939a1a6f0d51267fe7e330c164cc1e428b9749f84da032",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week05/invalid_missing_unit_import.sysml",
+      "sha256": "79f47b4d56f8cdcef195edd0fe2b77acc242bbc0b9563a418dfe3d99da54b321",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 11,
+          "column": 50,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'min'."
+        },
+        {
+          "severity": "WARNING",
+          "line": 11,
+          "column": 50,
+          "code": "validateOperatorExpressionQuantity",
+          "message": "Should be a measurement reference (unit)."
+        },
+        {
+          "severity": "WARNING",
+          "line": 11,
+          "column": 50,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week06/aerolink_charging.sysml",
+      "sha256": "c39b221a13f192c1d683b1b5b3d4a5a18c26a49b9aae035c4c7267d59fc2599e",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week06/invalid_usage_redefines_missing_feature.sysml",
+      "sha256": "080f5ce71987c873e42bca9936cfaa79ab994a317b0e89e5ae1c8004bae9e073",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 16,
+          "column": 23,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Feature 'usableEnergy'."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week08/aerolink_charge_requirement.sysml",
+      "sha256": "ebedcfac6999b72cbdc1f630adeb25d983d2261982cf68c92dc34bf2dfe956b0",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week08/aerolink_if005_allocation.sysml",
+      "sha256": "f3e52e692f6a43098658eb5ca187c03c40d03d7ccee12f30f888327ba5f3fb76",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week08/invalid_wrong_subject.sysml",
+      "sha256": "2f6db3ffcb5222df88da857ecbc67a6d986e660d6ae2c7e8e8a6e74804b937cc",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 17,
+          "column": 33,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'chargeTimeToDispatch'."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/aerolink_def_usage.sysml",
+      "sha256": "3e8384c02d861d8d405e5a4022518a111863208c78a6cb405ed8538798af38b7",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/aerolink_l9_skeleton.sysml",
+      "sha256": "bf17b0a9da76b0e11b703529fc9d2fb70003db466b31b89c76bf697e10b8544d",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/aerolink_network_stated.sysml",
+      "sha256": "727addf77511e2d9b5d1685d00e2cf4eef0bb0e1294669eb15f56aed55f350a6",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/invalid_pc1_unquoted_reference.sysml",
+      "sha256": "d3b2b989bd697c5953615666b586974dc8a911cb15fc026ee1a1dd157f347d94",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 7,
+          "column": 34,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '-'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 7,
+          "column": 31,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Feature 'PHY'."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/invalid_pc3_import_without_visibility.sysml",
+      "sha256": "8fd6f412ae664d16ea752424ee836738d85496ca9493880d80dbaed4330f7bdc",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 3,
+          "column": 2,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input 'import' expecting '}'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 3,
+          "column": 12,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '::'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 4,
+          "column": 11,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '::'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 8,
+          "column": 1,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "extraneous input '}' expecting EOF"
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 27,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Type 'SpeedValue'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 45,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'km'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 48,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'h'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 3,
+          "code": "validateAttributeUsageType_",
+          "message": "An attribute must be typed by attribute definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 45,
+          "code": "validateOperatorExpressionQuantity",
+          "message": "Should be a measurement reference (unit)."
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 45,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 48,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/invalid_pc5_block_keyword.sysml",
+      "sha256": "2a1efb9f6843030ff816b7aa28a08e11c7b0ab01c68aca6df4ce0f246db78cc7",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 4,
+          "column": 8,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'EVTOLAircraft'"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/invalid_pc7_part_typed_by_attribute_def.sysml",
+      "sha256": "112fa7f5b8499494105b1fc580117fdc555c1696fc6506886620beb13a746461",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 8,
+          "column": 3,
+          "code": "validateOccurrenceUsageType_",
+          "message": "An occurrence, item or part must be typed by occurrence definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 8,
+          "column": 3,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from DataValue, Part"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/invalid_pc8_usage_subsets_a_definition.sysml",
+      "sha256": "219ca2059595033be823db98b508dfd3a1b66380d6d119705d4e0a2b4e527714",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 34,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Feature 'Vertiport'."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/invalid_unquoted_short_name.sysml",
+      "sha256": "38ab597ba8c1dd2dfc5a7149347566616d5a11c5a641f417b6d08babb229f3fb",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 15,
+          "column": 12,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input '-' expecting '>'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 15,
+          "column": 18,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'chargingSystems'"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/predict_pc2_duplicate_short_name.sysml",
+      "sha256": "bf5c2338877830a4982098ac85ac03203aa8802bfdcefdb7fab1f5f7036e1544",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 9,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 7,
+          "column": 9,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/predict_pc4_conflicting_multiplicity.sysml",
+      "sha256": "69f830fd600e61a75b33fc00aeeb098006d6b7c2276e1de5fd5b6927986778c8",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 13,
+          "column": 18,
+          "code": "validateSubsettingMultiplicityConformance",
+          "message": "Subsetting/redefining feature should not have larger multiplicity upper bound"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/predict_pc6_attribute_def_with_part.sysml",
+      "sha256": "cbfbcac7ae3897bb2c7b29ddb310b1cdf12cf1cfafcda904f121cab50f5c78d2",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/aerolink_assume_still_air.sysml",
+      "sha256": "e4dbd822ddae2e20811e591b767dd42413e2c50c80895aec8354f00703b75753",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/aerolink_ports_interfaces.sysml",
+      "sha256": "f131971f8f4382fb382d788aa060a08a6ebfc85b0becf366ff27ef9e4d598489",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/aerolink_requirement_def_usage.sysml",
+      "sha256": "1ef7ecb1f24806a05bc4de38ed68a465cab3ee4e440ab761d5876e9d353b5174",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/aerolink_satisfy_allocate.sysml",
+      "sha256": "4b82664d2d7e461ed720de5ee8b2015ef3bac5a2811e6e6ebfc91f92a54e17e0",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/aerolink_satisfy_gap.sysml",
+      "sha256": "a7d99c66f8d558c5b3f0f343ca120f6261a8115d7a52dcc4dc57ced850d7efd2",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/invalid_pc3_interface_connects_parts.sysml",
+      "sha256": "afb3fe7c3f9f2d67198261157ea5292864ad2394a068b80a4c821152a4483fe2",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 13,
+          "column": 76,
+          "code": "validatePortUsageType_",
+          "message": "A port must be typed by port definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 13,
+          "column": 76,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Part, Port"
+        },
+        {
+          "severity": "ERROR",
+          "line": 13,
+          "column": 89,
+          "code": "validatePortUsageType_",
+          "message": "A port must be typed by port definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 13,
+          "column": 89,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Part, Port"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week10/invalid_pc5_satisfy_relaxes_limit.sysml",
+      "sha256": "3a9513df1bab4e46f402bde2be60d582fb4c6854cf0f8f3c074b6bed24c60f7c",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 20,
+          "column": 31,
+          "code": "validateFeatureValueOverriding",
+          "message": "Cannot override a binding feature value"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week10/invalid_pc6_satisfy_reversed.sysml",
+      "sha256": "8265cd28a0b440711d6a035b4f3baee2c8c454616fe895b8c862f7544c5ab73d",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 19,
+          "column": 10,
+          "code": "validateSatisfyRequirementUsageReference",
+          "message": "Must reference a requirement."
+        },
+        {
+          "severity": "ERROR",
+          "line": 19,
+          "column": 10,
+          "code": "validateAssertConstraintUsageReference",
+          "message": "Must reference a constraint."
+        },
+        {
+          "severity": "ERROR",
+          "line": 19,
+          "column": 2,
+          "code": "validateRequirementUsageType_",
+          "message": "A requirement must be typed by one requirement definition."
+        },
+        {
+          "severity": "WARNING",
+          "line": 19,
+          "column": 2,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Part, RequirementCheck"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week10/invalid_pc8_allocate_by.sysml",
+      "sha256": "ded6368c0e62a5fe3bea42e0c2b4b64ac77558428ed9e2bc8b0fc9b8b9fc0f5e",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 61,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input 'by' expecting 'to'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 64,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'aeroLink'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 72,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '.'"
+        },
+        {
+          "severity": "WARNING",
+          "line": 5,
+          "column": 7,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 64,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 2,
+          "code": "validateConnectorRelatedFeatures",
+          "message": "Must have at least two related elements"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week10/invalid_pc9_satisfy_requirement_def.sysml",
+      "sha256": "58c3d9f56a65401e68e862e42bcc0cafcee58133ace8e89bce18093b92f01fb4",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 17,
+          "column": 10,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Feature 'ChargeTimeRequirement'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 17,
+          "column": 10,
+          "code": "validateSatisfyRequirementUsageReference",
+          "message": "Must reference a requirement."
+        },
+        {
+          "severity": "ERROR",
+          "line": 17,
+          "column": 10,
+          "code": "validateAssertConstraintUsageReference",
+          "message": "Must reference a constraint."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week10/invalid_port_typed_by_item.sysml",
+      "sha256": "a90e58c91fefae8b5fc0ea506ba6144e873ba8db4867fbf73f3bb5e19f48b216",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 12,
+          "column": 3,
+          "code": "validatePortUsageType_",
+          "message": "A port must be typed by port definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 12,
+          "column": 3,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Item, Port"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week10/predict_pc1_interface_two_outputs.sysml",
+      "sha256": "1eb8d4685c804f675e2a256641150fb2cace7527e75d5bfae1a5148d71867990",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/predict_pc2_interface_wrong_port.sysml",
+      "sha256": "a434b159f3d33c7109c131e294158f874b87e3d76a3cea5a22a414524e7b59e2",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/predict_pc4_satisfy_by_port.sysml",
+      "sha256": "7117eb4b14aa4daeffda3baafae04dc157424564cda14c01b5623ed193252f4b",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 19,
+          "column": 27,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week10/predict_pc7_allocation_ends_reversed.sysml",
+      "sha256": "adfe90ac087cf0ff2b9c907293e239a7a237f1ae570cfc598e60bff8f9118d9d",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week11/aerolink_l11_starter_scn001.sysml",
+      "sha256": "28303d494e39c9edec87b03ee9ffe935882c5bf1685de97d806ae5be2e832344",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week11/aerolink_operating_states.sysml",
+      "sha256": "3acdea1053ee86e41eb053c2fe57dc6c9a49048dd9f405bf225280fe751ad90d",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week11/aerolink_review_fragment_team_k.sysml",
+      "sha256": "7b0f6c4d07eec1cc6da3fff96f9a84d2e4d33c20d8be0b6a05f0123f88457963",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week11/aerolink_scn002_action_flow.sysml",
+      "sha256": "0d923befb8e3efa4a115c5cb34627b513310e52a905658c4798a1de975b5c9f1",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week11/invalid_decide_target_declared.sysml",
+      "sha256": "61edb0ff459ec74e29d87da8fbe297364656eb246576a95386d7399cc20467f5",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 4,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'if'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 28,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'then'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 11,
+          "column": 4,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input 'else' expecting '}'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 13,
+          "column": 3,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "missing EOF at 'then'"
+        },
+        {
+          "severity": "WARNING",
+          "line": 11,
+          "column": 9,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 12,
+          "column": 10,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week12/aerolink_moe_mop.sysml",
+      "sha256": "9bdd5bcebcd7dec09dc0f7a87d3a8d2322ca9f8b765ea77dd051ed2394daa9d7",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week12/aerolink_ver001_charge_time.sysml",
+      "sha256": "db0b79779f5b059bcd2b6715681e3d1e7978f3da8bc535e948ddf203e1a6e476",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week12/invalid_method_kind_simulation.sysml",
+      "sha256": "7154e3a436fad94984344c6cee12f7aa20b63e375187b253844696728c3c504f",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 34,
+          "column": 12,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'VerificationMethodKind::simulation'."
+        },
+        {
+          "severity": "WARNING",
+          "line": 34,
+          "column": 12,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week13/aerolink_consistency_seeded.sysml",
+      "sha256": "d240879236332198d6e6949aaced1ea3ccb5fa01ca96e760164ae8910baa4b44",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 31,
+          "column": 16,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 37,
+          "column": 16,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week13/aerolink_r002_risk_causation.sysml",
+      "sha256": "c478e06745b708feda27a1d96be3f72cd1f47ab651dd423887b70522a1585328",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week13/aerolink_tpm003_landing_reserve_analysis.sysml",
+      "sha256": "d7ee50628e98321ef8daebe62a25609c715ab050b25b65cbd7e09e23af7e76e3",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week13/invalid_dangling_requirement_id.sysml",
+      "sha256": "daa181c3c5b8efd9dadd276b9310e0221129a880ffaccbf17b617885cbd702bc",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 23,
+          "column": 10,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Feature ''REQ-SYS-001''."
+        },
+        {
+          "severity": "ERROR",
+          "line": 23,
+          "column": 10,
+          "code": "validateSatisfyRequirementUsageReference",
+          "message": "Must reference a requirement."
+        },
+        {
+          "severity": "ERROR",
+          "line": 23,
+          "column": 10,
+          "code": "validateAssertConstraintUsageReference",
+          "message": "Must reference a constraint."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week13/invalid_risk_level_slide_abbreviation.sysml",
+      "sha256": "b211c34318a6d2f5b021487544cd257bc649d77fc6cb2364a9de8452bb224c34",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 15,
+          "column": 18,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'LevelEnum::M'."
+        },
+        {
+          "severity": "WARNING",
+          "line": 15,
+          "column": 18,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "FAIL"
+    }
+  ]
+}

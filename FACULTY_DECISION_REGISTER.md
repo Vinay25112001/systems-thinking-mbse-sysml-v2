@@ -1,0 +1,55 @@
+# Faculty Decision Register
+
+**Status:** OPEN; revision 1 (2026-10-09), after external review round 1. No decision below has been taken. This register lists decisions that **instructors, programme leadership or university offices** must make before either pathway can be offered.
+
+**Each entry has:**
+- the question;
+- the options;
+- the author's recommendation **[REC]** and the evidence for it;
+- who should decide, which is a suggestion (the author does not know Wright State's governance structure);
+- the documents affected.
+
+App-development questions (embedded AI, git, stack, audience) remain in `OPEN_QUESTIONS.md` (D8–D10, D12). They are not academic decisions.
+
+**Priority key:**
+- **P1** blocks curriculum approval.
+- **P2** must be settled before the term is scheduled.
+- **P3** can be settled during course preparation.
+
+| ID | P | Question | Options | Recommendation [REC] and evidence | Suggested decider | Affects |
+|---|---|---|---|---|---|---|
+| **FD-01** | P1 | Which pathway(s) should be developed? | (a) A only; (b) B only; (c) A as degree sequence + B as separate elective; (d) neither | **(c)**. A preserves the official design and has the hours its outcomes need; B is coherent but not equivalent (`CURRICULUM_COMPARISON.md` §1, §5, §7). The Phase-0 2:1 proposal (old D0) is withdrawn | Programme director / curriculum committee | All |
+| **FD-02** | P1 | Pathway B credit hours and level | 3 cr; 4 cr; 3 cr undergraduate + graduate section | 3 cr with an optional graduate section (FD-19). The estimated workload of 9.6 h/week already sits slightly above the 3-credit baseline; a 4-credit version could restore the 5-scenario behaviour package and model-based trade study. Credit-hour policy must be checked against WSU rules (the external basis used is 34 CFR 600.2) | Curriculum committee; registrar | B syllabus §14 |
+| **FD-03** | P1 | Target student population and prerequisites | A1: as drafted (none stated). B: junior standing / graduate / open | A1: sophomore+ with college algebra. B: junior standing or instructor permission; no programming prerequisite. Non-programmers are a risk for the textual notation (B syllabus §20 #4) | Programme director | A1.2, B §2 |
+| **FD-04** | P1 | Which deliverable weights are authoritative? | S01 v2.0 (sum 50 %); S03 (sum 60 %, labelled 50 %) | **S01 v2.0.** S03 predates it (2026-07-15 vs 2026-09-04) and is arithmetically inconsistent (verified). Also confirm that the A1 outcome-evidence balance is intended: CLO2 ≈ 30 % vs CLO1 ≈ 8 % | Course owner (author of S01) | A1.12; outcome matrix A1.2 |
+| **FD-05** | P2 | Course outcomes: adopt the measurable performance indicators? Re-map S03's "CLO 1–8"? | Adopt PIs as written; revise; keep only official outcomes | Adopt the PIs (they leave official outcome text unchanged). Supply the original 8-CLO list if it exists; otherwise retire the S03 references | Course owner | A1.3, A2.3 |
+| **FD-06** | P2 | A2: 16 S04 labs in 15 slots | Merge Labs 13 + 14; drop one; extend | Merge 13 + 14 in Week 13, as S02's Week-13 title already implies | Course owner | A2 schedule, lab plan |
+| **FD-07** | P2 | Exam timing and titles | — | A1: retitle Exam 1 to match its coverage (the title mentions trade studies, the coverage list does not; trade studies sit in Exam 2). A2: Exam 1 end of Week 6, Exam 2 end of Week 12, Exam 3 in finals week | Course owner | A1.12, A2.12 |
+| **FD-08** | **P1** | Designate the SysML v2 checker/tool, and **approve its local evaluation** | Pilot Implementation (Jupyter/Eclipse); other open-source or commercial SysML v2 tools | **The graded SysML instruments (the RB-8 gate, RB-12.3, practical-exam T5, lab acceptance) cannot be used until this is decided** (review C1). Until then they read "course-designated checker", and the instructor reviews syntax against the errata sheet.<br><br>**Evaluation protocol [REC]**, run ≥ 8 weeks before the term:<br>(1) Install ≥ 2 candidates **locally**. This needs approval; nothing has been installed.<br>(2) Parse the course errata snippets and the instructor reference model.<br>(3) Record the grammar version accepted.<br>(4) Time the modelling of 10 requirements and 1 scenario. This is the feasibility evidence for lab plan B.4 and A2.<br>(5) Screen-reader test (FD-20).<br>(6) Licence and deployment check.<br>(7) Attach the report to the curriculum submission | Instructor + IT + accessibility office | B Weeks 9–14; all of A2; RB-8, RB-12.3, RB-14 |
+| **FD-09** | P2 | Required textbook | Purchase; open sources only | **Open sources already in the folder:** SEBoK v2.14 (CC BY-NC-SA), DoD SE Guidebook, MITRE SEG (dated, used selectively), S10 deck (CC BY 4.0). Both syllabi say "TBD" | Course owner | Reading lists |
+| **FD-10** | P2 | External sources and Air Taxi data | (a) all values fictional; (b) add public FAA, NASA or INCOSE sources; (c) mix | (c). Fictional data sheet by default; the faculty name approved public sources (e.g. FAA Advanced Air Mobility material, NASA SE Handbook) that the syllabi already list as potential readings but the collection lacks. **Nothing is downloaded without approval** | Course owner | Lab plan C.3; all checkpoints |
+| **FD-11** | P2 | AI operating rules | Adopt the course-level rules in B §19; modify | Adopt them: closed-AI exams; parser check plus owner explanation for AI-generated SysML; accept/reject log for AI critique. Official S01/S02 policy is unchanged. WSU AI guidance must be checked (not in the collection) | Course owner; academic integrity office | B §19; RB-12 |
+| **FD-12** | P3 | Peer-review cadence in A2 | Every major lab [S02]; milestone labs only | Keep every major lab (official) for A2 in its full 15-week form. B uses one cross-team review | Course owner | A2.9 |
+| **FD-13** | P2 | Model scope and thread completeness | A2: official minimums; define "complete thread". B: proposed reduced minimums | A2: every requirement traced up and down, plus **≥ 5 complete 11-link threads**. B: minimums per lab plan C.5, plus ≥ 3 threads. Revision trigger if the workload pilot exceeds 10 h/week. A2 scenarios are phased: 3 in Week 7, all 5 by Week 8 | Course owner | Lab plan C.5; RB-9.3 |
+| **FD-14** | P3 | A1 deliverable packaging and Week-13 load | 17 separate submissions; 5 milestone packages with identical weights | Packaging is optional. Either way, assign the Week-13 deliverables in Week 11. Require an ID register appendix in the final package | Course owner | A1.11–A1.14 |
+| **FD-15** | **P1** | Add a SysML language-primer strand to A2 Weeks 1–8 | Add; separate prerequisite module; none | **Add.** S02 expects model construction from Week 1 but schedules no language instruction. The primer changes no official weight | Course owner | A2 schedule |
+| **FD-16** | P3 | "FDR" milestone name | Keep; rename (e.g. "Final Model Review") | Keep S02's name. Base the criteria on S12 CDR/PCA. No SE guidance source (S11–S13) defines an FDR. S12 defines ASR, SRR, SFR, PDR, CDR, TRR, SVR/FCA, PRR and PCA | Course owner | A2.16 |
+| **FD-17** | P1 | Individual accountability in team-weighted courses | — | **Revision 1 makes these required** (review C3):<br>(a) **conjunctive** attainment (individual parts ≥ 3 *and* team parts ≥ 3);<br>(b) the individual AI-critique part, 20 % of A2 Exam 2;<br>(c) per-student RB-11.5 Q&A at reviews;<br>(d) element ownership tags.<br><br>Optional: must-pass practical exam. Peer evaluation counts once (no multiplier). S01's "may be used to adjust" is limited to documented non-contribution cases | Course owner; department | Outcome matrix; RB-11, RB-13 |
+| **FD-18** | P3 | Use of finals week in B | None; practical make-up / overflow reviews | Reserve it for make-ups and overflow | Instructor | B §7 |
+| **FD-19** | P3 | Graduate extension / cross-listing | None; extension readings only; separate graduate section with extra deliverables | If cross-listed, graduate students complete the X readings plus one extension deliverable per checkpoint, assessed with a graduate addendum to the rubrics (not yet written) | Graduate programme director | B §20 |
+| **FD-20** | **P1** | Accessibility | — | Materials to WCAG 2.1 AA (external standard; the applicability and dates of the DOJ 2024 ADA Title II rule to WSU must be verified). Accessibility evaluation of the modelling tool **before** adoption. Insert the university's standard statements (both syllabi say "TBD") | Accessibility / disability services office | B §18; A1.18 |
+| **FD-21** | P2 | AeroLink Urban Mobility as fictional | Fictional with disclaimer; real-company case | Fictional, with a disclaimer; name from S04 | Course owner | Lab plan C.1 |
+| **FD-22** | P2 | Outcome-attainment targets and workload validation | — | Target: ≥ 70 % of students at level ≥ 3 on each CLO's criteria (proposal, not WSU policy). Run a Weeks 1–4 time-log pilot and adjust scope if the mean exceeds 10 h/week | Department assessment lead | Outcome matrix; B §14 |
+| **FD-23** | P3 | Hybrid delivery split | 2 × 75 min in person + ~30 min online; other | As proposed. Confirm against WSU hybrid-course definitions (not in the collection) | Programme director | All weekly plans |
+| **FD-24** | P3 | Team roles in B | S02's four lead roles; none | Use S02's four roles; for 3-person teams, combine AI & Data with Architecture | Instructor | B §2 |
+| **FD-25** | — | Record: Phase-0 2:1 compression withdrawn | — | Recorded for audit trail (`CURRICULUM_COMPARISON.md` §1) | — | `CURRICULUM_RECONCILIATION.md` §3 superseded |
+| **FD-26** | P3 | A1 AROU Register: weighted (2 %) but no due week in S01 (review m16) | Grade once; grade at each update; fold into the Technology Risk Assessment | Start it in Week 2, update it with every deliverable, grade it in Week 8 together with the Technology Risk Assessment | Course owner | A1.12; weekly plan A1 Week 8 |
+| **FD-27** | P2 | Language baseline: obtain the formal SysML v2.0 specification? (review M8) | Keep 2.1 Beta 2 (collection); add formal 2.0 | Obtain the formal 2.0 specification (public OMG document) **if approved**. Cite it as the standard and keep 2.1 Beta 2 as forward-looking. Teaching syntax follows the designated checker. The reviewer reports that formal adoption happened in 2025; **not verified from the collection** | Instructor | A2.8; comparison §6 |
+
+## Items explicitly *not* claimed
+- No accreditation status (ABET or other) is claimed or assumed. Whether either course supports an accredited programme is a programme-level question (not in the collection).
+- No Wright State policy (credit hours, hybrid definition, AI guidance, accessibility statement) has been read. Every reference to university policy says "verify".
+- No faculty member has reviewed or endorsed any of this material.
+
+## Source traceability
+Facts behind the recommendations are cited in the documents listed in the "Affects" column. S01/S03 dates come from docx metadata (`SOURCE_INVENTORY.md` §1).

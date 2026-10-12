@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+@import './workbench/theme.css';
+@import './workbench/polish.css';
+@import './flow/flow.css';
+
+/* Class-based dark mode (theme toggle sets .dark on <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* IBM Plex, bundled through @fontsource (offline; WORKBENCH_SPEC §4). */
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-condensed: 'IBM Plex Sans Condensed', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  /* The single accent is the workbench's instrument teal, so classic pages and the workbench share one palette. */
+  --color-brand-50: #e6f2f6;
+  --color-brand-100: #c7e4ee;
+  --color-brand-500: #11799a;
+  --color-brand-600: #0f6e8c;
+  --color-brand-700: #0b5a73;
+  --color-accent-500: #0f9d8a;
+}
+
+/* Workbench tokens as Tailwind colours (bg-wb-panel, text-wb-muted, border-wb-line, ...). */
+@theme inline {
+  --color-wb-bg: var(--wb-bg);
+  --color-wb-panel: var(--wb-panel);
+  --color-wb-sunk: var(--wb-sunk);
+  --color-wb-line: var(--wb-line);
+  --color-wb-line-strong: var(--wb-line-strong);
+  --color-wb-fg: var(--wb-fg);
+  --color-wb-muted: var(--wb-muted);
+  --color-wb-accent: var(--wb-accent);
+  --color-wb-accent-soft: var(--wb-accent-soft);
+  --color-wb-ok: var(--wb-ok);
+  --color-wb-ok-soft: var(--wb-ok-soft);
+  --color-wb-warn: var(--wb-warn);
+  --color-wb-warn-soft: var(--wb-warn-soft);
+  --color-wb-bad: var(--wb-bad);
+  --color-wb-bad-soft: var(--wb-bad-soft);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* React Flow theming hooks */
+.react-flow__attribution {
+  display: none;
+}
+.dark .react-flow__controls-button {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+  fill: #e2e8f0;
+}

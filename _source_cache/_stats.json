@@ -1,0 +1,178 @@
+[
+ {
+  "file": "Syllabus and Deliverables\\DraftSyallabus_Model-BasedSystemIntegration.docx",
+  "kind": "docx",
+  "pages": null,
+  "chars": 15382,
+  "images": 0,
+  "media": []
+ },
+ {
+  "file": "Syllabus and Deliverables\\DraftSyllabus_SystemsThinkingTechLiteracy.docx",
+  "kind": "docx",
+  "pages": null,
+  "chars": 12994,
+  "images": 0,
+  "media": []
+ },
+ {
+  "file": "Syllabus and Deliverables\\Syllabus Notes Phase 2 Air Taxi Deliverables.docx",
+  "kind": "docx",
+  "pages": null,
+  "chars": 6966,
+  "images": 0,
+  "media": []
+ },
+ {
+  "file": "Syllabus and Deliverables\\Weekly Lab Deliverables.docx",
+  "kind": "docx",
+  "pages": null,
+  "chars": 6478,
+  "images": 0,
+  "media": []
+ },
+ {
+  "file": "SysML\\1-Kernel_Modeling_Language.pdf",
+  "kind": "pdf",
+  "pages": 458,
+  "chars": 970459,
+  "near_empty_pages": 3,
+  "images": 1,
+  "toc_entries": 661,
+  "meta": {
+   "format": "PDF 1.5",
+   "title": "KerML Specification",
+   "producer": "Prince 15.1 (www.princexml.com)"
+  }
+ },
+ {
+  "file": "SysML\\2a-OMG_Systems_Modeling_Language.pdf",
+  "kind": "pdf",
+  "pages": 691,
+  "chars": 1306666,
+  "near_empty_pages": 3,
+  "images": 10,
+  "toc_entries": 985,
+  "meta": {
+   "format": "PDF 1.5",
+   "title": "SysML Specification",
+   "producer": "Prince 15.1 (www.princexml.com)"
+  }
+ },
+ {
+  "file": "SysML\\2b-SysML_v1_to_v2_Transformation.pdf",
+  "kind": "pdf",
+  "pages": 657,
+  "chars": 851277,
+  "near_empty_pages": 3,
+  "images": 1,
+  "toc_entries": 1032,
+  "meta": {
+   "format": "PDF 1.5",
+   "title": "SysML v1 to SysML v2 Transformation",
+   "producer": "Prince 15.1 (www.princexml.com)"
+  }
+ },
+ {
+  "file": "SysML\\3-Systems_Modeling_API_and_Services.pdf",
+  "kind": "pdf",
+  "pages": 107,
+  "chars": 174965,
+  "near_empty_pages": 3,
+  "images": 1,
+  "toc_entries": 141,
+  "meta": {
+   "format": "PDF 1.5",
+   "title": "Systems Modeling API and Services Specification",
+   "producer": "Prince 15.1 (www.princexml.com)"
+  }
+ },
+ {
+  "file": "SysML\\Intro to the SysML v2 Language-Graphical Notation.pdf",
+  "kind": "pdf",
+  "pages": 123,
+  "chars": 60732,
+  "near_empty_pages": 0,
+  "images": 278,
+  "toc_entries": 0,
+  "meta": {
+   "format": "PDF 1.7",
+   "title": "SysML v2 Language Intro to Structure and Behavior Modeling",
+   "author": "Ed Seidewitz",
+   "creator": "Microsoft\u00ae PowerPoint\u00ae for Microsoft 365",
+   "producer": "Microsoft\u00ae PowerPoint\u00ae for Microsoft 365",
+   "creationDate": "D:20230313124016-04'00'",
+   "modDate": "D:20230313124016-04'00'"
+  }
+ },
+ {
+  "file": "SysML\\Intro to the SysML v2 Language-Textual Notation.pdf",
+  "kind": "pdf",
+  "pages": 185,
+  "chars": 179664,
+  "near_empty_pages": 0,
+  "images": 1732,
+  "toc_entries": 186,
+  "meta": {
+   "format": "PDF 1.7",
+   "title": "SysML v2 Language Intro to Structure and Behavior Modeling",
+   "author": "Ed Seidewitz",
+   "creationDate": "D:20260911231524+00'00'",
+   "modDate": "D:20260911231524+00'00'"
+  }
+ },
+ {
+  "file": "Systems Engineering\\Guide_to_the_Systems_Engineering_Body_of_Knowledge_v2.14.pdf",
+  "kind": "pdf",
+  "pages": 1705,
+  "chars": 4531622,
+  "near_empty_pages": 1,
+  "images": 333,
+  "toc_entries": 1,
+  "meta": {
+   "format": "PDF 1.7",
+   "creator": "pdftk 3.0.2 - www.pdftk.com",
+   "producer": "itext-paulo-155 (itextpdf.sf.net-lowagie.com)",
+   "creationDate": "D:20260518191937-04'00'",
+   "modDate": "D:20260522074146-04'00'"
+  }
+ },
+ {
+  "file": "Systems Engineering\\Systems Engineering Guidebook.pdf",
+  "kind": "pdf",
+  "pages": 240,
+  "chars": 604022,
+  "near_empty_pages": 0,
+  "images": 115,
+  "toc_entries": 147,
+  "meta": {
+   "format": "PDF 1.6",
+   "title": "Systems Engineering Guidebook ",
+   "author": "OUSD(R&E)",
+   "creator": "Acrobat PDFMaker 17 for Word",
+   "producer": "Adobe PDF Library 17.11.238",
+   "creationDate": "D:20211229104159-05'00'",
+   "modDate": "D:20220825144306-04'00'"
+  }
+ },
+ {
+  "file": "Systems Engineering\\se-guide-book-interactive.pdf",
+  "kind": "pdf",
+  "pages": 726,
+  "chars": 1648521,
+  "near_empty_pages": 6,
+  "images": 8,
+  "toc_entries": 120,
+  "meta": {
+   "format": "PDF 1.7",
+   "title": "The MITRE Systems Engineering Guide",
+   "subject": "Systems Engineering (General), Systems Engineering Process, Systems Engineering Standards",
+   "keywords": "MITRE, systems engineering, SEG, acquisition, enterprise engineering, life-cycle building blocks, mission assurance, portfolio management",
+   "creator": "Adobe InDesign CS6 (Windows)",
+   "producer": "Adobe PDF Library 10.0.1",
+   "creationDate": "D:20140509134145-04'00'",
+   "modDate": "D:20140516113957-04'00'",
+   "encryption": "Standard V4 R4 128-bit AES"
+  }
+ }
+]

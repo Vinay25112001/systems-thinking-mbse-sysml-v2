@@ -1,0 +1,66 @@
+| Highest level | Objectives | Share |
+|---|---|---|
+| Understand | 11 | 19 % |
+| Apply | 17 | 30 % |
+| Analyse | 12 | 21 % |
+| Evaluate | 13 | 23 % |
+| Create | 4 | 7 % |
+| **Total** | **57** | 100 % |
+
+B1.1: Understand
+B1.2: Apply
+B1.3: Analyse
+B1.4: Understand
+B2.1: Analyse
+B2.2: Apply
+B2.3: Analyse
+B2.4: Understand
+B3.1: Apply
+B3.2: Apply
+B3.3: Analyse
+B3.4: Create
+B4.1: Understand
+B4.2: Create
+B4.3: Analyse
+B5.1: Evaluate
+B5.2: Analyse
+B5.3: Create
+B5.4: Understand
+B6.1: Evaluate
+B6.2: Evaluate
+B6.3: Apply
+B6.4: Evaluate
+B6.5: Understand
+B7.1: Apply
+B7.2: Apply
+B7.3: Analyse
+B7.4: Evaluate
+B8.1: Apply
+B8.2: Analyse
+B8.3: Analyse
+B8.4: Analyse
+B8.5: Understand
+B9.1: Understand
+B9.2: Understand
+B9.3: Apply
+B9.4: Apply
+B9.5: Evaluate
+B10.1: Apply
+B10.2: Apply
+B10.3: Analyse
+B11.1: Apply
+B11.2: Apply
+B11.3: Evaluate
+B11.4: Evaluate
+B12.1: Understand
+B12.2: Apply
+B12.3: Apply
+B12.4: Evaluate
+B12.5: Evaluate
+B13.1: Analyse
+B13.2: Evaluate
+B13.3: Apply
+B13.4: Understand
+B14.1: Evaluate
+B14.2: Create
+B14.3: Evaluate

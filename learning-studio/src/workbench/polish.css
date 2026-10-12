@@ -1,0 +1,444 @@
+/* AeroLink Workbench, pre-review polish pass (2026-10-11): segmented controls, compact sliders, top-bar groups,
+   settings popover, model-browser drawer, empty states, the mission brief's reading size, step completion, skeletons,
+   and the density layer for pages mounted in a centre view. Tokens come from theme.css. */
+
+@layer components {
+  .wb-btn.danger {
+    color: var(--wb-bad);
+    border-color: var(--wb-bad);
+  }
+  .wb-btn.danger:hover:not(:disabled) {
+    background: var(--wb-bad-soft);
+  }
+  .wb-tab:hover {
+    background: var(--wb-sunk);
+  }
+  .wb-tab .wb-tab-badge {
+    font: 500 10px/1 var(--wb-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--wb-accent);
+    background: var(--wb-accent-soft);
+    border-radius: 3px;
+    padding: 3px 5px;
+  }
+  /* views the current mission step does not need: reachable, but quieter (icon only, title in the tooltip) */
+  .wb-tab.secondary {
+    padding: 0 9px;
+  }
+  .wb-tabs .wb-tabs-sep {
+    flex: 1;
+    min-width: 8px;
+  }
+  .wb-tabs .wb-tabs-label {
+    align-self: center;
+    font: 500 10.5px/1 var(--wb-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--wb-muted);
+    padding: 0 4px 0 8px;
+    white-space: nowrap;
+  }
+
+  /* segmented control (scenario choice): one bordered group, the pressed segment filled with the accent */
+  .wb-seg {
+    display: inline-flex;
+    flex-wrap: wrap;
+    border: 1px solid var(--wb-line-strong);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--wb-panel);
+  }
+  .wb-seg > button {
+    all: unset;
+    cursor: pointer;
+    font: 500 12px/1 var(--wb-body);
+    padding: 0 11px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--wb-fg);
+    border-right: 1px solid var(--wb-line);
+    white-space: nowrap;
+  }
+  .wb-seg > button:last-child {
+    border-right: 0;
+  }
+  .wb-seg > button:hover {
+    background: var(--wb-accent-soft);
+  }
+  .wb-seg > button[aria-pressed='true'] {
+    background: var(--wb-accent);
+    color: var(--wb-accent-fg);
+  }
+  .wb-seg > button:focus-visible {
+    outline: 2px solid var(--wb-accent);
+    outline-offset: -2px;
+  }
+
+  /* compact slider with a mono value readout */
+  .wb-slider .wb-readout {
+    font: 500 12px/1 var(--wb-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--wb-fg);
+    background: var(--wb-sunk);
+    border: 1px solid var(--wb-line);
+    border-radius: 3px;
+    padding: 2px 5px;
+    white-space: nowrap;
+  }
+  .wb-range {
+    width: 100%;
+    height: 18px;
+    margin: 4px 0 0;
+    accent-color: var(--wb-accent);
+  }
+
+  .wb-disclosure > summary {
+    color: var(--wb-accent);
+    font-size: 12.5px;
+  }
+  .wb-cld .react-flow__controls {
+    box-shadow: none;
+    border: 1px solid var(--wb-line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .wb-cld .react-flow__controls-button {
+    background: var(--wb-panel);
+    color: var(--wb-fg);
+    border-bottom: 1px solid var(--wb-line);
+    fill: currentColor;
+  }
+  .wb-cld .react-flow__attribution {
+    background: transparent;
+  }
+  .wb-cld .react-flow__attribution a {
+    color: var(--wb-muted);
+  }
+
+  /* top bar: the breadcrumb truncates part by part (the week title keeps at least 7 characters) */
+  .wb-crumb {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .wb-crumb > * {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .wb-crumb .sep {
+    flex: none;
+    color: var(--wb-line-strong);
+  }
+  .wb-crumb h1 {
+    display: block;
+    flex: 0 1 auto;
+    min-width: 7ch;
+    color: var(--wb-fg);
+    font-weight: 500;
+  }
+  .wb-crumb .mission {
+    flex: 0 3 auto;
+    min-width: 6ch;
+  }
+  .wb-btn-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding-left: 10px;
+    border-left: 1px solid var(--wb-line);
+  }
+  .wb-popover {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 45;
+    width: 270px;
+    background: var(--wb-panel);
+    color: var(--wb-fg);
+    border: 1px solid var(--wb-line-strong);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.16);
+    padding: 6px;
+  }
+  .wb-popover .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12.5px;
+  }
+  .wb-popover .row:hover {
+    background: var(--wb-sunk);
+  }
+  .wb-popover hr {
+    border: 0;
+    border-top: 1px solid var(--wb-line);
+    margin: 4px 0;
+  }
+
+  /* model browser (and properties) as an overlay drawer at 1024–1279 px */
+  .wb-browser-drawer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 48px;
+    width: min(340px, calc(100% - 64px));
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--wb-line-strong);
+    background: var(--wb-panel);
+    box-shadow: 8px 0 24px rgb(0 0 0 / 0.14);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .wb-browser-drawer {
+      animation: wb-slide-left 140ms ease-out;
+    }
+  }
+  @keyframes wb-slide-left {
+    from {
+      transform: translateX(-16px);
+      opacity: 0.6;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  /* status bar items that act */
+  .wb-status-btn {
+    all: unset;
+    cursor: pointer;
+    padding: 2px 4px;
+    margin: 0 -4px;
+    border-radius: 3px;
+  }
+  .wb-status-btn:hover {
+    background: var(--wb-accent-soft);
+    color: var(--wb-fg);
+  }
+  .wb-status-btn:focus-visible {
+    outline: 2px solid var(--wb-accent);
+  }
+
+  /* empty states: icon, one plain sentence, an action where one helps */
+  .wb-empty {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    color: var(--wb-muted);
+    font-size: 12.5px;
+    max-width: 80ch;
+  }
+  .wb-empty svg {
+    flex: none;
+    margin-top: 1px;
+  }
+  .wb-empty strong {
+    color: var(--wb-fg);
+    font-weight: 600;
+  }
+  .wb-empty.ok > svg {
+    color: var(--wb-ok);
+  }
+  .wb-ph svg {
+    flex: none;
+  }
+  .wb-ph .wb-ph-hint {
+    font: 400 12px/1.2 var(--wb-body);
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--wb-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  /* mission brief (Practice stage): the primary guide, so it reads at 14 px */
+  .wb-brief {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .wb-brief .wb-section-title {
+    font-size: 18px;
+    line-height: 1.25;
+  }
+  .wb-brief .wb-goal {
+    font-size: 13.5px;
+  }
+  .wb-brief .wb-step-text {
+    font-size: 14px;
+  }
+  .wb-brief .wb-note {
+    font-size: 13px;
+  }
+  .wb-brief .wb-step-num {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+  .wb-brief .wb-btn {
+    font-size: 12.5px;
+    height: 28px;
+  }
+  .wb-brief .wb-choice {
+    font-size: 13.5px;
+  }
+
+  /* a step that just passed: the number pops and the row flashes once (nothing under reduced motion) */
+  @media (prefers-reduced-motion: no-preference) {
+    .wb-step.just-done {
+      animation: wb-step-flash 900ms ease-out 1;
+    }
+    .wb-step.just-done .wb-step-num {
+      animation: wb-step-pop 420ms cubic-bezier(0.3, 1.6, 0.5, 1) 1;
+    }
+  }
+  @keyframes wb-step-flash {
+    0% {
+      background: var(--wb-ok-soft);
+    }
+    100% {
+      background: transparent;
+    }
+  }
+  @keyframes wb-step-pop {
+    0% {
+      transform: scale(0.6);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* dock auto-expand: panels grow smoothly only while the class is set (never during a drag) */
+  @media (prefers-reduced-motion: no-preference) {
+    .wb-animate-panels [data-panel] {
+      transition: flex-grow 160ms ease-out;
+    }
+  }
+
+  /* lazy-loaded views and drawers: a designed skeleton, not a spinner */
+  .wb-skel {
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+  }
+  .wb-skel > span {
+    display: block;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--wb-sunk);
+  }
+  .wb-skel > span.block {
+    height: 160px;
+    border: 1px solid var(--wb-line);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .wb-skel > span {
+      animation: wb-skel 1.2s ease-in-out infinite alternate;
+    }
+  }
+  @keyframes wb-skel {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.55;
+    }
+  }
+}
+
+/* Density layer for existing pages mounted in a centre view (the stakeholder editor): maps the classic page's
+   utility colours, radii and type sizes onto the workbench tokens. Unlayered so it wins over the utilities layer;
+   scoped to .wb-embed so the classic page is untouched. Behaviour and text are unchanged. */
+.wb-embed .text-sm {
+  font-size: 13px;
+  line-height: 1.45;
+}
+.wb-embed .text-xs {
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+.wb-embed .bg-white,
+.wb-embed .bg-slate-50 {
+  background-color: var(--wb-panel);
+}
+.wb-embed .bg-slate-100 {
+  background-color: var(--wb-sunk);
+}
+.wb-embed .border-slate-100,
+.wb-embed .border-slate-200 {
+  border-color: var(--wb-line);
+}
+.wb-embed .border-slate-300 {
+  border-color: var(--wb-line-strong);
+}
+.wb-embed .text-slate-500,
+.wb-embed .text-slate-600 {
+  color: var(--wb-muted);
+}
+.wb-embed .text-slate-700,
+.wb-embed .text-slate-800,
+.wb-embed .text-slate-900 {
+  color: var(--wb-fg);
+}
+.wb-embed .text-emerald-600,
+.wb-embed .text-emerald-700 {
+  color: var(--wb-ok);
+}
+.wb-embed .text-rose-600,
+.wb-embed .text-rose-700 {
+  color: var(--wb-bad);
+}
+.wb-embed .rounded-lg,
+.wb-embed .rounded-xl,
+.wb-embed .rounded-md {
+  border-radius: 4px;
+}
+.wb-embed .rounded-t-md {
+  border-radius: 4px 4px 0 0;
+}
+.wb-embed .shadow-sm {
+  box-shadow: none;
+}
+.wb-embed input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+.wb-embed select,
+.wb-embed textarea {
+  font-family: var(--wb-body);
+  font-size: 13px;
+  color: var(--wb-fg);
+  background-color: var(--wb-panel);
+  border-color: var(--wb-line-strong);
+  border-radius: 3px;
+}
+.wb-embed h2.font-semibold,
+.wb-embed h3.font-semibold {
+  font-family: var(--wb-display);
+  font-size: 15px;
+}
+
+/* Below 1280 px the top bar drops what the brief already shows (the mission title, the AeroLink root) and keeps the
+   week title; Export becomes icon-only (its accessible name is unchanged). */
+@media (max-width: 1279px) {
+  .wb-root .wb-hide-medium {
+    display: none;
+  }
+}
+
+/* The stakeholder editor in a centre view: its selection panel goes under the canvas, so the canvas keeps the width */
+.wb-embed .grid:has(> [data-testid='stakeholder-canvas']) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.wb-embed [data-testid='stakeholder-canvas'] {
+  height: 520px;
+}

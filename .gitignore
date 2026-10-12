@@ -1,0 +1,13 @@
+# Licensed source material and its extracted text stay local and out of version control
+Shared Resource Folder/
+_source_cache/*.txt
+_source_cache/*.toc.json
+_source_cache/verification/__pycache__/
+# Build and test outputs
+learning-studio/test-results/
+learning-studio/playwright-report/
+tools/
+learning-studio/sysml/_selftest/selftest-report.json
+learning-studio/sysml/partial-report.json
+exports/
+learning-studio/dist-student/
