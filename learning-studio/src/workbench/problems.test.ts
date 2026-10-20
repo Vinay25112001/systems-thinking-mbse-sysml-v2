@@ -6,22 +6,13 @@ import { INSTRUCTOR_EXAMPLE, SEED_STAKEHOLDERS, type Relationship } from '../mod
 import type { Element, EngineeringModel } from '../model/engineering'
 import { referenceUpTo } from '../model/reference'
 import { CORE_RULES, countBySeverity, problemKey, runRules, worstByElement, type Rule, type RuleCtx } from './problems'
-import { LOOPS_KEY, type StudentLoop } from './week1/logic'
+import { EMPTY_NEED_ROW, EMPTY_TEAM, TEAM_KEY, type StakeholderRow, type TeamRecord } from './week1/team'
 
 const el = (id: string, kind: Element['kind'], extra: Partial<Element> = {}): Element => ({ id, kind, name: id, provenance: 'team-derived', owner: 'JS', status: 'active', ...extra })
 const EMPTY: EngineeringModel = { elements: [], links: [] }
 const ctx = (p: Partial<RuleCtx> = {}): RuleCtx => ({ week: 1, artefacts: {}, boundary: {}, stakeholders: SEED_STAKEHOLDERS.map((s) => ({ ...s })), relationships: [], ...p })
-const loop = (p: Partial<StudentLoop>): StudentLoop => ({
-  id: 'LOOP-001',
-  name: 'Word of mouth',
-  vars: [{ ref: 'riders', label: 'Riders' }, { ref: 'adoption', label: 'Word-of-mouth adoption' }],
-  polarities: ['+', '+'],
-  declared: 'Reinforcing',
-  owner: 'JS',
-  provenance: 'team-derived',
-  ...p,
-})
-const withLoops = (...loops: StudentLoop[]) => ctx({ artefacts: { [LOOPS_KEY]: { loops, issued: loops.length } } })
+const stk = (id: string, p: Partial<StakeholderRow> = {}): StakeholderRow => ({ id, name: `Stakeholder ${id}`, role: 'public', stage: 'Operation', side: 'external', approving: 'no', concerns: [{ id: id.replace('STK', 'CON'), text: 'Residents beside the depot are woken by engines before 6 a.m.' }], influence: '3', reason: 'can object through planning', ...p })
+const withTeam = (p: Partial<TeamRecord>) => ctx({ artefacts: { [TEAM_KEY]: { ...EMPTY_TEAM, ...p } } })
 
 const ALL: Rule[] = [...CORE_RULES, ...week1.rules]
 const rule = (id: string) => ALL.find((r) => r.id === id)!
@@ -47,32 +38,25 @@ const FIXTURES: Record<string, Fixture> = {
     pass: [{ elements: [el('EXT-001', 'EXT', { owner: 'JS' }), el('EXT-002', 'EXT', { owner: undefined, provenance: 'instructor-reference' })], links: [] }, ctx()],
     expectElement: 'EXT-001',
   },
-  'w1-loop-structure': {
-    fail: [EMPTY, withLoops(loop({ polarities: ['+', ''] }))],
-    pass: [EMPTY, withLoops(loop({}))],
-    expectElement: 'LOOP-001',
+  'w1-team-aerolink': {
+    fail: [EMPTY, withTeam({ proposal: { ...EMPTY_TEAM.proposal, name: 'AeroLink vertiport network' } })],
+    pass: [EMPTY, withTeam({ proposal: { ...EMPTY_TEAM.proposal, name: 'Riverside food bank network' } })],
+    expectElement: 'team:proposal',
   },
-  'w1-loop-type': {
-    // a realistic error: one negative link (balancing) declared reinforcing
-    fail: [EMPTY, withLoops(loop({ vars: [{ ref: 'riders', label: 'Riders' }, { ref: 'potential', label: '' }, { ref: 'adoption', label: '' }], polarities: ['−', '+', '+'], declared: 'Reinforcing' }))],
-    pass: [EMPTY, withLoops(loop({ vars: [{ ref: 'riders', label: 'Riders' }, { ref: 'potential', label: '' }, { ref: 'adoption', label: '' }], polarities: ['−', '+', '+'], declared: 'Balancing' }))],
-    expectElement: 'LOOP-001',
+  'w1-team-concern': {
+    fail: [EMPTY, withTeam({ stakeholders: [stk('STK-001', { concerns: [{ id: 'CON-001', text: 'They care a great deal about noise and safety' }] })] })],
+    pass: [EMPTY, withTeam({ stakeholders: [stk('STK-001')] })],
+    expectElement: 'team:STK-001',
   },
-  'w1-loop-undeclared': {
-    fail: [EMPTY, withLoops(loop({ declared: '' }))],
-    pass: [EMPTY, withLoops(loop({}))],
+  'w1-team-trace': {
+    fail: [EMPTY, withTeam({ stakeholders: [stk('STK-001')], needs: [{ ...EMPTY_NEED_ROW('NEED-001'), name: 'n', text: 'Residents need quiet nights at all operating hours.', conditions: '', rationale: 'sleep matters to the residents here', sources: 'STK-009' }] })],
+    pass: [EMPTY, withTeam({ stakeholders: [stk('STK-001')], needs: [{ ...EMPTY_NEED_ROW('NEED-001'), name: 'n', text: 'Residents need quiet nights at all operating hours.', conditions: '', rationale: 'sleep matters to the residents here', sources: 'STK-001' }] })],
+    expectElement: 'team:NEED-001',
   },
-  'w1-loop-explorer': {
-    fail: [EMPTY, withLoops(loop({ polarities: ['−', '−'] }))], // riders → adoption is + in the explorer
-    pass: [EMPTY, withLoops(loop({}))],
-  },
-  'w1-loop-new-link': {
-    fail: [EMPTY, withLoops(loop({ vars: [{ ref: 'riders', label: '' }, { ref: 'fleet', label: '' }], polarities: ['+', '+'] }))],
-    pass: [EMPTY, withLoops(loop({}))],
-  },
-  'w1-loop-owner': {
-    fail: [EMPTY, withLoops(loop({ owner: 'J' }))],
-    pass: [EMPTY, withLoops(loop({ owner: 'JS' }))],
+  'w1-team-authority': {
+    fail: [EMPTY, withTeam({ stakeholders: [stk('STK-001'), stk('STK-002'), stk('STK-003')] })],
+    pass: [EMPTY, withTeam({ stakeholders: [stk('STK-001'), stk('STK-002', { approving: 'yes', role: 'authority' }), stk('STK-003')] })],
+    expectElement: 'team:register',
   },
   'w1-ent-boundary': {
     fail: [{ elements: [el('ENT-001', 'ENT', { text: '  ' })], links: [] }, ctx()],
@@ -126,15 +110,16 @@ describe('runRules', () => {
   it('the instructor reference baseline for Week 1 raises no problem', () => {
     expect(runRules(ALL, referenceUpTo(1), ctx())).toEqual([])
   })
-  it('a full, correct Week 1 student model raises no problem', () => {
+  it('a full, correct Week 1 student model and team record raise no problem', () => {
     const m: EngineeringModel = {
       elements: [el('ENT-001', 'ENT', { text: 'AeroLink service enterprise.' }), ...[1, 2, 3, 4, 5, 6].map((i) => el(`EXT-00${i}`, 'EXT', { attributes: { exchange: 'data' } }))],
       links: [],
     }
-    const c = withLoops(
-      loop({}),
-      loop({ id: 'LOOP-002', vars: [{ ref: 'riders', label: '' }, { ref: 'demand', label: '' }, { ref: 'util', label: '' }, { ref: 'wait', label: '' }, { ref: 'attract', label: '' }, { ref: 'churn', label: '' }], polarities: ['+', '+', '+', '−', '−', '−'], declared: 'Balancing' }),
-    )
+    const c = withTeam({
+      proposal: { ...EMPTY_TEAM.proposal, name: 'Riverside food bank network' },
+      stakeholders: [stk('STK-001'), stk('STK-002', { approving: 'yes', role: 'authority' }), stk('STK-003')],
+      needs: [{ ...EMPTY_NEED_ROW('NEED-001'), name: 'n', text: 'Residents need quiet nights at all operating hours.', conditions: '', rationale: 'sleep matters to the residents here', sources: 'STK-001' }],
+    })
     expect(runRules(ALL, m, c)).toEqual([])
   })
 })

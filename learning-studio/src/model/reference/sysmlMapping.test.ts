@@ -46,8 +46,17 @@ function block(text: string, id: string): { header: string; body: string } | und
   return undefined
 }
 
-const named = (tag: string, l: Link) =>
-  new RegExp(`#${tag} dependency '${rx(`${l.source} ${l.type} ${l.target}`)}' from [\\w:']*'${rx(l.source)}' to [\\w:']*'${rx(l.target)}';`)
+/** The course direction rule (sysml/reference/README.md §3; SysML v2.1 Beta 2, Part 1, 7.3, R80 pp.50–51): every
+ *  dependency runs from the dependent element (client) to the element it depends on (supplier), and its tag names the
+ *  client's relation to the supplier. For these link types the dependent is the link's SOURCE ... */
+const CLIENT_IS_SOURCE: Record<string, string> = { 'derives-from': 'derivesFrom', refines: 'refinement', satisfies: 'satisfies', measures: 'measures', mitigates: 'mitigates' }
+/** ... and for these it is the link's TARGET: Y is affected by X; the consumer Y receives from the producer X. */
+const CLIENT_IS_TARGET: Record<string, string> = { affects: 'affectedBy', 'flows-to': 'receivesFrom' }
+/** The dependency realising a course link, named after the link, with its ends in the course direction. */
+const named = (tag: string, l: Link) => {
+  const [client, supplier] = CLIENT_IS_TARGET[l.type] ? [l.target, l.source] : [l.source, l.target]
+  return new RegExp(`#${tag} dependency '${rx(`${l.source} ${l.type} ${l.target}`)}' from [\\w:']*'${rx(client)}' to [\\w:']*'${rx(supplier)}';`)
+}
 
 /** Why a baseline link is (or is not) realised in a model text; returns undefined when it is realised. */
 function missingRealisation(text: string, l: Link): string | undefined {
@@ -92,7 +101,7 @@ function missingRealisation(text: string, l: Link): string | undefined {
         const ends = ks === 'INFO' ? info === s && to.includes(`'${t}'`) : info === t && from.includes(`'${s}'`)
         return ok(ends, 'item flow with matching item and ends')
       }
-      return ok(named('flowsTo', l).test(text), 'item flow or #flowsTo dependency')
+      return ok(named('receivesFrom', l).test(text), 'item flow or #receivesFrom dependency')
     }
     case 'measures':
       return ok(named('measures', l).test(text), '#measures dependency')
@@ -101,7 +110,7 @@ function missingRealisation(text: string, l: Link): string | undefined {
     case 'affects':
       if (['A', 'R', 'O', 'U'].includes(ks))
         return ok(new RegExp(` about[\\s\\S]*'${t}'[,\\s]`).test(block(text, s)?.header ?? ''), 'AROU metadata about the target')
-      return ok(named('affects', l).test(text), '#affects dependency')
+      return ok(named('affectedBy', l).test(text), '#affectedBy dependency')
   }
 }
 
@@ -222,6 +231,39 @@ describe('reference SysML model files', () => {
       ]
       for (const h of hops) expect(missingRealisation(text, h), ids.join('>')).toBeUndefined()
     }
+  })
+
+  it('every course dependency runs from the dependent element to the element it depends on, for each link type', () => {
+    const seen = new Set<string>()
+    for (const f of Object.keys(FILES) as (keyof typeof FILES)[]) {
+      const deps = [...src(f).matchAll(/#(\w+) dependency '([A-Z]+(?:-[A-Z]+)?-\d{3}) ([a-z-]+) ([A-Z]+(?:-[A-Z]+)?-\d{3})' from [\w:.']*'([^']+)' to [\w:.']*'([^']+)';/g)]
+      expect(deps.length, f).toBeGreaterThan(20)
+      for (const [line, tag, s, type, t, from, to] of deps) {
+        const expected = CLIENT_IS_TARGET[type] ? { tag: CLIENT_IS_TARGET[type], from: t, to: s } : { tag: CLIENT_IS_SOURCE[type], from: s, to: t }
+        expect({ tag, from, to }, `${f}: ${line}`).toEqual(expected)
+        seen.add(type)
+      }
+      // the inverted tags are gone, and the metadata definition says which end is the client
+      expect(src(f), f).not.toMatch(/#affects |#flowsTo |<affects>|<flowsTo>/)
+      expect(src(f), f).toMatch(/metadata def <affectedBy> AffectedByLink \{\s*doc \/\* affects, written from the dependent/)
+    }
+    expect([...seen].sort()).toEqual([...Object.keys(CLIENT_IS_SOURCE), ...Object.keys(CLIENT_IS_TARGET)].sort())
+    const v04 = src('v04')
+    expect(v04).toContain("#affectedBy dependency 'TECH-003 affects PHY-001' from Physical::aeroLink::'PHY-001' to Analysis::'TECH-003';")
+    expect(v04).toContain("#receivesFrom dependency 'AI-001 flows-to PHY-005' from Physical::aeroLink::'PHY-005' to Logical::logicalArchitecture::'AI-001';")
+    expect(v04).toContain("#derivesFrom dependency 'CAP-003 derives-from NEED-004' from Needs::'CAP-003' to Needs::'NEED-004';")
+  })
+
+  it('negative direction: a dependency written the inverted way is not accepted as the link', () => {
+    const v04 = src('v04')
+    const link = m.links.find((l) => l.source === 'TECH-003' && l.type === 'affects' && l.target === 'PHY-001') as Link
+    expect(missingRealisation(v04, link)).toBeUndefined()
+    const inverted = v04.replace(
+      "#affectedBy dependency 'TECH-003 affects PHY-001' from Physical::aeroLink::'PHY-001' to Analysis::'TECH-003';",
+      "#affectedBy dependency 'TECH-003 affects PHY-001' from Analysis::'TECH-003' to Physical::aeroLink::'PHY-001';",
+    )
+    expect(inverted).not.toBe(v04)
+    expect(missingRealisation(inverted, link)).toMatch(/not found/)
   })
 
   it('the checks can fail: a removed ID, a removed satisfy and a removed dependency are each detected', () => {

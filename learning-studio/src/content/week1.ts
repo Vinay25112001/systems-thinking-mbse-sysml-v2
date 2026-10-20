@@ -7,11 +7,20 @@ import type { LessonBlock } from './schema'
 
 export type Principle = { name: string; statement: string; aerolink: string; cite: Citation }
 
+// Week 1 rebuild (2026-10-18, COURSE_SCHEDULE.md: Team Formation / Needs / Identifying Stakeholders). The title, the
+// driving question and the outcomes, intuition and lab blocks below are new text, pending independent review
+// ('new-pending-review'); w1-se, w1-soi and w1-worked are the reviewed blocks the rebuilt week keeps. The systems-
+// thinking blocks w1-paradox, w1-analysis-synthesis, w1-feedback and w1-application are kept here unchanged but are no
+// longer part of Week 1 (docs/redesign/WEEK1_LEARNING_DESIGN.md §10); they may return in a later week.
 export const WEEK1_INTRO = {
-  title: 'Week 1 — Systems, systems thinking and the engineered enterprise',
+  title: 'Week 1 — Team Formation / Needs / Identifying Stakeholders',
   question:
-    'AeroLink Urban Mobility plans to add aircraft to cut passenger waiting times. Will it work? By the end of this week you should be able to argue the answer from the structure of the system, not from intuition.',
+    'AeroLink Urban Mobility plans a new vertiport next to a residential district. Its project team proposes to write the needs for the vertiport from three stakeholders only: passengers, AeroLink’s investors and the aircraft manufacturer. Is that list enough to write the needs from?',
+  review: 'new-pending-review' as const,
 }
+
+/** The question the reviewed boundary exercise and worked example (w1-worked) are keyed to. */
+export const BOUNDARY_QUESTION = 'Will adding aircraft reduce average passenger waiting time?'
 
 export const WEEK1_BLOCKS: LessonBlock[] = [
   {
@@ -19,35 +28,38 @@ export const WEEK1_BLOCKS: LessonBlock[] = [
     kind: 'outcomes',
     title: 'Learning outcomes for this week',
     paragraphs: [
-      'This week contributes to course outcome B-CLO1: analyse a socio-technical enterprise using systems-thinking principles and life-cycle concepts. Graduate students are expected to complete the advanced analysis and the archetype memo, not only the foundations.',
+      'This week contributes to course outcomes B-CLO1 (analyze a socio-technical enterprise using systems-thinking principles and life-cycle concepts) and B-CLO2 (needs and requirements). Your team forms, proposes the enterprise it will engineer for the whole term, and does the first engineering work on it: the system of interest and its boundary, the stakeholders, and their initial needs. Graduate students also complete the individual needs review.',
     ],
     bullets: [
-      'B1.1 (Understand) Define system, system of interest, boundary, environment, emergence and enterprise.',
-      'B1.2 (Apply) Construct a context diagram and two causal loops for AeroLink.',
-      'B1.3 (Analyse) Explain one emergent behaviour of AeroLink causally.',
-      'B1.4 (Understand) Describe what systems engineering contributes across a life cycle.',
-      'Graduate expectation: identify and defend a leverage point using the dynamics explorer and the system archetypes.',
+      'B1.1 (Apply) Form a project team with a charter that assigns roles, decision rules, communication norms and ID ownership.',
+      'B1.2 (Understand) Explain system, system of interest, boundary, context and enterprise, using cited definitions.',
+      'B1.3 (Apply) Propose an enterprise and its system of interest, with a boundary and a context, for instructor approval.',
+      'B1.4 (Apply) Identify and classify the stakeholders of a system of interest, with their specific concerns.',
+      'B1.5 (Apply) Write well-formed stakeholder need statements traced to stakeholders, and tell needs from requirements.',
+      'Graduate expectation: review four of your team’s need statements against the need-quality criteria and record the revisions.',
     ],
     citations: [],
     provenance: 'instructor-authored',
+    review: 'new-pending-review',
   },
   {
     id: 'w1-intuition',
     kind: 'intuition',
-    title: 'Intuition: a traffic jam is not inside any car',
+    title: 'Intuition: the people who never ride can still stop the service',
     paragraphs: [
-      'Inspect any single car in a traffic jam and you will not find the jam. The jam exists only in the interactions between cars, drivers, road geometry and timing. Every driver behaves reasonably; the outcome is still one nobody chose.',
-      'Air-taxi service behaves the same way. Waiting time is not a property of an aircraft, a charger or a vertiport. It emerges from how demand, fleet, charging and turnaround interact. That is why "buy more aircraft" may or may not shorten waits — and why this course starts with the whole before the parts.',
+      'Picture a new bus depot. Riders want frequent buses; the transit agency wants its costs under control; neighbors want no engines idling at five in the morning; the city’s planners decide whether the depot is built at all; the fire service needs a way in. Ask only the riders and the agency, and you can design a depot that works perfectly for them and is still refused, blocked or unusable.',
+      'AeroLink faces the same trap. A vertiport serves passengers, but the people who live beside it, the authorities who approve it, the utility that powers it and the responders who protect it all have a stake in it. This week starts there: before anyone writes a requirement, a team must know whose needs the system has to meet.',
     ],
     citations: [],
     provenance: 'instructor-authored',
+    review: 'new-pending-review',
   },
   {
     id: 'w1-se',
     kind: 'concept',
     title: 'What systems engineering is for',
     paragraphs: [
-      'SEBoK describes systems engineering as a transdisciplinary approach for realising successful systems — systems that satisfy the needs of customers, users and other stakeholders. Its province is the engineered system: a technical or socio-technical system that is the subject of a life cycle, designed or adapted to operate in an anticipated environment for intended purposes under constraints.',
+      'SEBoK describes systems engineering as a transdisciplinary approach for realizing successful systems — systems that satisfy the needs of customers, users and other stakeholders. Its province is the engineered system: a technical or socio-technical system that is the subject of a life cycle, designed or adapted to operate in an anticipated environment for intended purposes under constraints.',
       'Two consequences matter immediately. First, the engineered system context includes the other engineered, social and natural systems the system interacts with, so the scope of analysis is wider than the product. Second, systems engineering has boundaries of its own: manufacturing, funding and general management sit in its environment rather than inside it, which is why SE cannot by itself guarantee success.',
     ],
     quote: {
@@ -75,7 +87,7 @@ export const WEEK1_BLOCKS: LessonBlock[] = [
     title: 'The systems-thinking paradox — and how engineers proceed anyway',
     paragraphs: [
       'To understand a system fully you would need to consider all of its relationships, inside and outside the boundary, in every future situation. That is impossible, which SEBoK calls the systems-thinking paradox.',
-      'Engineering proceeds by hiding detail deliberately (encapsulation, separation of concerns) while checking the impact of changes on enough of the surrounding system to stay within acceptable commercial and social risk. How much knowledge is "enough" can be partly codified in rules and processes, but SEBoK is explicit that it ultimately rests on the skill and judgement of the people doing the work.',
+      'Engineering proceeds by hiding detail deliberately (encapsulation, separation of concerns) while checking the impact of changes on enough of the surrounding system to stay within acceptable commercial and social risk. How much knowledge is "enough" can be partly codified in rules and processes, but SEBoK is explicit that it ultimately rests on the skill and judgment of the people doing the work.',
       'Holism and separation of concerns look contradictory but are dual ways of handling complexity: one keeps the whole in view, the other divides the problem into manageable concerns. Both are needed; relying on either alone gives insufficient understanding.',
     ],
     citations: [{ reading: 'R02', pages: '266' }, { reading: 'R04', pages: '273–275' }],
@@ -101,8 +113,8 @@ export const WEEK1_BLOCKS: LessonBlock[] = [
     ],
     bullets: [
       'SoI = the aircraft. Analysis reveals turnaround, seats and range, but waiting time is outside the boundary: this SoI cannot answer the question.',
-      'SoI = flight operations (fleet, dispatch, schedule). Fleet size and utilisation are inside, but charging and vertiport pad capacity are treated as fixed environment — the answer will be optimistic if those are the real constraint.',
-      'SoI = the AeroLink service enterprise (fleet, vertiports, charging, operations centre, demand). Large enough to contain the feedback between demand, capacity and waiting; small enough to analyse. This is the resolution the Week 1 explorer uses.',
+      'SoI = flight operations (fleet, dispatch, schedule). Fleet size and utilization are inside, but charging and vertiport pad capacity are treated as fixed environment — the answer will be optimistic if those are the real constraint.',
+      'SoI = the AeroLink service enterprise (fleet, vertiports, charging, operations center, demand). Large enough to contain the feedback between demand, capacity and waiting; small enough to analyze. This is the resolution the Week 1 explorer uses.',
       'Synthesis check: AeroLink itself sits inside an urban transport system and an airspace system shared with others. Those wider systems become environment — they influence AeroLink (airspace access, grid power, public acceptance) but are not designed by it.',
     ],
     citations: [{ reading: 'R02', pages: '264' }, { reading: 'R50', pages: '46–47' }],
@@ -111,12 +123,12 @@ export const WEEK1_BLOCKS: LessonBlock[] = [
   {
     id: 'w1-feedback',
     kind: 'advanced',
-    title: 'Advanced analysis: feedback, archetypes and emergent behaviour',
+    title: 'Advanced analysis: feedback, archetypes and emergent behavior',
     paragraphs: [
       'Cybernetics distinguishes negative feedback, which maintains a state against a set level, from positive feedback, which drives growth or contraction to new levels (SEBoK Concepts of Systems Thinking). In system-dynamics language these are balancing and reinforcing loops.',
-      'The system-dynamics community catalogues recurring structures as system archetypes. SEBoK groups them with antipatterns because they describe behaviour in organisations that is used repeatedly but unsuccessfully to solve recurring problems. Three entries are directly relevant to AeroLink. Limits to Growth: a reinforcing process of growth encounters a balancing process as the limit is approached, and continuing efforts produce diminishing returns. Balancing Process with Delay: delay in the response to corrective action causes the correcting agent to over-correct or to give up. Growth and Underinvestment: where capacity investments could overcome the limits but are not made, growth stalls, which then rationalises further underinvestment.',
-      'The explorer below is an instructor-authored stock-and-flow model of AeroLink. Riders recruit riders (reinforcing loop R1) while the remaining potential market shrinks (balancing loop B4, market saturation); long waits deter adoption and drive churn (B1, B2); management orders aircraft when utilisation exceeds a target, sizing orders on current demand and by default ignoring aircraft already on order, a classic decision error (B3, B5); charging may or may not scale with the fleet (B7), and orders may optionally count the supply line (B6). All parameter values are FICTIONAL. Every behaviour this lesson claims about the model is asserted by an automated test that also runs a counterfactual the assertion must reject, so the behaviours are properties of the model, not illustrations drawn by hand.',
-      'Matching archetypes to the model needs care. Its structure reproduces Limits to Growth twice, with different limits — the charging limit when chargers stay fixed, and the market limit (word of mouth R1 meeting market saturation B4) when chargers scale with the fleet — and Balancing Process with Delay (long delivery delay). It does not contain Growth and Underinvestment: charger investment is a policy switch that you set, so stalled growth never feeds back into the charging decision, and the model cannot show growth stalling and thereby rationalising further underinvestment. Whether AeroLink’s real capital committee would close that loop is a question to argue in the memo. So is a second reading, the Attractiveness Principle (R05 p.284): faced with several limiting factors, the ordering rule considers aircraft on their own rather than the interdependence between aircraft and charging.',
+      'The system-dynamics community catalogs recurring structures as system archetypes. SEBoK groups them with antipatterns because they describe behavior in organizations that is used repeatedly but unsuccessfully to solve recurring problems. Three entries are directly relevant to AeroLink. Limits to Growth: a reinforcing process of growth encounters a balancing process as the limit is approached, and continuing efforts produce diminishing returns. Balancing Process with Delay: delay in the response to corrective action causes the correcting agent to over-correct or to give up. Growth and Underinvestment: where capacity investments could overcome the limits but are not made, growth stalls, which then rationalizes further underinvestment.',
+      'The explorer below is an instructor-authored stock-and-flow model of AeroLink. Riders recruit riders (reinforcing loop R1) while the remaining potential market shrinks (balancing loop B4, market saturation); long waits deter adoption and drive churn (B1, B2); management orders aircraft when utilization exceeds a target, sizing orders on current demand and by default ignoring aircraft already on order, a classic decision error (B3, B5); charging may or may not scale with the fleet (B7), and orders may optionally count the supply line (B6). All parameter values are FICTIONAL. Every behavior this lesson claims about the model is asserted by an automated test that also runs a counterfactual the assertion must reject, so the behaviors are properties of the model, not illustrations drawn by hand.',
+      'Matching archetypes to the model needs care. Its structure reproduces Limits to Growth twice, with different limits — the charging limit when chargers stay fixed, and the market limit (word of mouth R1 meeting market saturation B4) when chargers scale with the fleet — and Balancing Process with Delay (long delivery delay). It does not contain Growth and Underinvestment: charger investment is a policy switch that you set, so stalled growth never feeds back into the charging decision, and the model cannot show growth stalling and thereby rationalizing further underinvestment. Whether AeroLink’s real capital committee would close that loop is a question to argue in the memo. So is a second reading, the Attractiveness Principle (R05 p.284): faced with several limiting factors, the ordering rule considers aircraft on their own rather than the interdependence between aircraft and charging.',
       'Two features of the diagram reward close reading. First, each arrow’s polarity is a local effect, with every other input held constant. Adoption depends on riders multiplied by the remaining potential market, so, with attractiveness (the waiting time) held constant, the net effect of one more rider on adoption is positive only while riders are fewer than half the potential market (15,000 riders here); above that, market saturation (B4) dominates word of mouth (R1). In the full model more riders also lengthen waits (B1), so when capacity is tight the net effect can turn negative much earlier. Second, capacity is the smaller of fleet capacity and charging capacity, so the fleet → capacity link operates only while the fleet is the limiting resource. A loop can therefore be active in one operating range and absent in another, which is how the dominant loop shifts during a run.',
     ],
     citations: [{ reading: 'R03', pages: '270' }, { reading: 'R05', pages: '283–284' }],
@@ -136,20 +148,21 @@ export const WEEK1_BLOCKS: LessonBlock[] = [
   {
     id: 'w1-lab',
     kind: 'lab',
-    title: 'Lab L1 — context and causal loops',
+    title: 'Lab L1 — team charter, enterprise proposal, stakeholder register and initial needs',
     paragraphs: [
-      'In teams, following the five L1 steps: (1) choose and justify a system of interest for the driving question, recording at least one boundary you rejected; (2) draw a context diagram with at least six external systems or actors (EXT-001, EXT-002, …), using the boundary exercise below to classify candidate elements as inside the boundary, environment, or irrelevant; (3) draw one reinforcing and one balancing loop with a polarity on every arrow; (4) use the explorer to reproduce one plateau or one over-build and explain it causally, so that it cannot be attributed to any single element; (5) agree a team charter that assigns the four course roles (Requirements & Compliance, Architecture, AI & Data Management, and Verification & Validation; in a 3-person team, AI & Data Management merges with Architecture), decision rules, and each member’s owned ID prefixes. The stakeholder ecosystem editor (Week 2 lab) is already available for teams who finish early.',
+      'In teams, on your team’s own enterprise (not AeroLink, which is the instructor’s worked example): (1) agree a team charter that assigns the four course roles (Requirements & Compliance, Architecture, AI & Data Management, and Verification & Validation; in a 3-person team, AI & Data Management merges with Architecture), decision rules, communication norms and each member’s owned ID prefixes; (2) write the enterprise proposal (name, domain, mission or purpose, the system of interest inside the enterprise and its boundary, and why it suits a 14-week project) and take it to the instructor for approval, recording it as submitted for approval until the instructor decides; (3) record the context: at least six external systems or actors (EXT-001, EXT-002, …), each with what crosses the boundary and in which direction; (4) build the stakeholder register: at least eight stakeholders (STK-001, …), each classified and with one or more specific concerns (CON-001, …); (5) write at least eight initial need statements (NEED-001, …), each traced to the stakeholder it comes from and the concern it answers, with its priority, and confirmed by the team against the six criteria; then write the AI usage statement. The Team enterprise view in Practice checks each part and exports the Team Record.',
     ],
     citations: [],
     provenance: 'instructor-authored',
+    review: 'new-pending-review',
   },
 ]
 
 export const PRINCIPLES: Principle[] = [
   { name: 'Boundary', statement: 'A boundary separates the system from the external world, concentrating interactions inside while allowing exchange with external systems.', aerolink: 'Is the electric grid inside AeroLink’s boundary? Usually not — but its connection capacity is a key exchange.', cite: { reading: 'R04', pages: '274' } },
   { name: 'Holism', statement: 'A system should be considered as a single entity, a whole, not just as a set of parts.', aerolink: 'Waiting time is a whole-system property; no single element owns it.', cite: { reading: 'R04', pages: '274' } },
-  { name: 'Interaction', statement: 'Properties, capabilities and behaviour derive from the parts, their interactions, and interactions with other systems.', aerolink: 'Throughput depends on aircraft × chargers × pads interacting, not on any one of them.', cite: { reading: 'R04', pages: '274' } },
-  { name: 'Relations', statement: 'A system is characterised by its relations; feedback is a type of relation, and the set of relations defines the network.', aerolink: 'The rider-recruits-rider loop is a relation, not a component.', cite: { reading: 'R04', pages: '275' } },
+  { name: 'Interaction', statement: 'Properties, capabilities and behavior derive from the parts, their interactions, and interactions with other systems.', aerolink: 'Throughput depends on aircraft × chargers × pads interacting, not on any one of them.', cite: { reading: 'R04', pages: '274' } },
+  { name: 'Relations', statement: 'A system is characterized by its relations; feedback is a type of relation, and the set of relations defines the network.', aerolink: 'The rider-recruits-rider loop is a relation, not a component.', cite: { reading: 'R04', pages: '275' } },
   { name: 'Separation of concerns', statement: 'A larger problem is more effectively solved when decomposed into smaller problems or concerns.', aerolink: 'Charging, scheduling and pad operations can be studied separately — if one concern remains the whole.', cite: { reading: 'R04', pages: '275' } },
   { name: 'View', statement: 'Multiple views, each based on a system aspect or concern, are essential to understand a complex system.', aerolink: 'Passengers, regulators and investors each need a different view of the same enterprise.', cite: { reading: 'R04', pages: '275' } },
   { name: 'Equifinality', statement: 'In open systems the same final state may be reached from different initial conditions and in different ways.', aerolink: 'Shorter waits can come from more aircraft, faster charging or better scheduling.', cite: { reading: 'R04', pages: '274' } },
@@ -161,11 +174,11 @@ export type BoundaryClass = 'inside' | 'environment' | 'irrelevant'
 export const BOUNDARY_ITEMS: { id: string; name: string; answer: BoundaryClass; why: string }[] = [
   { id: 'b1', name: 'AeroLink aircraft fleet', answer: 'inside', why: 'Fleet size is the decision variable under study.' },
   { id: 'b2', name: 'Vertiport chargers', answer: 'inside', why: 'Charging capacity limits throughput; it must be inside to test the claim.' },
-  { id: 'b3', name: 'Dispatch and scheduling (operations centre)', answer: 'inside', why: 'Turns fleet and chargers into served trips.' },
+  { id: 'b3', name: 'Dispatch and scheduling (operations center)', answer: 'inside', why: 'Turns fleet and chargers into served trips.' },
   { id: 'b4', name: 'Passenger demand and rider word-of-mouth', answer: 'inside', why: 'Inside the analysis boundary because it is endogenous to the feedback under study: demand responds to waiting time, which is the point of the question. Note the criterion: AeroLink does not control passengers any more than it controls the grid, so this is a model-boundary (endogenous variable) argument, not a control argument.' },
   { id: 'b5', name: 'Electric grid', answer: 'environment', why: 'Influences charging capacity but is not designed or controlled by AeroLink.' },
   { id: 'b6', name: 'Airspace managed by the air navigation service provider', answer: 'environment', why: 'Constrains schedule density; outside AeroLink’s control.' },
   { id: 'b7', name: 'Weather', answer: 'environment', why: 'Natural system that affects operations; not designed by AeroLink.' },
-  { id: 'b8', name: 'Aircraft cabin interior colour scheme', answer: 'irrelevant', why: 'No plausible causal path to waiting time for this question.' },
+  { id: 'b8', name: 'Aircraft cabin interior color scheme', answer: 'irrelevant', why: 'No plausible causal path to waiting time for this question.' },
   { id: 'b9', name: 'Aircraft manufacturer delivery lead time', answer: 'environment', why: 'Sets the procurement delay — a key influence that AeroLink cannot set.' },
 ]

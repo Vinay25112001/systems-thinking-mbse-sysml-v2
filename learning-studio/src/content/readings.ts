@@ -1,4 +1,4 @@
-import data from './readings.generated.json'
+import data from './readings.generated.json' with { type: 'json' }
 
 export type Reading = {
   id: string

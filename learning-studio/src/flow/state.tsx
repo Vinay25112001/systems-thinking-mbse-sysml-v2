@@ -20,6 +20,10 @@ export type FlowState = {
   worked: Record<string, string>
   memo: Record<string, string>
   practiceStarted?: boolean
+  /** The orientation ("How the workbench works") is open over a started workbench. */
+  practiceGuide?: boolean
+  /** Check & submit has been opened (review F15: the stepper marks Check done only after the student has been there). */
+  checkVisited?: boolean
 }
 const EMPTY: FlowState = { checks: {}, read: {}, selfRating: {}, timePlan: {}, worked: {}, memo: {} }
 

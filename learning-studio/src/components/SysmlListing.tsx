@@ -7,16 +7,14 @@ type Verdict = { tone: 'emerald' | 'rose' | 'amber' | 'slate' | 'violet'; text: 
 
 export function SysmlListingView({ listing }: { listing: SysmlListing }) {
   const src = sysmlSource(listing.file)
-  const [verdict, setVerdict] = useState<Verdict>({ tone: 'slate', text: 'Checking validation record…' })
+  const entry = reportEntry(listing.file)
+  const [checked, setVerdict] = useState<Verdict>({ tone: 'slate', text: 'Checking validation record…' })
+  // a listing with no validation record needs no effect: its verdict is known during render
+  const verdict: Verdict = entry ? checked : { tone: 'amber', text: 'Not yet validated by the reference implementation' }
 
   useEffect(() => {
     let live = true
-    const entry = reportEntry(listing.file)
-    if (!src) return
-    if (!entry) {
-      setVerdict({ tone: 'amber', text: 'Not yet validated by the reference implementation' })
-      return
-    }
+    if (!src || !entry) return
     sha256Hex(src).then((h) => {
       if (!live) return
       if (h !== entry.sha256) setVerdict({ tone: 'amber', text: 'Changed since last validation — re-run npm run content:sysml' })
@@ -27,7 +25,7 @@ export function SysmlListingView({ listing }: { listing: SysmlListing }) {
     return () => {
       live = false
     }
-  }, [src, listing.file, listing.intent])
+  }, [src, entry, listing.intent])
 
   if (!src) return <p role="alert" className="text-sm text-rose-700 dark:text-rose-300">Missing SysML listing {listing.file}</p>
   return (

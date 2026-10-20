@@ -4,6 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import * as Tabs from '@radix-ui/react-tabs'
 import { X } from 'lucide-react'
 import { Quiz } from '../../components/Quiz'
+import { bloomLabel } from '../../flow/route'
 import { weekContent } from '../../content/weeks'
 import { AssignmentPanel, InstructorPanel, LabPanel, WorkloadPanel } from '../../pages/WeekPage'
 import { useApp } from '../../state/AppState'
@@ -52,7 +53,7 @@ export function AssessmentsPanel() {
             <div className="wb-scroll bg-wb-bg p-4 text-[14px]">
               <Tabs.Content value="recall">
                 <p className="mb-3 text-wb-muted">Formative. Every option has an explanation; each question cites its source. Recommended after the week's missions.</p>
-                <Quiz questions={c.quiz} />
+                <Quiz questions={c.quiz} bloomText={c.week === 1 ? bloomLabel : undefined} />
               </Tabs.Content>
               <Tabs.Content value="lab">
                 <LabPanel c={c} />

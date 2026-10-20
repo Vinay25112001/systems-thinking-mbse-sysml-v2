@@ -1,0 +1,57 @@
+/* Week 8 pages: a scrollable SysML code panel (the generated model file on the worked-examples page). The panel scrolls
+   on its own, so the page never scrolls sideways at 400 px; the theme variables give both themes. */
+.wk-code {
+  max-width: 100%;
+  max-height: 36rem;
+  overflow: auto;
+  margin-top: 12px;
+  border: 1px solid var(--wb-line);
+  border-radius: 6px;
+  background: var(--wb-sunk);
+  color: var(--wb-fg);
+}
+.wk-code:focus-visible {
+  outline: 2px solid var(--wb-accent);
+  outline-offset: 2px;
+}
+.wk-code pre {
+  margin: 0;
+  padding: 12px 14px;
+  font: 400 13px/1.5 var(--wb-mono);
+  white-space: pre;
+  tab-size: 4;
+}
+/* A listing numbered with its file's own line numbers (the applied-exercise fragment): the number is drawn in a gutter
+   that is not selected with the code, so a copied fragment is the file's text. */
+.wk-code .wk-ln {
+  display: inline-block;
+  width: 3ch;
+  margin-right: 1.5ch;
+  text-align: right;
+  color: var(--wb-muted);
+  user-select: none;
+}
+
+/* Lesson tables shown on the worked-examples page sit outside the reader's table wrapper: at narrow widths they wrap
+   their cells instead of widening the page. */
+[data-testid='week8-examples'] .wk-lesson .lec-table {
+  table-layout: fixed;
+  width: 100%;
+}
+[data-testid='week8-examples'] .wk-lesson .lec-table :is(th, td, caption) {
+  overflow-wrap: anywhere;
+}
+/* The full mapping matrix keeps its scroll wrapper, but its cells also wrap so the page never widens. */
+[data-testid='week8-examples'] .lec-table-wrap {
+  max-width: 100%;
+}
+[data-testid='week8-examples'] [data-testid='example-matrix-table'] .lec-table {
+  table-layout: fixed;
+  width: 100%;
+}
+[data-testid='week8-examples'] [data-testid='example-matrix-table'] .lec-table :is(th, td, caption) {
+  overflow-wrap: anywhere;
+}
+[data-testid='week8-examples'] .lf-prose code {
+  overflow-wrap: anywhere;
+}

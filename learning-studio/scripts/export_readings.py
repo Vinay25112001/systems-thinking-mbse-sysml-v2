@@ -41,7 +41,7 @@ for rid, src, _f, first, last, title, level in mod.R:
         'id': rid,
         'source': src,
         'sourceTitle': SOURCE_TITLES[src],
-        'title': title,
+        'title': getattr(mod, 'DISPLAY_TITLES', {}).get(rid, title),
         'firstPage': first,
         'lastPage': last,
         'unit': 'slide' if src in ('S09', 'S10') else 'pdf-page',

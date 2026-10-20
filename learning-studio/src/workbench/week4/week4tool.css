@@ -1,0 +1,211 @@
+/* Week 4 lab tool (Week4LabTool.tsx), mirroring week2tool.css. Built on the workbench tokens (theme.css) so it reads as one product with the
+   week pages in light and dark; every text pair uses the token pairs theme.css validates at >= 4.5:1. Meaning is never
+   carried by color alone: every status has a word and a glyph. */
+.w4-tool {
+  font: 15px/1.5 var(--wb-body);
+  color: var(--wb-fg);
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1400px;
+}
+.w4-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+.w4-head h1 {
+  font: 600 20px/1.25 var(--wb-display, var(--wb-body));
+  margin: 0;
+}
+.w4-sp {
+  flex: 1;
+}
+.w4-part {
+  background: var(--wb-panel);
+  border: 1px solid var(--wb-line);
+  border-radius: 8px;
+}
+.w4-ph {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--wb-line);
+}
+.w4-ph h2 {
+  font: 600 16px/1.3 var(--wb-body);
+  margin: 0;
+}
+.w4-body {
+  display: grid;
+  gap: 12px;
+  padding: 12px 14px 14px;
+}
+.w4-help {
+  color: var(--wb-muted);
+  margin: 0;
+  font-size: 14px;
+}
+.w4-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.w4-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 10px;
+}
+.w4-field {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.w4-field > span,
+.w4-legend {
+  font: 600 12.5px/1.3 var(--wb-body);
+  color: var(--wb-muted);
+}
+.w4-input,
+.w4-select,
+.w4-textarea {
+  font: inherit;
+  font-size: 14px;
+  color: var(--wb-fg);
+  background: var(--wb-panel);
+  border: 1px solid var(--wb-line-strong);
+  border-radius: 4px;
+  padding: 5px 7px;
+  min-width: 0;
+  width: 100%;
+}
+.w4-input.mono {
+  font-family: var(--wb-mono);
+}
+.w4-input.narrow {
+  width: 6.5em;
+}
+.w4-textarea {
+  resize: vertical;
+}
+.w4-item {
+  border: 1px solid var(--wb-line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.w4-item > legend,
+.w4-id {
+  font: 600 13px/1.3 var(--wb-mono);
+  padding: 0 4px;
+}
+.w4-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.w4-sub {
+  border-left: 3px solid var(--wb-line);
+  padding-left: 10px;
+  display: grid;
+  gap: 6px;
+}
+.w4-note {
+  border: 1px solid var(--wb-line-strong);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: var(--wb-sunk);
+}
+.w4-note.ok {
+  border-color: var(--wb-ok);
+  background: var(--wb-ok-soft);
+}
+.w4-note.warn {
+  border-color: var(--wb-warn);
+  background: var(--wb-warn-soft);
+}
+.w4-note ul,
+.w4-gates {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+.w4-gates {
+  list-style: none;
+  padding-left: 0;
+  font-size: 13.5px;
+  display: grid;
+  gap: 2px;
+}
+.w4-pass {
+  color: var(--wb-ok);
+}
+.w4-fail {
+  color: var(--wb-bad);
+}
+.w4-adv {
+  color: var(--wb-warn);
+}
+.w4-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 600 12px/1.2 var(--wb-mono);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--wb-line-strong);
+}
+.w4-chip.ok {
+  color: var(--wb-ok);
+  border-color: var(--wb-ok);
+  background: var(--wb-ok-soft);
+}
+.w4-chip.warn {
+  color: var(--wb-warn);
+  border-color: var(--wb-warn);
+  background: var(--wb-warn-soft);
+}
+.w4-table-wrap {
+  overflow-x: auto;
+}
+.w4-table {
+  border-collapse: collapse;
+  font-size: 13.5px;
+  width: 100%;
+}
+.w4-table th,
+.w4-table td {
+  border: 1px solid var(--wb-line);
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+.w4-table th {
+  background: var(--wb-sunk);
+  font-weight: 600;
+}
+.w4-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+.w4-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.w4-tool .lf-btn.small {
+  padding: 5px 10px;
+}
+.w4-file {
+  font-size: 14px;
+}

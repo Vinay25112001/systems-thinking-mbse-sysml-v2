@@ -1,158 +1,491 @@
-# Week 5 independent review: Requirement quality, traceability and measures (+ SysML reading micro-lab 1)
+# Week 5 independent review: Components / Interfaces (package at commit 7ab45a5)
 
-Reviewer: independent adversarial review (not the author). Date: 2026-10-11.
+Reviewer: independent review (PhD systems engineering + senior web QA), not the author. Date: 2026-10-19.
+This file replaces the 2026-10-11 review of the superseded Week 5 draft ("Requirement quality, traceability and
+measures"), which is preserved in git history (`85da1bb`).
 
-**Scope**
-- `learning-studio/src/content/weeks/week05.ts`
-- `src/activities/week05.activity.tsx` and `src/activities/week05/*` (logic, components, tests)
-- `docs/authoring/week05_notes.md` (checked, not trusted)
-- `sysml/week05/aerolink_fleet.sysml`, `aerolink_tpm.sysml`, `invalid_missing_unit_import.sysml`
+**Scope.** `src/content/lectures/week05/*`, `src/components/figures/LectureWeek5*.tsx`, `week5FigureKit.ts`,
+`lectureWeek5Figures.ts`, `src/content/{week5Path,quizWeek5}.ts`, `src/content/lab/week05Lab.ts`,
+`docs/lectures/week05/*`, `src/workbench/week5/*`, `src/week5/*`, `exports/lectures/week05-*` (both decks unzipped and
+20 slide PNGs opened one by one).
+**Checked against.** DECISION_LOG A20/A21 (item 6: security and resilience in Week 5); COURSE_PRODUCTION_PLAN.md
+definition of done A–I; `WEEK5_MILESTONE_REPORT.md` incl. its gate-justification table; the Week 2, 3, 4 and 8
+reviews and confirmations in this folder (recurring defect classes listed in §6).
+**Method.** Case values recomputed in a scratch script outside the repo (jiti, importing the case read-only); 34
+citations opened in `_source_cache` page text; all 368 R-page references in Week 5 sources range-checked by script;
+throwaway lab-tool probe of about 110 cases (`src/workbench/week5/zz_review_probe.test.ts`, deleted after the run;
+`git status` clean); Playwright under the `_source_cache/.playwright.lock` protocol (lock created as
+`week05-reviewer`, deleted after). No source file was edited and nothing was committed. Paths below are relative to
+`learning-studio/` unless they start with `_source_cache/`.
 
-**Checked against**
-- `course.ts`; `AUTHORING_GUIDE.md` §7 (all eight rules); `schema.ts`
-- `ASSESSMENT_RUBRICS.md` RB-3, RB-4, RB-12, RB-16 (incl. the graduate-task note)
-- `LABORATORY_AND_CAPSTONE_PLAN.md` Part B L5; syllabus §11–12; `WEEKLY_INSTRUCTIONAL_PLAN.md` Week 5
-- Reference baseline `src/model/reference/week04.ts`, `week05.ts`
-- Prior reviews `week01`–`week04` (recurring defect classes)
+## Verdict: **REVISE**
 
-**Sources read** (via `python -I scripts/source_pages.py`, every cited page):
-- R45 p.118–119; R44 p.113–117; R15 p.531–536; R56 p.384–390; R48 p.143–144; R13 p.565–566; R14 p.478
-- S10: R70 sl.5–17; R74 sl.87–89; R75 sl.92; R79 sl.167–168
-- S06: R80 p.49, 63–64, 72–73, 77
+**Blocker 0 · Major 2 · Moderate 6 · Minor 22.**
 
-No course or app file was edited. Probes ran from a scratch directory outside the repo.
+The package is strong. The lecture is deep and teachable. Every number is computed from the case, and every
+citation is in range. The case imports Weeks 1–4 instead of copying them. The N² arithmetic, the crossing-flow
+check, the ICWG count and the latency arithmetic are all correct. IF-015 genuinely closes the INFO-006 route gap:
+removing it uncovers exactly the pad-incident flow. The new requirements pass Week 2's own gates. The web gates are
+green.
 
-## Verdict: **PASS WITH FIXES**
+Two defects stop sign-off:
+- **M1.** The trust-boundary and hidden-external rule classifies the air-ground radio datalink as safe unless a
+  segment is leased. That contradicts the MITRE sentence (R54 p.331, "radios connect subsystems via airwaves") that
+  the same lecture quotes.
+- **M2.** The lab tool repeats the Week 2 M1 / Week 4 M2 defect class. Unstated word-count minimums reject answers
+  the lecture itself calls complete ("Fail safe", "Power only", "Approved"), although the milestone report says this
+  class is "prevented by construction".
 
-There are no critical defects.
+Both have small, mechanical fixes.
 
-**What holds up**
-- Citation fidelity is high. Every DoD, SEBoK and MITRE page lands, and both quotations are exact.
-- The TPM arithmetic is correct and test-asserted (CBE and WCE margins, projections, statuses).
-- The trace numbers for the peer sample and the reference are correct and test-asserted.
-- The three SysML listings validate exactly as the lesson says, including the error text and line for the invalid listing.
-- The SysML reading key is correct for all 14 targets.
+### What holds up (checked, with evidence)
+- **Case recomputed independently.**
+  - Received set: 14 interfaces = 3 physical, 9 information, 2 organizational; 4 external (IF-003, 006, 007, 011).
+  - Degrees: PHY-004 9, PHY-001 4, PHY-006 0. Sum 28 = 2 × 14. 12 of 105 pairs joined. 4 empty rows.
+  - After this week: 16 interfaces, sum 32. PHY-004 has degree 10.
+  - 20 crossing flows, 20 covered. Removing IF-015 uncovers exactly `FN-016: pad incident records`.
+  - Trust boundaries: 12 crossing / 3 possible / 1 none (as the rule is written; see M1).
+  - ICWG: 7 organizations over 11 cross-owner interfaces. Seat counts 9, 8, 1, 1, 1, 1, 1 sum to 22 = 2 × 11.
+  - Coupling: A has X = 14 of 23 (κ 0.61), P 6, Dmax 5; B has X = 20 (κ 0.87), P 10, Dmax 5, and 4 pairs with no
+    information interface.
+  - Integration groupings: 6 vs 4 between aggregates, 5 external.
+  - Latency budget: 30 + 30 + 30 = 90 s of 120 s, margin 30 s.
+  - ICR-001 neighbours: IF-001, 002, 006, 010, 013.
 
-**What must be fixed**
-- **ID collisions.** The peer-team sample reuses reference IDs with different meanings (rule 8). This makes worked example (a) contradict itself: REQ-SYS-003 is both the booking app and the "landing energy reserve".
-- **Quiz items answered by the lesson.** Most quiz items are answered verbatim by the lesson or the activities (rule 6).
-- **Workload.** The graduate memo's time budget is implausible and no caution says so (rule 3).
+  All match the slides, the lesson, the Examples page and the figures.
+- **Imports, not copies.** `aerolinkCase.ts:25–30` imports Weeks 1–4. Ends and types are read through
+  `W4(...)` (`:117–121`). Information-interface carries and directions are computed hop by hop from the Week 4
+  routes (`carriesOf`, `:249–263`).
+- **REQ-SYS-013..015** pass the Week 2 `assessRequirement` gates in a genuine test (`aerolinkCase.test.ts:216–235`,
+  using the real Week 2 record and gates, not a stub). Each names its interface, and that interface lists it.
+- **Citations.** 368 R-page references; 0 out of range; 0 unknown IDs. 34 spot-checked (table in §4). Both real
+  quotations are verbatim (R13 p.563, R101 p.1467). R100–R104 headings exist on the cited pages.
+- **The Week 3 overstatement class is not repeated.** Defense in depth is its own entry on R24 p.1206.
+- **N² convention.** The claim that no held source states a row/column rule is true. N-squared appears only at SEBoK
+  pp.623, 630–631. The course's "row produces, column consumes" matches the usual outputs-on-rows convention and is
+  labeled a course convention in the lesson and the notes (but not on the slide face: n1).
+- **Timing.** Both sessions are 69 min of content plus a 6 min buffer = 75. Spoken notes run at most 92 wpm on any
+  slide (lab-launch slides are 6–27 wpm by design), never above 130. Worked slides meet their minimums. Lab launch is 22 min.
+- **Exercises precede reveals:**
+  - driving question (S1 sl.2), answered on sl.17;
+  - table row (sl.18), answered on sl.19;
+  - degrees (sl.14), revealed on sl.15;
+  - trust-boundary pair question (S2 sl.6), answered on sl.9;
+  - audit findings in the notes only.
 
-Counts: **critical 0 · major 3 · minor 9**.
+  Exceptions are n9 and n10.
+- **Downstream links.** The feeds slide and lesson name Weeks 6, 7, 11 and 12 concretely (`session2.ts:586`,
+  `:591–593`). Limits are stated honestly (`session2.ts:560`, `:565–566`).
 
-## Tool runs (from `learning-studio/`)
+---
 
-| Command | Result |
-|---|---|
-| `npm run content:sysml -- sysml/week05` | Pilot 2026-08 (kernel 0.62.0). `aerolink_fleet` PASS, `aerolink_tpm` PASS, `invalid_missing_unit_import` FAIL as expected: `ERROR 11:50 Couldn't resolve reference to Element 'min'` + 2 warnings. This matches the lesson and the notes exactly. |
-| `npx vitest run src/activities/week05 src/activities/week06 src/activities/week07 src/content` | **8 files, 147 tests passed** (exit 0). |
-| `npx tsc -b` | **clean** (exit 0, no output). |
+## 1. Findings
 
-## Findings
+Severity: **Major** = must fix before sign-off; **Moderate** = should fix before teaching; **minor** = author's
+discretion or quick fix.
 
-| ID | Sev. | Location | Finding | Evidence | Recommended fix |
-|---|---|---|---|---|---|
-| W5-F01 | major | `trace.ts` `PEER_SAMPLE`; `audit.ts` a1–a6; `w5-worked-audit`, `w5-worked-trace`, `w5-worked-tpm`; q5-3, q5-4, q5-5 | **The "Team Kestrel" peer sample reuses reference IDs with different meanings (§7 rule 8). This creates contradictions inside one example.** Kestrel uses REQ-STK-003 for hub turnaround (reference: weather limits), REQ-SYS-003 for the booking app (reference: landing energy reserve), REQ-SYS-004 for assignment time (reference: weather dispatch hold) and REQ-SYS-005 for the carbon airframe (reference: assignment time). The same worked example (a) then revises REQ-SYS-005 by tracing it "to REQ-SYS-003 (landing energy reserve)", while its own REQ-SYS-003 is the booking app. Audit item a6 says "move the reserve to REQ-SYS-003" in the same activity where a1 *is* REQ-SYS-003. The TPM table then cites "TPM-003 … REQ-SYS-003" in the reference sense. The quiz switches numbering between items: q5-4 uses Kestrel's REQ-SYS-004, while q5-3 and q5-5 use the reference REQ-STK-005 for the same turnaround concept that Kestrel calls REQ-STK-003. | `week04.ts` lines 32, 80, 84, 89 vs `trace.ts` PEER_SAMPLE; `w5-worked-audit` para 3; `audit.ts` a2 and a6 `revision`. | Give the peer sample its own non-colliding IDs (e.g. `KES-REQ-…`, or REQ-SYS-9xx). Update audit.ts, the worked tables, the answer key and q5-4. |
-| W5-F02 | major | quiz q5-1, q5-2, q5-4, q5-8, q5-9, q5-11, q5-12, q5-13; q5-10 option b | **Most quiz items are answered verbatim by the lesson or an activity (§7 rule 6).** | q5-1: the carbon-fibre airframe is the same case as worked (a) and audit a2, with the same answer. q5-2: REQ-SYS-010 / TBD-02 / U-002 is audit a4. q5-4: CAP-002 missing link to REQ-SYS-004 is the conclusion of worked (b). q5-8: TPM-003 23.0 / 1.5 / 1.5 points is the worked (c) table. q5-9: the TPM-002 series 1.0/0.9/0.8/0.5 and the projection 0.2 are worked (c). q5-11 and q5-12: `chargeTimeToDispatch = 20 [min]` and `fleet[12]` are worked (d). q5-13: the invalid listing is explained in worked (d). q5-10 (b): "take-off mass growth per review" is a candidate given in `w5-advanced`. | Recast each item as a new case: a different requirement, a different TPM series, a different listing line (e.g. `vertiports[6]`, `reserveShare`), and a different missing link. |
-| W5-F03 | major | `workload` | **Graduate time budget is implausible and not flagged (§7 rule 3).** "Graduate leading-indicator memo, including extension reading R14" gets 0.5 h. R14 is 5 pp (≈ 0.33 h at 15 pp/h), which leaves ≈ 10 min to design two leading indicators with characteristic, condition, predicted behaviour, time range and decision, plus a pitfall (template §6). The 5,150-word lesson plus four activities (14-element SysML reading, six-item audit, trace and TPM tracker) gets 0.8 h. `cautions` says nothing; the week total is held at exactly 9.0. | `week05.ts` `workload`; notes "Lesson word count 5,150". | Budget ≥ 1 h for the memo and ≈ 1.2 h for online material and activities. Record the overrun against the 9 h plan in `cautions`, or cut scope. |
-| W5-F04 | minor | q5-5 key and explanation; `w5-advanced` para 3 | **OVERCLAIM of R45 p.119.** The source says a lower-level element "cannot have the same or wider tolerance bands" than its parent: a statement about tolerances. The lesson uses it to (a) reject a sequential time budget (20 + 8 = 28 > 25 min) and (b) claim that sub-TPM margins "must sum to no more than TPM-001's". Both are budget-allocation arguments that R45 does not make. | R45 p.119 bullet 3 (quoted in the review notes). | Keep the arithmetic but present it as instructor reasoning ("budget allocation"). Cite R45 only for "correctly / feasibly allocated". |
-| W5-F05 | minor | `measures.ts` TPM_HISTORY TPM-001; `w5-worked-tpm` para 3 | **The contingency basis regresses while the lesson cites R44 for the fall.** Month 6 is a "Bench test of one module (surrogate)" with contingency 0.8. Month 9 reverts to "Supplier charge-curve analysis" (no test) with *lower* contingency, 0.6. The lesson calls this "exactly the pattern R44 p.117 describes" (contingency falls as measurements mature). It is the shrink-contingency move that `w5-advanced` warns against. The tracker table shows neither contingency nor basis, so students cannot see it. The status is unaffected: with 0.8, the margin is 1.2 ≥ floor and still on track. | R44 p.117 ("a surrogate item … would warrant a greater contingency … than if the actual end item were used"). `TpmTracker.tsx` table columns. | Make month 9 a more mature basis (e.g. a full-pack test), or keep 0.8. Add Contingency and Basis columns to the tracker table. |
-| W5-F06 | minor | `w5-advanced` para 3 | **The arithmetic contradicts rule R3 as implemented.** "With 0.5 dBA … WCE margin would be 1.0 dBA and its trend projection 0.7 dBA". By R3 (`assessPoint`) the projection is 1.0 + (1.0 − 0.8) = **1.2**. The 0.7 comes from reusing the old −0.3 slope. Either way the status is on track. | `measures.ts` `projectedMargin = marginWce + (marginWce − prevMargin)`. | Say 1.2 (or state the different assumption). Add the case to `logic.test.ts`. |
-| W5-F07 | minor | `reading.ts` t11, t12; q5-11 explanation | **Metrology slip.** It says "h (hour) is a specific SI unit", "km/h … a derived SI unit" and "min is an SI unit (S10 sl.168)". Hour and minute are non-SI units accepted for use with the SI, and km/h is not a coherent SI derived unit. S10 sl.168 shows neither min nor h (it elides with "…"). | R79 sl.168 text. | Say "declared in the SysML `SI` library package". Cite the library file or the S06 Quantities clause, not sl.168. |
-| W5-F08 | minor | `w5-sysml` para 3 | **The multiplicity default is overstated.** "Parts, attributes and items owned by a definition or usage default to exactly one (S06 p.73; S10 sl.12)". S06 p.73 adds a condition: [1..1] applies only when the usage has **no explicit subsettings or redefinitions**. Otherwise it inherits from the feature it subsets or redefines, else [0..*]. Every usage in the second half of the listing is a redefinition. | R80 p.73 conditions 1–3. | Add the condition. Point at `part redefines battery` as a case where the multiplicity is inherited. |
-| W5-F09 | minor | `aerolink_tpm.sysml` l.20; `measures.ts` TPMS[0].name | **Naming conflates turnaround with charge time.** The TPM-001 attribute is `turnaroundChargeTime` ("Turnaround charge time"). The lesson carefully separates the 25-min turnaround (REQ-STK-005) from the 20-min charge (REQ-SYS-001 / MOP-002), and worked (a) faults Kestrel for exactly this blur. | Lesson worked (a) para 4; quiz q5-5. | Rename it `chargeTimeToDispatch` / "Charge time to dispatch threshold". Re-run the validator. |
-| W5-F10 | minor | `w5-trace` para 4; `TraceExplorer` predictions | **The source's definition becomes the "supplementary" check (rule 7).** R45 defines a childless parent as a *higher-level requirement* not flowed down. The course's primary rule applies it to NEED/CAP, and the source's own case (REQ-STK without child) is "supplementary" and not part of the student prediction task. The course convention is labelled, so this is minor. | R45 p.118. | Present both checks as equal. Include REQ-STK in the prediction ticks. |
-| W5-F11 | minor | `w5-sysml` `citations`; `references`; `w5-measures` | Citation bookkeeping: (a) **S06 p.49** is cited inline for short names, but it is absent from the block's `citations` array and from `references` (R80 "63–77"). (b) SEBoK Figure 3 is described as "after Roedler and Jones". The figure caption credits Roedler et al. 2010; Roedler and Jones 2005 is the text citation. | R80 p.49; R15 p.532–533. | Add `{R80, '49'}`. Say "Figure 3 (Roedler et al. 2010)". |
-| W5-F12 | minor | `audit.ts` `lintSignals` on a2 | **Misleading lint on the "false finding" item.** For "The aircraft shall have a carbon-fibre airframe", the mechanical lint prints "No number or TBD: check that a measurable criterion exists". The key's teaching point is that this requirement is verifiable by inspection. The lint nudges students towards the false "not verifiable" finding the item is designed to catch. | Lint rule `!/\d/.test(text)`. | Suppress the number check when the requirement names a material or feature checkable by inspection. At minimum, label the lint "advisory; may be a false signal". |
+### M1 (Major). The radio datalink is classified as inside the trust boundary unless "leased", contradicting R54 p.331 as quoted in the same lecture
 
-**§7 rule check**
+**What happens.**
+- The lecture quotes MITRE (`session1.ts:121`): hidden external interfaces appear when internal communications use
+  an external medium "such as radio, a satellite relay or an outside network". The source text agrees
+  (`_source_cache/se_guide_book_interactive.txt:15654–15657`, R54 p.331: "radios connect subsystems via airwaves").
+- The case puts the air-ground datalink inside PHY-006 (`aerolinkCase.ts:123`, `datalink = 'air-ground datalink
+  (PHY-006)'`). The trust-boundary rule (`:279–293`, course convention) has four reasons, and none of them covers
+  radio.
+- IF-002 (release and plan to the aircraft) and IF-013 (health data) are therefore listed as crossing "possibly:
+  only if a network segment is leased" (`session2.ts:44`, `:100`, `:433`; figure strip "12 crossing · 3 possible ·
+  1 none", `s2/image-9-1`).
+- The hidden-external finding F6 (`aerolinkCase.ts:548`) makes the issue depend only on ownership.
+- The tool's hidden-external advisory regex misses "Wi-Fi", LTE/4G, VPN and API media (probe; `record.ts:39`).
+- IF-002 is the interface whose own protection cell says "a forged release is a flight hazard" (`:138`). IF-013
+  names only an integrity check, with no authentication (`:210`).
 
-| Rule | Result |
-|---|---|
-| 1 (recorders) | n/a: no Week 5 activity writes to the workspace. |
-| 2 | ✓: `rubricScope` names RB-16.1. |
-| 3 | ✗ (F03). |
-| 4 | ✓: the reference trace and the CBE margins pass the tool's checks in tests. |
-| 5 | Lint is advisory only (F12). |
-| 6 | ✗ (F02). |
-| 7 | Partly (F10); the RB-4.1 and margin conventions are labelled. |
-| 8 | ✗ (F01). |
+**Failure scenario.**
+- A student applies the cited source and asks why an RF link "anyone with a transmitter can reach" crosses no trust
+  boundary. The reference has no answer.
+- A team whose enterprise uses Wi-Fi or a cellular link of its own gets neither a crossing nor the advisory, so
+  the tool never prompts for protection.
 
-## Citation table
+This is the A21 item 6 content the week exists to teach.
 
-| Claim / location | Citation | Verdict | Evidence |
+**Fix.**
+- Add a fifth reason to `boundaryReasons`: "the medium is radio or another medium outsiders can reach", per R54
+  p.331. Alternatively, classify every interface over the datalink as a hidden external interface on R54 alone.
+- Recompute the counts. They become 14 crossing; possible: IF-012 only; none: IF-004.
+- Add authentication to IF-013.
+- Update the slide, lesson, figure and F6 text (all computed, so the update is mechanical).
+- Widen the tool's hidden-external pattern to radio, Wi-Fi, cellular, satellite, VPN and the internet.
+- Add both-direction tests.
+
+### M2 (Major). Unstated word-count gates reject entries the lecture calls complete: the Week 2 M1 / Week 4 M2 class again
+
+**What happens.** The probe rejected the following valid entries (each a hard gate, so the entry does not count):
+
+| Gate (code) | Threshold | Valid input rejected | Lecture says |
 |---|---|---|---|
-| 13 attributes; poorly written requirements raise risk | R48 p.143–144 | OK | p.144 bullet list (13 items); p.143 "Poorly written requirements can lead to significant problems…" |
-| Requirement verification vs validation; methods | R13 p.566 | OK | "Assessing the Requirements" section |
-| Traceability model at project start | R13 p.565 | OK | "Defining a traceability relationship model at the beginning…" |
-| Quote "Poorly written requirements make traceability difficult because the real meaning is often lost." | R56 p.389 | OK (exact) | Verbatim |
-| may/will, derived requirements, creep, hard-to-test | R56 p.389–390 | OK | "Best practices" list |
-| Definition, two-way flow, 32 knots, change process | R56 p.384–385 | OK | |
-| RTM links, extendable to tests | R56 p.387–388 | OK | |
-| Bidirectional, orphan, childless parent; quote | R45 p.118 | OK (exact quote) | |
-| RTM; traceable, correctly and feasibly allocated | R45 p.119 | OK | |
-| Allocation budgets (q5-5) and margin sums (advanced) | R45 p.119 | OVERCLAIM | F04 |
-| Technical measurement; MOE/MOP/TPM; fidelity grows | R15 p.532–533 | OK | Figure credited to Roedler et al. 2010 (F11b) |
-| Leading indicator definition and composition | R15 p.531–532 | OK | |
-| Pitfalls (golden measures, single pass, measurement for its own sake, inappropriate use) | R15 p.535 | OK | Table 1 |
-| Good practices (action-driven, timely, relevance) | R15 p.536 | OK | Table 2 |
-| TPM definition; quote "TPMs provide leading indicators…" | R44 p.113 | OK (exact) | |
-| 15 core categories; Mission, System performance, RAM, Requirements management | R44 p.113–115 | OK | Table 4-2 (Cybersecurity is a sub-row, so 15) |
-| TPM hierarchy (system weight allocated) | R44 p.115 | OK | |
-| Actual vs planned; four attributes of a good metric | R44 p.116 | OK | |
-| Contingency, CBE, WCE, margin = threshold − WCE; margin not allocated | R44 p.117 | OK | The higher-is-better mirror is labelled as course |
-| Monitoring metrics (TBD/TBR, not traced to source) | R14 p.478 | OK | |
-| Packages, imports, quotes; visibility, private imports | S10 sl.5–6 (R70) | OK | |
-| Definition/usage; implicit definition; features | S06 p.63 | OK | |
-| Part def; composite part usage; attribute usage referential | S10 sl.9; S06 p.77 | OK | |
-| def keyword; `:`, `:>`, `:>>` | S06 p.72 | OK | |
-| Multiplicity default exactly one | S06 p.73; S10 sl.12 | OVERCLAIM (condition omitted) | F08 |
-| Units: only the kind on the type, unit with the value | S06 p.77 | OK | |
-| ISQ value types; SI units, prefixed and derived | S10 sl.167–168 | OK | |
-| "min is an SI unit (S10 sl.168)" | S10 sl.168 | NOT FOUND | min/h are not on the slide (F07) |
-| `attribute :>> massReqd = 2000[kg]` | S10 sl.89 | OK | |
-| Short names on any element | S10 sl.87, 89; S06 p.49 | OK | p.49 is missing from the citation array (F11a) |
-| Redefinition in usages; inheritance by usages | S10 sl.12, sl.15 | OK | |
-| `objective` is a keyword (analysis case objective) | S10 sl.92 (R75) | OK | |
-| Contingency tied to evidence (advanced) | R44 p.117 | OK | |
+| protection or reason (`record.ts:402`, `MIN_PART_WORDS` `:34`) | ≥ 3 words, **not stated** in `labBrief.ts:139` | "Power only", "TLS", "Mutual TLS" | "A power cable carries no data, and saying so is a complete answer" (`session2.ts:86`) |
+| degraded mode (`:404`, `MIN_TEXT_WORDS` `:35`) | ≥ 5 words, **not stated** (`labBrief.ts:140`) | "Fail safe", "Hold all departures", "Fall back to radio", "Switch to manual procedure" | slide face: "**Fail safe**: treat a missing status as the unsafe value" (`session2.ts:385`) |
+| CR decision (`:546`) | ≥ 3 words, **not stated** (`labBrief.ts:163`) | "Approved" (decider "ICWG") | "the owners decide" (`session2.ts:287`) |
+| external reason (`:637`) | ≥ 5 words, **not stated** | "No arrangement yet", "Natural system: no exchange" | the reference's own dispositions say exactly this, in more words (`aerolinkCase.ts:536–537`) |
+| change text (`:540`) | ≥ 5 words | "Add encryption to IF-006" | — |
+| responsibility (`:345`, `:358`) | ≥ 3 words | "Charges aircraft", "Raises alarms" | "the responsibility in one sentence" (`session1.ts:99`) |
+| criterion (`:523`) | ≥ 3 words | "2 min", "TBD (Ops)" | "≤ 2 min" passes, so a typographic symbol decides |
 
-## Verified correct
+`labBrief.ts:12–15` and the milestone report (`WEEK5_MILESTONE_REPORT.md:165`, §9 at `:253`) claim that "no gate
+tests a name's form, its length beyond one word". That holds for names only.
 
-**SysML listings**
-- All three listings validate exactly as stated: 2 PASS, 1 expected FAIL at 11:50 with the quoted message.
-- The line numbers in worked (d) and in the reading key match the file:
-  - package at line 5, imports at lines 7–9, definitions at lines 12–37, usages at lines 40–55
-  - targets at lines 12, 13, 18, 20, 29, 30, 33, 40, 41, 44, 50, 51
-- The SysML reading key (t1–t14) is correct. The answer key matches `reading.ts`. A test asserts that each token sits on its stated line.
+**Failure scenario.**
+- A team copies "Fail safe" from the slide into its degraded-mode cell, and the interface stops counting toward
+  the minimum of 8.
+- A change request recorded as "Approved" by the ICWG fails Part 22.
 
-**TPM arithmetic** (independently recomputed)
-- TPM-001: WCE 18.6, margin 1.4, projection 1.9, history 0 / 0.5 / 0.9 / 1.4 (statuses at-risk ×3, then on track).
-- TPM-002: WCE 64.5, margin 0.5, projection 0.2, at risk by R3. History 1.0 / 0.9 / 0.8 / 0.5.
-- TPM-003: WCE 21.5, margin 1.5, projection 1.1, on track.
-- No objective is met.
-- Student entry 64.4 + 0.8 = 65.2 is a BREACH.
+This is exactly what Week 2 M1 and Week 4 M2 (both majors) were about, and Week 5 claims to have designed against it.
 
-**Trace**
-- Peer sample: 8 requirements, 9 links, 6/8 with a parent (75 %).
-- Orphans: REQ-SYS-003 and -005. Childless: NEED-002, CAP-002, CAP-004.
-- Reference at Week 5: 20/20 with a parent. The supplementary check flags REQ-STK-007 and -009, which are resolved by Week 8 (test-asserted).
+**Fix.**
+- Require ≥ 1 word for protection/reason, decision and external reason.
+- Require ≥ 2 words (or 1 word plus an advisory) for degraded mode, change, responsibility and criterion.
+- Count a value with a unit ("2 min") as a criterion.
+- State any remaining threshold in the gate text so that the generated table shows it.
+- Add the rejected inputs above as accept-direction tests in `record.test.ts`.
+- Correct the "by construction" claim in `labBrief.ts` and the report.
 
-**Quiz arithmetic**
-- q5-6: at a 63 dBA threshold, the CBE margin is −0.5.
-- q5-8: margin 1.5.
-- q5-9: projection 0.2.
-- Each quiz item has exactly one defensible key. Bloom tags are plausible.
+### Mo1 (Moderate). The IF-015 decision is justified on a miscount: the relay adds one new interface, the same as the direct option
 
-**Sessions and workload**
-- Session 1 = 75 min and Session 2 = 75 min (L5 55 + micro-lab 20), as in the weekly plan.
-- The 12-measure classification key adds up to 4 MOE + 5 MOP + 2 TPM + 1 non-measure.
-- The reading count of 27 pp is correct (R45 2 + R56 8 + R15 9 + R44 8). The workload sums to 9.0 h.
+**What happens.**
+- Alternative B is "a new interface from the fire detection system to the vertiport systems, then on over IF-014"
+  (`aerolinkCase.ts:396`). That is one new interface, so both options end with 15.
+- The rationale says "The relay adds an interface" (`:400`), and `counts: { direct: 1, relay: 2 }` (`:401`).
+- The slide notes say "the relay costs one more interface than the direct path" and tie this to SEBoK's aim of
+  fewer physical interfaces (R20c p.599; `session1.ts:143`, `:715`).
+- The answer figure compares "1 new interface" with "2 interfaces" (`s1/image-17-1`, `session1.ts:704–708`).
 
-**Assignment and lab**
-- The W5-A template covers RB-3.1–3.6 and RB-4.1–4.3.
-- The weight statement matches CP2 (RB-3 40, RB-4 20). `rubricScope` names RB-16.1 for the graduate memo.
-- The L5 steps match lab plan L5: random draw of 10, AI tagging, ≥ 3 MOE / 5 MOP / 2 TPM.
+This is the Week 4 M1 class: a decision whose stated reason does not match the data.
 
-**Accessibility**
-- The TPM chart encodes status by marker shape and text, and has a full table equivalent.
-- SysML targets are labelled buttons.
+**Failure scenario.** A student counts the N² after each option, gets 15 both times, and the cited SEBoK
+justification collapses in front of the class.
+
+**Fix.**
+- State the real differences: the relay puts a second system (and a second owner's availability) in the path,
+  adds INFO-006 to IF-014's items, and needs the vertiport systems to forward records.
+- Keep R20c p.599 only for the path argument, or drop it.
+- Change `counts` to new interfaces (1 / 1 / 0) and the card text to "1 new interface · path of 2".
+
+### Mo2 (Moderate). The REQ-SYS-014 rationale and the IF-011 degraded mode get the forecast time coverage wrong
+
+**What happens.**
+- IF-011 delivers "a forecast … at least every 10 min, valid for the next 30 min" (`aerolinkCase.ts:196`).
+  REQ-SYS-004 needs the forecast "within the next 30 min".
+- The rationale claims that a 10 min refresh "keeps that window covered with two spare refreshes if one is lost"
+  (`:427`, shown on the Examples page `src/week5/Examples.tsx:201`).
+- In fact a 30 min forecast received 10 min ago covers only 20 min ahead, so the 30 min look-ahead is fully covered
+  only at the instant of receipt, and there is no spare at all.
+- The degraded mode holds only when the forecast is "older than its 30 min window" (`:199`), by which point it
+  covers 0 min ahead.
+
+**Failure scenario.** A sharp student works the timeline. The worked interface requirement and the fail-safe rule
+are then both shown to be inconsistent with the requirement they refine.
+
+**Fix.**
+- Set the forecast horizon to at least 30 + 10 min plus a margin (for example 60 min).
+- Restate the rationale as horizon − interval ≥ 30 min.
+- Make the degraded trigger "the newest valid forecast no longer covers the next 30 min".
+
+### Mo3 (Moderate). Assessment: no applied-exercise brief, a graduate scale that does not map, and a 35-minute task that is overfull (the Week 4 Mo5 / N6 classes again)
+
+**What happens.**
+- The ferry case is "released on the LMS" (`src/week5/Assessment.tsx:77`), but no `WEEK5_APPLIED_EXERCISE_BRIEF.md`
+  exists. Week 4 has one; it was the Mo5 fix. There are no elements, exchanges, requirements or marking notes, so
+  graders cannot mark consistently.
+- The exercise is scored as 5 × 4 = 20 points (`:85`). The graduate replacement has 2 criteria = 8 points
+  (`week05Lab.ts:280–281`), with no mapping. This is Week 4 N6 again.
+- Five tasks in about 35 min is overfull: 5–7 components with a sub-breakdown, an N² with degrees, two full
+  definitions with security columns, an interface requirement and a change trace.
+- Quiz items Q3 and Q11 use ferry contexts, the same domain as the exercise.
+
+**Fix.**
+- Write the brief with marking notes.
+- State the 8 → 20 mapping, or add a third graduate criterion and scale it.
+- Cut the exercise to four tasks or extend it to 50 min.
+- Move Q3/Q11 to another domain.
+
+### Mo4 (Moderate). The modularity figure cannot be counted as its walk instructs
+
+**What happens.**
+- The walk says to count "the five heavy ones crossing the module boundary aloud" (`session1.ts:851`).
+- In the right panel of `s1/image-21-1`, the heavy B–F link passes through node D (`LectureWeek5S1.tsx:911–917`).
+  It reads as B–D plus a heavy D–F drawn over the thin inside link, so a class counts six.
+- In the left panel, A–B runs through F and D–E grazes F.
+
+The milestone report (`:247`) says the modularity link count was fixed. The caption was fixed, but the geometry
+still misleads.
+
+**Fix.** Move the nodes so that no link passes within radius + 8 px of a node it does not join. Add a
+point-to-segment distance test to the figure tests.
+
+### Mo5 (Moderate). The integration grouping teaches a degenerate criterion without its limit
+
+**What happens.**
+- "The second wins on SEBoK's criterion" (`session2.ts:495`). G2 is a 2 + 6 split (`aerolinkCase.ts:494–503`).
+- Minimizing between-aggregate interfaces with no balance constraint is trivially won by lopsided groupings: one
+  aggregate of everything gives 0.
+- The lesson and notes never say that aggregate size and integration order matter too.
+
+**Failure scenario.** Teams "optimize" their own grouping into one giant aggregate and cite the lecture.
+
+**Fix.** Add one sentence: compare groupings of similar size, and weigh the interfaces between aggregates against
+the size of the largest aggregate and the order in which owners can deliver. Keep the computed counts.
+
+### Mo6 (Moderate). The latency budget, a Week 4 hand-over, is taught on no slide, and its key design decision is unexplained
+
+**What happens.**
+- The 120 s budget appears only in the lesson table (`session2.ts:144`), the Examples page and the limits-slide
+  notes (`:565`), which are stripped from the student build.
+- Leg 2 introduces "automatic provisional no-go on any fault code in the no-go list, before a technician classifies
+  it" (`aerolinkCase.ts:449`). That is a real architectural change: Week 4 says "only [certifying technicians] may
+  classify a fault" (`week04/aerolinkCase.ts:219–220`), and CMP-014 "classify every fault" (`aerolinkCase.ts:82`).
+- The budget meets REQ-SYS-008 only because of this automation, and nothing says so or why.
+- The IF-013 degraded mode (download on arrival, `:211`) also means the 2 min cannot hold during link loss. That is
+  acceptable, but should be stated.
+
+**Fix.**
+- Give the budget a slide-face table, or a bullet on the limits slide.
+- Add one sentence: technician classification cannot meet a 30 s leg, so an automatic, conservative provisional
+  no-go is proposed; the technician still classifies and alone returns the aircraft to "go".
+- Note the in-flight link-loss exception.
+
+### Minor findings
+
+| # | Finding (file:line) | Failure scenario | Fix |
+|---|---|---|---|
+| n1 | The N² conventions are unlabeled on the slide face: the bullets "written once above the diagonal" and "the row produces, the column consumes" sit under R22 pp.630–631 (`session1.ts:579`, `:583`). The label is only in the stripped notes (`:589`) and the lesson (`:131`). | A slide-viewer student cites the row rule as SEBoK's. | Add "(course convention)" to the bullet or caption. |
+| n2 | The slide face cites SEBoK R24 p.1205 for the course's own definition of "fail safe" (`session2.ts:385`). SEBoK only lists fail-safe as an example under *continue*. | Overstatement, Week 3 class. | Label it "course default"; optionally add R24 p.1207 "safe state". |
+| n3 | The lesson says "On every count the chosen platform is less coupled" (`session2.ts:135`), but "Most partners" is 5 vs 5 in its own table (`:131`). The slide correctly says "On κ and P" (`:536`). | The lesson contradicts its table. | "On κ and P". |
+| n4 | IF-001 flows list "boarding and alighting passengers" PHY-002 → PHY-001 and also "alighting passengers" PHY-001 → PHY-002 (`aerolinkCase.ts:130`). Alighting is listed in both directions. | The Examples direction column is wrong. | PHY-002 → PHY-001 "boarding passengers"; PHY-001 → PHY-002 "alighting passengers". |
+| n5 | Week 4 N1 is still unresolved and now load-bearing. FN-010's only output is the alarm to EXT-006 (`week04/aerolinkCase.ts:229–232`), yet FN-016's "pad incident records" names FN-010 as source (`:267–268`), and IF-015 carries them. | "Which function at the fire alarm produces incident records?" has no answer in the case. | In the Week 4 source (Week 5 imports it): add the output "pad incident record → PHY-004 (INFO-006)" to FN-010. |
+| n6 | Two crossing-flow counts appear without explanation: 20 (`session1.ts:680`, including external routes) and "14 of 23" (S2 sl.12, function-to-function only). | Students think one number is wrong. | One sentence on S2 sl.12. |
+| n7 | The worked-security alt text lists every protection measure and IF-006's enforcement point, while the cards draw counts and one example each (`session2.ts:410`, `s2/image-9-1`). | Alt text promises more than is drawn (Week 4 Mo1 class). | Shorten the alt text, or draw the measures. |
+| n8 | Trust-boundary figure example 4 ("public network") joins the same pair as example 3, whose ends also have different owners. The leased-network line has only one end (`s2/image-6-1`). | The figure does not isolate reason 4. | Draw example 4 between two same-owner internal elements through the cloud, and give the leased line two ends. |
+| n9 | Change-control exercise: "ask pairs, in one minute, which other interfaces could be affected" (`session2.ts:294`) is asked while the figure already shows the neighbours and the filled "reached" cells (`:276–279`). | The answer is on screen during the exercise. | Pose it on S2 sl.4 before advancing (as done for the worked N²), or split the figure. |
+| n10 | "Take answers … before revealing each card" (`session2.ts:426`), but all three cards are on one static figure. | No per-card reveal is possible in the deck. | Say "before advancing", posing the question on sl.6–8. |
+| n11 | Worked N² timing contradiction. The notes say to count degrees "before you advance" (`session1.ts:625`); the timing puts the count after advancing (`:637`). The notes also call the nine IDs "the operations center row" (`:629`), but four sit in the column of the upper-triangle layout. | The instructor follows one sentence and contradicts the other. | Align them; say "row and column". |
+| n12 | The student lesson says "the case test checks both" (`session1.ts:96`). | Internal test tooling leaks into student text. | "The reference was checked so that …". |
+| n13 | The WBS example contradicts its own sentence: "“design the app” … belong[s] in a WBS" (`session1.ts:84`) straight after "outcomes, not actions". | Students learn action-named WBS elements. | "the app design", "integration test results". |
+| n14 | Lab gate basis labels: "Layers and the breakdown" matches no slide (`labBrief.ts:122`). The one-shall basis cites a section that never states the rule (`:152`). The `name` basis adds "and assigned" to the glossary (`:121`). The `impact` basis says the N² row and column "show every neighbor the change can reach (after R22 p.631)" (`:162`), but R22 p.631 is about fault location, and the lesson calls them candidates (`session2.ts:70`). The fallback titles in `week05Lab.ts:37–66` are stale. | A student following the reference finds nothing there. | Correct the strings, or resolve them by slide id. |
+| n15 | Hard checks are missing from the 26-gate table: ICWG ≥ 2 organizations (`record.ts:674`), standards ≥ 3 words (`:675`; "None apply" fails), reused requirement ID (`:652–653`), duplicate IDs. | A block with no published basis. | Add them to `PART_RULES` with a basis, or make them advisories. |
+| n16 | Owners are compared as text with only case and spacing normalized (`record.ts:145`, `:372`). | "Ops" vs "Operations" creates a false trust-boundary crossing. | Pick owners from the card owners, or add an advisory. |
+| n17 | An interface between two external elements is accepted and counts (`record.ts:379–385`). | A team meets the minimums without touching its own system. | Gate or advise: at least one end inside the system of interest. |
+| n18 | Importing a teammate's file replaces the record without confirmation (`Week5LabTool.tsx:171–176`). | Silent overwrite (A22). | Confirm when the record is not empty. |
+| n19 | A capitalized method ("Test") in an imported file is silently dropped (`record.ts:199`). | The requirement fails its method gate after import. | Lower-case before validating. |
+| n20 | Quiz residual cues (every mechanical rule passes; recomputed in §5). The hedged key in Q2 and Q12 is the only non-absolute option. The Q4 per-position majority yields the key. Q5 omits the likeliest wrong answer ("five"). Q10 distractors are all same-owner links. Q11 c is wrong only through its stated reason. Q12's key needs a current link count the stem does not give. | "Pick the moderate option" scores 2/12. | Add hedged wrong distractors; vary Q4 parts; offer "five"; give the link count in the Q12 stem. |
+| n21 | Some quiz explanations rely on unseen content: Q7b "simplest approach", Q12c "disaggregation", Q3's program-office clause of R104 p.104. | Answerable only by elimination. | Add the clause to the lesson, or reword the explanations. |
+| n22 | Stale status text (Week 4 N4 class): `WEEK5_MILESTONE_REPORT.md:4` says "Nothing is committed"; the package is commit `7ab45a5`. | — | Update. |
+
+Figure legibility (cosmetic; folded under n7–n8, fix at discretion; seen in the PNGs):
+- Text overflows three worked-breakdown boxes ("High-power turnaround chargers", "Flight management and health
+  monitoring", "Planning and evidence services").
+- The external corner mark covers the last digit of IF-003, IF-006, IF-007 and IF-011 (`s1/image-14-1`).
+- On the change-control chart, the IF-005 label touches IF-001, and the "reached" fill is close to the physical
+  fill (`s2/image-5-1`).
+- On the integration figure, all pills use the physical style, and the line strikes through every label
+  (`s2/image-11-1`).
+- The IF-015 label collides with its arrowhead (`s1/image-17-1`).
+
+## 2. Item-by-item against the brief
+
+1. **Depth, teachability, why/downstream, limits, timing.**
+   - Graduate-level depth. Every slide has teach / why / walk / misconception / transition / timing, and the worked
+     slides carry full solutions.
+   - The why is explicit on every slide. Downstream links to Weeks 6, 11 and 12 are concrete. Limits are on S2 sl.13.
+   - Timing is ≤ 75 min, and spoken notes run ≤ 92 wpm (≤ 130 required).
+   - Exercises precede reveals except n9 and n10.
+   - Session 1 is dense (21 content slides in 69 min), but its wpm is low. If anything slips, the notes say what to
+     cut (`session1.ts:222`).
+2. **Technical correctness.**
+   - Component hierarchy, the 15288 element kinds, SBS vs WBS (except n13), logical vs physical, interface definition
+     and the three-step interface requirement are all correct and sourced.
+   - The N² construction and reading conventions are sound, the output-row convention is standard, and the source
+     gap is honestly stated (except n1).
+   - ICD content is a labeled course convention. Change control rests on DoD/SEBoK/MITRE, and the impact method is
+     labeled as the course's.
+   - Security and resilience are well sourced (R24/R25 exact), except M1 (the radio medium) and n2.
+3. **AeroLink.**
+   - Consistent with Weeks 1–4 by import. The 14 interfaces on the N² are right.
+   - IF-015 closes the INFO-006 route gap genuinely (removal test). Its decision rationale is miscounted (Mo1), and
+     the producing function is missing upstream (n5).
+   - IF-016 closes the EXT-004 row with a sound organizational interface.
+   - REQ-SYS-013..015 pass the Week 2 gates. The latency arithmetic is right but under-explained (Mo6). The coupling
+     counts are right (lesson wording n3).
+   - Figures were checked against captions, alt text and walks in 20 PNGs (Mo4, n7, n8, legibility).
+4. **Lab tool.** See §3. Real defects are rejected. Imports work both ways and the export is versioned. The tool
+   rejects valid input through unstated word minimums (M2).
+5. **Quiz.**
+   - Keys are balanced 3/3/3/3 with no run of three. Key length ranks are 3 each. No key is a 1.4× / 0.7× outlier.
+     The farthest-length option is the key 0/12. No grammar, article or absolute cues.
+   - All items are answerable from student-visible text. Contexts are unseen and not AeroLink.
+   - Residual soft cues: n20, n21.
+6. **Web.** No review codes, DECISION_LOG, "new-pending-review" or raw internal status in student pages or the tool
+   (only "pending faculty approval", as in earlier weeks). The student build check passes. Playwright is green (§7).
+   n12 is a leaked tooling phrase.
+
+## 3. Gate-table audit (26 hard gates, 8 advisories; `labBrief.ts:120–181`, enforced in `record.ts`)
+
+The student build strips only slide `notes` and `purpose` (`student-edition.ts:19–41`). Slide bodies, captions,
+alt text and the lesson are student-visible.
+
+| Gate | Code | Student-visible basis | Judgment |
+|---|---|---|---|
+| Component name (one word) | record.ts:354 | s1 lesson :71 | Justified |
+| Component parent | :355–356 | s1 :75; slide :334 | Justified (label n14) |
+| Component kind | :357 | s1 :71 | Justified |
+| Component responsibility ≥ 3 words | :358 | s1 :99 "in one sentence" | **Weak**: threshold not taught (M2) |
+| Card responsibility ≥ 3 words | :345 | s1 :99 | **Weak** (M2) |
+| Card owner | :347 | s1 :99; slide :458 | Justified |
+| Interface ends | :379–385 | s1 :108; R100 / R20c | Justified (ext–ext gap n17) |
+| Interface kind | :391 | s1 :110 (labeled convention) | Justified |
+| What crosses | :392 | s1 :175 (R13 p.563) | Justified |
+| Direction (not organizational) | :394–396 | s1 :154; slide :745 | Justified (course convention) |
+| Medium | :397 | s1 :122 | Justified |
+| Owner per side | :399 | s1 :99; s2 :56 | Justified |
+| Protection or reason (≥ 3 words) | :402 | s2 :86; slide :329 | Rule justified; **threshold unstated and contradicts the lecture** (M2) |
+| Degraded mode (≥ 5 words) | :404 | s2 :98; slide :385 | Rule justified; **threshold unstated; the slide's own "Fail safe" fails** (M2) |
+| One "shall" | :519 | Week 2 rule | Justified; the cited Week 5 section never states it (n14) |
+| Names its interface | :521 | s1 :175 | Justified |
+| Criterion ≥ 3 words | :523 | Week 2 rule | **Weak**: "2 min" fails (M2) |
+| Method | :525 | Week 2 rule | Justified |
+| Parent exists | :526–530 | Week 2 rule | Justified |
+| CR names an interface | :538 | s2 :70; slide :287 | Justified |
+| CR change ≥ 5 words | :540 | s2 :70 | **Weak** (M2) |
+| CR impact from N² | :542–545 | s2 :70 | Justified (basis wording n14) |
+| CR decision (≥ 3 words) and decider | :546 | slide :287 "the owners decide" | Decider justified; **decision threshold unstated** (M2) |
+| Part: externals (reason ≥ 5 words) | :637 | s1 :138 (R55 p.369) | Rule justified; **threshold unstated** (M2) |
+| Part: crossing flows / relays | :490–513, :638 | s1 :141 (R22 p.630) | Justified; hop order checked |
+| Part: ≥ 1 security-linked interface | :551–557, :687 | slide S2 sl.9 step "Link" | Adequate (always satisfiable from the Week 3 register) |
+
+The eight advisories are correctly non-blocking, and each reason given is valid. The `hidden-external` pattern is too
+narrow (M1).
+
+**Probe, accept direction (correct):**
+- organizational interface with no direction; two-way direction as text
+- media "Wi-Fi" and "SFTP over internet"; owner "Ops" (case and spacing normalized)
+- Unicode names; one-word "what crosses"
+- component ends; AI-001 resolved to its host; lower-case IDs on import
+- "SHALL", "shall not"; lower-case parent and impact IDs; a stakeholder requirement as impact; "ICWG" as decider
+- two-hop relay; reasons "none: same owner, private cable" and "No data cross"
+- the fixture reaches "ready"
+
+**Probe, reject direction (correct):**
+- same ends; AI end at its own host; unknown or hostless ends
+- missing kind, what-crosses, direction (physical and information), medium or owner
+- crossing with no protection and no reason; no degraded mode
+- two shalls or none; unknown interface; no method; unknown parent
+- change request with an unknown interface, no or unknown impact, or no decision or decider
+- removed relay or relay in the wrong order
+- external with no interface and no reason; no security-linked interface
+
+**Imports:**
+- The Week 4 importer accepts `week4-model-inputs` v1. It refuses `{}`, `[]`, a string, `null`, wrong format,
+  version 2, version "1", missing version, a Week 3 file, a Week 5 file, AeroLink (any case), no physical elements
+  and invalid JSON, each with an actionable message.
+- The Week 5 importer refuses a Week 4 file, `{}`, `[]`, version 2, version "1", interfaces given as an object, a
+  bad ID, and AeroLink.
+- The export carries `format: week5-model-inputs`, `version: 1`, and round-trips to "ready".
+
+**Probe, wrong outcomes:** all are listed in M2. Plus "None apply" for standards (n15) and owner text mismatch
+(n16).
+
+## 4. Citation spot-check (34 opened; full range check 368 / 368 in range)
+
+| # | Where | Claim | Source | Verdict |
+|---|---|---|---|---|
+| 1 | s1:60 | IM defines, controls, communicates; design through operations | R57 p.410 | exact paraphrase |
+| 2 | s1:60 | Uses of documented interface requirements | R47 p.140 | supported |
+| 3 | s1:71 | System element (15288) definition and kinds | R102 p.1643 | exact |
+| 4 | s1:71 | "one of the parts that make up a system"; complexity and specialist disciplines | R101 p.1467 | verbatim |
+| 5 | s1:75 | Layers; five plus or minus two a guideline | R20c p.597 | exact |
+| 6 | s1:84 | SBS (IEEE 1220 wording) | R103 p.1640 | exact |
+| 7 | s1:84 | WBS product-oriented, non-overlapping, dictionary, outcomes | R104 p.104 | supported (example n13) |
+| 8 | s1:86 | Logical vs physical configuration items | R19 p.571 | supported |
+| 9 | s1:86 | Physical architecture: elements, physical interfaces, externals | R20c p.597 | supported |
+| 10 | s1:99 | Roles, responsibilities, funding, scheduling | R47 p.139 | exact |
+| 11 | s1:108 | Shared boundary between two functional units | R100 p.1541 | exact |
+| 12 | s1:108 | Binds two elements; protocols, procedures, documents | R20c p.597 | exact |
+| 13 | s1:108 | Functional and physical connections at boundaries; many types | R57 p.411 | exact |
+| 14 | s1:110 | All three course kinds are physical in SEBoK's sense | R20c p.597 | supported inference, labeled |
+| 15 | s1:121 | Hidden externals via radio, satellite, outside network | R54 p.331 | exact (the case contradicts it: M1) |
+| 16 | s1:121, :138 | All external interfaces included; hidden external | R55 p.369 | exact |
+| 17 | s1:131 | N-squared after Grady; aggregates and order | R22 p.630 | exact |
+| 18 | s1:131 | Reorganize coupling matrix; locate faults | R22 p.631 | exact |
+| 19 | s1:131, :589 | No held source states the N² conventions | grep of all sources | accurate |
+| 20 | s1:141 | Every interface and interaction verified | R22 p.630 | exact |
+| 21 | s1:143, :178 | Aims: fewer interfaces, modularity, resilience | R20c p.599 | supported (applied wrongly: Mo1) |
+| 22 | s1:178 | Modularity practice; focus on interfaces | R20c p.603 | exact |
+| 23 | s1:152 | One consistent attribute framework incl. use; early | R57 p.413 | exact |
+| 24 | s1:152 | Outputs incl. ICDs | R57 p.411 | exact |
+| 25 | s1:175 | Interface requirement; three steps; ICD 123 quote | R13 p.563 | verbatim ("write last" a gloss) |
+| 26 | labBrief:154 | Criterion or TBD with owner | R13 p.565 | supported |
+| 27 | s2:53 | Identify / define / manage / ensure compliance; CM plan; iterative | R47 pp.138–139 | supported |
+| 28 | s2:56 | Governance; loosely coupled harder; ICWG sole purpose; IM plan | R57 pp.412, 414; R47 p.140 | exact |
+| 29 | s2:60 | Standards, SLAs; MOSA, insertion; enablers | R57 p.413; R47 p.139; R20c p.596 | exact |
+| 30 | s2:69 | Baseline snapshot; functional baseline incl. interfaces; deprecate prior versions | R36 pp.498–499; R57 p.414 | exact |
+| 31 | s2:85 | Only authorized interactions; alteration…destruction; adversity via connected systems | R25 pp.1229, 1231, 1234 | exact, each on the cited page |
+| 32 | s2:88 | Preserve integrity; constrain; boundary enforcement; domain separation; diversification; defense in depth; least privilege; loose coupling | R24 pp.1205–1207 | exact |
+| 33 | s2:97, :385 | Degrade gracefully; continue (fail-safe example); fail soft; loss dispersion and duration | R24 pp.1205, 1207; R25 p.1233 | supported (slide-face gloss n2) |
+| 34 | s2:146 | Parts, ports, interfaces, flows from slide 18 | R71 sl.18 | supported |
+
+R100–R104 (`_source_cache/verification/readings.py:200–204`; `readings_verified.txt:136–140`): the heading line is
+present on each cited page. The titles, source files and single-page ranges are sound.
+
+## 5. Quiz mechanics (recomputed independently)
+
+| Check | Result |
+|---|---|
+| Keys | a c b d a b d c b a d c: 3 each, no run of three |
+| Key length rank (1 = longest) | 2 4 1 3 4 2 1 3 4 1 2 3: three of each |
+| Key length vs mean of the others | 0.82–1.25: no 1.4× / 0.7× outlier |
+| Farthest-length option is the key | 0 / 12 |
+| Stem-word overlap | the key never has the most overlap |
+| Grammar, article, absolute, "all of the above" cues | none |
+| Answerable from student-visible text | 12 / 12 (three only by elimination: n21) |
+| Contexts | unseen, none AeroLink; Q3 and Q11 share the exercise's ferry domain (Mo3) |
+
+## 6. Recurring defect classes (Weeks 2, 3, 4, 8): repeated or not
+
+| Class (origin) | Week 5 |
+|---|---|
+| Tool rejects valid input by form or length (W2 M1, W4 M2, W4 N3) | **Repeated**: M2 |
+| Gap closure fails the course's own gates (W3 M2) | Not repeated: REQ-SYS-013..015 pass Week 2 gates (genuine test) |
+| Decision justified on the wrong data (W4 M1) | **Repeated in small form**: Mo1 |
+| Figure / alt text / walk disagree (W4 Mo1, N7) | **Partly repeated**: Mo4, n7, n8, legibility |
+| Gate basis only in stripped speaker notes (W4 N2) | Not repeated for the rules; the thresholds have no basis at all (M2) |
+| Quiz length / position cues (W3 m3, W4 Mo6, N5) | Not repeated; soft cues remain (n20) |
+| Source overstated (W3 note 2) | Not repeated for defense in depth; n2 (fail safe) is minor |
+| Direction / convention stated against the source (W8 M1) | N² convention correct; **the medium rule contradicts the cited source**: M1 |
+| Grading scales not comparable; missing exercise brief (W4 N6, Mo5) | **Repeated**: Mo3 |
+| Stale status text (W4 N4) | **Repeated**: n22 |
+| Unresolved upstream data (W4 N1) | Carried over and now load-bearing: n5 |
+
+## 7. Gates (run 2026-10-19 from `learning-studio/`; shared working tree with other agents' uncommitted Week 9/11/12 edits)
+
+| Gate | Result |
+|---|---|
+| `npx tsc -b` | exit 0 |
+| `npx oxlint src` | exit 0; warnings only, all pre-existing `only-export-components` in Week 3/4 figure files; **none in Week 5 files** |
+| `npx vitest run` (full, parallel) | 1826 / 1829. The 3 failures are `src/activities/week07` (2) and `week11` (1): a 30 s timeout, plus a cascade under load. Rerun alone: **104 / 104 pass**. Week 5 subset (case, timing, quiz, lab, record, tool DOM, exampleParts, `lectures.test.ts`, `content.test.ts`): **193 / 193** |
+| `npx vite build` | ✓ (chunk-size warning only) |
+| Student build (`vite build --mode student --outDir dist-student` + `scripts/check-student-build.mjs`) | **PASS**. The Week 5 instructor decks keep 23 / 19 notes slides (47,477 / 36,332 chars); the student decks are stripped |
+| Playwright `e2e/week5-flow.spec.ts` (workers = 1, lock `week05-reviewer`) | **6 / 6** (dashboard, walk, lab-tool import and export, archive, axe light and dark at 1440 and 400 px) |
+| Playwright `e2e/lectures-week5.spec.ts` (lectures config, port 5198) | **4 / 4** (viewer, axe every slide with notes light and dark: no violations; 400 px no horizontal scroll) |
+
+The dev server on 5173 was left running. The lock was created before the runs and deleted after them.
+
+## 8. Required for sign-off
+
+1. **M1.** Add the radio / outsider-reachable medium to the trust-boundary and hidden-external rule. Recompute the
+   counts, add authentication to IF-013, and widen the tool's advisory. Add tests.
+2. **M2.** Drop or relax the word-count minimums. State any that remain in the gate text. Add accept-direction tests
+   for "Fail safe", "Power only", "Approved", "2 min", "Charges aircraft" and "No arrangement yet". Correct the "by
+   construction" claim.
+3. **Mo1–Mo6.** Fix as described. Mo1, Mo2, Mo5 and Mo6 are text or data changes; Mo3 needs one brief and one
+   mapping; Mo4 is one figure plus a geometry test.
+4. **Minors** at the author's discretion. n1, n3, n4, n5, n12, n13 and n22 are one-line fixes.

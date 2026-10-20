@@ -200,9 +200,10 @@ export function checkSoi(model: EngineeringModel): CheckOut {
   const sentences = text.split(/[.!?](\s|$)/).filter((s) => s && s.trim().length > 0).length
   const rejected = String(ent.attributes?.rejectedBoundary ?? '').trim()
   const missing: string[] = []
-  if (words(text) < 8) missing.push('a boundary sentence of at least 8 words')
+  // gate sweep 2026-10-19: one sentence, not a length (was 8 words); a subject, a verb and an object
+  if (words(text) < 3) missing.push('a boundary sentence (at least a subject, a verb and an object)')
   else if (sentences > 1) missing.push('a single sentence (the boundary statement has more than one)')
-  if (words(rejected) < 5) missing.push('a rejected boundary and why')
+  if (words(rejected) < 1) missing.push('a rejected boundary and why')
   if (ownerProblem(ent.owner ?? '') && ent.provenance !== 'official-S04' && ent.provenance !== 'instructor-reference') missing.push('owner initials')
   return missing.length ? { ok: false, detail: `${ent.id}: still needs ${missing.join('; ')}.` } : { ok: true, detail: `${ent.id} recorded with a rejected boundary.` }
 }
@@ -216,9 +217,9 @@ export function checkContext(model: EngineeringModel): CheckOut {
   const ext = model.elements.filter((e) => e.kind === 'EXT' && e.status === 'active')
   const labelled = ext.filter((e) => String(e.attributes?.exchange ?? '').trim() || (e.text ?? '').trim())
   const owned = labelled.filter((e) => !ownerProblem(e.owner ?? '') || e.provenance === 'instructor-reference' || e.provenance === 'official-S04')
-  if (owned.length >= MIN_EXT) return { ok: true, detail: `${owned.length} external systems with labelled exchanges.` }
+  if (owned.length >= MIN_EXT) return { ok: true, detail: `${owned.length} external systems with labeled exchanges.` }
   const notes = []
-  if (ext.length > labelled.length) notes.push(`${ext.length - labelled.length} without a labelled exchange`)
+  if (ext.length > labelled.length) notes.push(`${ext.length - labelled.length} without a labeled exchange`)
   if (labelled.length > owned.length) notes.push(`${labelled.length - owned.length} without owner initials`)
   return { ok: false, detail: `${owned.length} of ${MIN_EXT} complete${notes.length ? ` (${notes.join(', ')})` : ''}.` }
 }
@@ -234,12 +235,12 @@ export function checkTwoLoops(loops: StudentLoop[]): CheckOut {
 
 /** L1 step 4 (completeness only; the causal argument itself is read against RB-1.4). */
 export function checkEmergent(rec: L1Record, loops: StudentLoop[], runs: { scenario: string }[]): CheckOut {
-  if (!rec.behaviour) return { ok: false, detail: 'Choose the behaviour you will explain.' }
+  if (!rec.behaviour) return { ok: false, detail: 'Choose the behavior you will explain.' }
   const want = BEHAVIOUR_SCENARIO[rec.behaviour]
   const missing: string[] = []
   if (!runs.some((r) => r.scenario === want.scenario)) missing.push(`reproduce it in the Dynamics view (run “${want.scenario === 'delay' ? 'Long procurement delay' : 'Fleet grows, charging does not'}”)`)
   if (words(rec.explanation) < MIN_EXPLANATION_WORDS) missing.push(`an explanation of at least ${MIN_EXPLANATION_WORDS} words (${words(rec.explanation)} so far)`)
-  if (loopsMentioned(rec.explanation, loops).length < 2) missing.push('name at least two loops (e.g. R1, B2 or your own LOOP IDs) — the behaviour must not be attributable to a single element')
+  if (loopsMentioned(rec.explanation, loops).length < 2) missing.push('name at least two loops (e.g. R1, B2 or your own LOOP IDs) — the behavior must not be attributable to a single element')
   return missing.length ? { ok: false, detail: `Still needs: ${missing.join('; ')}.` } : { ok: true, detail: 'Complete; the causal argument is read against RB-1.4.' }
 }
 
@@ -249,8 +250,9 @@ export function checkCharter(rec: L1Record): CheckOut {
   const unassigned = roles.filter((r) => ownerProblem(rec.roles[r] ?? ''))
   const missing: string[] = []
   if (unassigned.length) missing.push(`initials for ${unassigned.join(', ')}`)
-  if (words(rec.decisionRules) < 5) missing.push('decision rules')
-  if (words(rec.norms) < 5) missing.push('communication norms')
+  if (words(rec.decisionRules) < 1) missing.push('decision rules')
+  if (words(rec.norms) < 1) missing.push('communication norms')
+
   if (!/[A-Z]{2,5}/.test(rec.prefixes)) missing.push('each member’s owned ID prefixes')
   return missing.length ? { ok: false, detail: `Still needs ${missing.join('; ')}.` } : { ok: true, detail: 'Roles, decision rules, norms and owned prefixes recorded.' }
 }

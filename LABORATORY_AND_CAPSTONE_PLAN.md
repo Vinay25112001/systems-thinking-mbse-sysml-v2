@@ -1,5 +1,10 @@
 # Laboratory and Capstone Plan
 
+> **Schedule superseded (2026-10-18).** The week sequence in this plan (labs L1–L13 and checkpoints CP1–CP5 by week) is
+> superseded by `COURSE_SCHEDULE.md`, the authoritative faculty schedule (DECISION_LOG A19): team outputs are the
+> Systems Thinking Engineering Package (Week 7) and the SysML v2 enterprise model (Week 14). The text below is kept
+> unchanged as reviewed source material.
+
 **Status:** PROPOSAL, **revision 1**, 2026-10-09, after external review round 1. Not approved.
 
 **Changes in revision 1:**

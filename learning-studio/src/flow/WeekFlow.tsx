@@ -16,11 +16,14 @@ import { FlowProvider, useFlow } from './state'
 import { readPrediction } from './storage'
 
 function FlowBody({ stage, section }: { stage: Stage; section?: string }) {
-  const { allRead, state } = useFlow()
+  const { allRead, state, patch } = useFlow()
   const { instructor, quiz } = useApp()
   const w = WEEKS[0]
-  const workbench = stage === 'practice' && (allRead || instructor) && !!state.practiceStarted
+  const workbench = stage === 'practice' && (allRead || instructor) && !!state.practiceStarted && !state.practiceGuide
   const quizDone = WEEK1_QUIZ.every((q) => quiz[q.id])
+  useEffect(() => {
+    if (stage === 'check' && !state.checkVisited) patch('checkVisited', true)
+  }, [stage, state.checkVisited, patch])
   useEffect(() => {
     const s = LEARN_SECTIONS.find((x) => x.id === section)
     const label = STAGES.find((x) => x.id === stage)!.label
@@ -39,7 +42,7 @@ function FlowBody({ stage, section }: { stage: Stage; section?: string }) {
           </Link>
         }
       >
-        <StageBar current={stage} done={{ overview: !!readPrediction(), learn: allRead, check: quizDone }} locked={{ practice: !allRead && !instructor }} />
+        <StageBar current={stage} done={{ overview: !!readPrediction(), learn: allRead, check: quizDone && !!state.checkVisited }} locked={{ practice: !allRead && !instructor }} />
       </TopBar>
       <main id="lf-main" tabIndex={-1} className={`lf-main${workbench ? ' is-workbench' : ''}`}>
         {stage === 'overview' && <Overview />}

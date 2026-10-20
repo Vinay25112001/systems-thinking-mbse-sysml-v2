@@ -1,6 +1,7 @@
 import { CausalLoopDiagram } from '../components/CausalLoopDiagram'
 import { DynamicsExplorer } from '../components/DynamicsExplorer'
 import { BoundaryExercise, PrinciplesExplorer } from '../components/Week1Exercises'
+import { NeedCheckActivity, StakeholderActivity } from '../workbench/week1/ClassicActivities'
 
 function AeroLinkDynamics() {
   return (
@@ -17,4 +18,6 @@ export const ACTIVITIES = {
   'principles-explorer': PrinciplesExplorer,
   'aerolink-dynamics': AeroLinkDynamics,
   'boundary-exercise': BoundaryExercise,
+  'w01-stakeholder-exercise': StakeholderActivity,
+  'w01-need-check': NeedCheckActivity,
 }

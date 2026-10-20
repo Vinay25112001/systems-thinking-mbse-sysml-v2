@@ -32,6 +32,8 @@ import { PanelHeader, Tip } from './ui'
 import { VIEW_REGISTRY, WEEK_UI } from './views'
 import { WorkbenchProvider } from './WorkbenchProvider'
 import { cycleRegion } from './regions'
+import { PracticeBar } from './shell/PracticeBar'
+import { usePracticeLinks } from './learnLink'
 
 // Drawers and dialogs that read every week's content load on first open (code split; WORKBENCH_SPEC §7.17).
 const ReferenceDrawer = lazy(() => import('./shell/ReferenceDrawer'))
@@ -138,8 +140,8 @@ function SettingsMenu({ onShortcuts }: { onShortcuts: () => void }) {
           aria-label="Settings"
         >
           <label className="row">
-            <span>Colour theme</span>
-            <select aria-label="Colour theme" className="wb-select" value={theme} onChange={(e) => setTheme(e.target.value as ThemePref)}>
+            <span>Color theme</span>
+            <select aria-label="Color theme" className="wb-select" value={theme} onChange={(e) => setTheme(e.target.value as ThemePref)}>
               <option value="system">System</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
@@ -183,22 +185,25 @@ function TopBar({ onShortcuts, embedded = false }: { onShortcuts: () => void; em
     focusRegion('dock')
   }
   const exportAll = () => {
-    const data = { exported: new Date().toISOString(), week: wb.week, note: 'AeroLink Workbench export. All AeroLink values are FICTIONAL.', model, artefacts: wb.state.artefacts, missionProgress: wb.progress }
+    // practice only: the team's Week 1 record (w1.team) is not part of the practice export; it is exported from My Project
+    // or the lab tool (architecture §6.6, change C9)
+    const practiceArtefacts = Object.fromEntries(Object.entries(wb.state.artefacts).filter(([k]) => k !== 'w1.team' && k !== 'w1.team.previous'))
+    const data = { exported: new Date().toISOString(), week: wb.week, note: 'Practice workbench export. All AeroLink values are FICTIONAL.', model, artefacts: practiceArtefacts, missionProgress: wb.progress }
     const ok = downloadText(`aerolink-week${wb.week}-workbench.json`, JSON.stringify(data, null, 2), 'application/json')
     wb.log('export', ok ? `Exported the Week ${wb.week} workbench state (model, artefacts, mission progress)` : 'Export failed: downloads are blocked in this browser')
   }
   return (
     <header className="wb-topbar wb-region" data-wb-region="topbar" data-wb-always-visible="true" tabIndex={-1} aria-label="Top bar">
       {embedded ? (
-        <span className="wb-brand">Practice · AeroLink Workbench</span>
+        <span className="wb-brand">Practice workbench</span>
       ) : (
-        <Link to="/" className="wb-brand no-underline" style={{ color: 'inherit' }} aria-label="AeroLink Workbench — dashboard">
-          AeroLink Workbench
+        <Link to="/" className="wb-brand no-underline" style={{ color: 'inherit' }} aria-label="Practice workbench — dashboard">
+          Practice workbench
         </Link>
       )}
       <Tip label={mission ? `${weekTitle} ▸ ${mission.title}` : weekTitle}>
         <span className="wb-crumb min-w-0 flex-1" data-testid="breadcrumb">
-          <span className="wb-hide-medium flex-none">AeroLink</span>
+          <span className="wb-hide-medium flex-none">{mission?.kind === 'own' ? 'Studio · your team’s enterprise' : 'AeroLink worked example'}</span>
           <span className="sep wb-hide-medium" aria-hidden>
             ▸
           </span>
@@ -337,7 +342,7 @@ function CentreViews() {
   return (
     <Tabs.Root value={wb.view} onValueChange={wb.setView} className="wb-pane" data-testid="centre">
       <div className="wb-tabs">
-        <Tabs.List className="flex min-w-0" aria-label="Centre views">
+        <Tabs.List className="flex min-w-0" aria-label="Center views">
           {primary.map((id) => {
             const v = VIEW_REGISTRY[id]
             const Icon = v.icon
@@ -515,7 +520,7 @@ function CentreColumn() {
   return (
     <Group orientation="vertical" id="wb2-centre" elementRef={group} defaultLayout={layout.defaultLayout} onLayoutChanged={layout.onLayoutChanged}>
       <Panel id="wbp-view" minSize="30%">
-        <Region name="view" label="Centre view">
+        <Region name="view" label="Center view">
           <CentreViews />
         </Region>
       </Panel>
@@ -536,13 +541,15 @@ function CentreColumn() {
 function BriefPane() {
   const wb = useWorkbench()
   const done = wb.evals.filter((x) => x.complete).length
+  const partsLabel = usePracticeLinks()?.partsLabel
+  const parts = wb.evals.length === 1 ? partsLabel : undefined
+  const partsDone = wb.evals[0]?.done ?? 0
+  const partsTotal = wb.evals[0]?.total ?? 0
   return (
     <Region name="brief" label="Mission brief">
       <div className="wb-pane bg-wb-sunk">
-        <PanelHeader title="Mission brief" icon={<Target size={13} aria-hidden />}>
-          <span className="wb-count">
-            {done}/{wb.evals.length} missions
-          </span>
+        <PanelHeader title={parts ? parts : 'Mission brief'} icon={<Target size={13} aria-hidden />}>
+          <span className="wb-count">{parts ? `${partsDone}/${partsTotal} steps` : `${done}/${wb.evals.length} missions`}</span>
         </PanelHeader>
         <div className="wb-scroll">
           <MissionBrief />
@@ -720,7 +727,7 @@ function NarrowLayout() {
           </Region>
         </Tabs.Content>
         <Tabs.Content value="view" className="h-full">
-          <Region name="view" label="Centre view">
+          <Region name="view" label="Center view">
             <CentreViews />
           </Region>
         </Tabs.Content>
@@ -813,9 +820,10 @@ function ShellBody({ embedded = false }: { embedded?: boolean }) {
   return (
     <div className={`wb-root${embedded ? ' wb-embedded' : ''}`} data-testid="workbench">
       <a href="#wb-main-region" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-wb-panel focus:px-3 focus:py-2" onClick={(e) => (e.preventDefault(), focusRegion('view'))}>
-        Skip to the centre view
+        Skip to the center view
       </a>
       <TopBar onShortcuts={() => setShortcuts(true)} embedded={embedded} />
+      {embedded && <PracticeBar />}
       {instructor && !embedded && (
         <div className="flex-none border-b border-wb-line bg-wb-warn-soft px-3 py-1 text-[12px] text-wb-warn" role="status">
           Instructor review mode: provenance, review controls and instructor notes (Assessments) are visible. Reviews are stored in this browser only.
@@ -849,8 +857,15 @@ function ShellBody({ embedded = false }: { embedded?: boolean }) {
 /** `embedded`: the shell is the Practice stage of a book-style week; the flow's own top bar carries the brand, theme,
  *  instructor mode and week navigation, so the shell drops them and fills its parent instead of the viewport. */
 export function WorkbenchShell({ week, embedded = false }: { week: number; embedded?: boolean }) {
-  const def = workbenchWeek(week)
+  const all = workbenchWeek(week)
   const ui = WEEK_UI[week]
+  // the lecture-first path shows only the missions its page is for (sign-off Mo3: the lab tool shows the Team Record)
+  const only = usePracticeLinks()?.missions
+  const def = useMemo(() => {
+    if (!all || !only) return all
+    const missions = all.missions.filter((m) => only.includes(m.id))
+    return missions.length ? { ...all, missions } : all
+  }, [all, only])
   const ok = useMemo(() => !!def && !!ui, [def, ui])
   if (!ok) return <p>Week {week} is not converted to the workbench.</p>
   return (

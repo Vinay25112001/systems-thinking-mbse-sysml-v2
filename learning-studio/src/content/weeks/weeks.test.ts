@@ -1,7 +1,11 @@
 // Definition-of-done tests for every authored week module (src/content/weeks/weekNN.ts).
 // Structural checks must always pass; "complete" additionally requires an independent review (schema.ts).
+// Modules are numbered by the earlier outline (draftWeeks.ts) and are checked against the objectives they were written for;
+// under the A19 schedule only Week 1 is live, and since its rebuild (2026-10-18) its module is written for the course.ts
+// Week 1 objectives, not for the archived draft outline (asserted below).
 import { describe, expect, it } from 'vitest'
-import { WEEKS, weekByNumber } from '../course'
+import { WEEKS } from '../course'
+import { draftWeekByNumber } from '../draftWeeks'
 import { citationInRange, getReading, type Citation } from '../readings'
 import { RUBRIC_IDS } from '../rubrics'
 import { weekChecks, type WeekContent } from '../schema'
@@ -14,7 +18,7 @@ const authored = Object.values(WEEK_CONTENT).sort((a, b) => a.week - b.week)
 function citationsOf(c: WeekContent): Citation[] {
   return [
     ...c.blocks.flatMap((b) => [...b.citations, ...(b.quote ? [b.quote.cite] : [])]),
-    ...c.quiz.map((q) => q.cite),
+    ...c.quiz.flatMap((q) => (q.cite ? [q.cite] : [])),
     ...c.instructorNotes.misconceptions.flatMap((m) => (m.cite ? [m.cite] : [])),
     ...c.references,
   ]
@@ -23,6 +27,13 @@ function citationsOf(c: WeekContent): Citation[] {
 describe('week modules', () => {
   it('Week 1 is authored', () => {
     expect(WEEK_CONTENT[1]).toBeDefined()
+  })
+
+  it('the rebuilt Week 1 module is written for the course.ts Week 1 objectives, which differ from the archived draft ones', () => {
+    expect(WEEKS[0].objectives.map((o) => o.id)).toEqual(['B1.1', 'B1.2', 'B1.3', 'B1.4', 'B1.5'])
+    expect(WEEKS[0].objectives).not.toEqual(draftWeekByNumber(1)!.objectives)
+    const used = new Set([...WEEK_CONTENT[1].quiz.map((q) => q.objective), ...WEEK_CONTENT[1].lab.objectives, ...WEEK_CONTENT[1].assignment.objectives])
+    for (const o of WEEKS[0].objectives) expect(used.has(o.id), o.id).toBe(true)
   })
 
   it('block, quiz and activity IDs are unique across the whole course', () => {
@@ -37,10 +48,12 @@ describe('week modules', () => {
 
   for (const c of authored) {
     describe(`Week ${c.week}`, () => {
-      const w = weekByNumber(c.week)!
+      const w = c.week === 1 ? WEEKS[0] : draftWeekByNumber(c.week)!
       const objectiveIds = w.objectives.map((o) => o.id)
 
       it('passes every structural definition-of-done check', () => {
+        // Week 1's workload now equals the syllabus estimate (8.0 h, lecture-first path; sign-off Mo4), so its workload
+        // check runs like every other week's (the FD-29 exemption is removed)
         const failed = weekChecks(c, objectiveIds, RUBRIC_IDS, ACTIVITY_KEYS).filter((k) => !k.ok && k.id !== 'review')
         expect(failed.map((k) => `${k.id}: ${k.label}${k.detail ? ` (${k.detail})` : ''}`)).toEqual([])
       })

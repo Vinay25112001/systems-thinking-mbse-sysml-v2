@@ -3,7 +3,7 @@
 import { useId, useState } from 'react'
 import { resolveBullet } from '../../content/learn/resolve'
 import { LOOP_LINKS } from '../../content/causalLoops'
-import { CHARGE_CAP_6, F4_ALONE, F4_DELIVERED, F4_FLEET, F4_PER_AIRCRAFT_DAY } from '../../content/learn/week01'
+import { CHARGE_CAP_6, F4_ALONE, F4_DELIVERED, F4_FLEET, F4_PER_AIRCRAFT_DAY } from '../../content/learn/dynamicsNumbers'
 import { REFERENCE_BY_WEEK } from '../../model/reference'
 import { DEFAULT_PARAMS, simulate } from '../../sim/aerolink'
 import { Box, Markers } from './Frame'
@@ -70,7 +70,8 @@ const wrap = (name: string, max = 17) =>
     return lines
   }, [])
 
-export function OpenSystemFigure({ alt }: { alt: string }) {
+/** `showState`: the small state panel from the dynamics explorer (off when the figure is used for context only). */
+export function OpenSystemFigure({ alt, showState = true }: { alt: string; showState?: boolean }) {
   const id = useId().replace(/:/g, '')
   const ext = REFERENCE_BY_WEEK[1].elements.filter((e) => e.kind === 'EXT')
   const start = simulate({ ...DEFAULT_PARAMS, months: 0 })[0]
@@ -84,7 +85,7 @@ export function OpenSystemFigure({ alt }: { alt: string }) {
       {/* the boundary */}
       <rect x={250} y={24} width={260} height={276} rx={28} className="f-boundary" />
       <text x={380} y={48} textAnchor="middle" fontSize={14} fontWeight={600} className="f-accent-ink">
-        AeroLink service enterprise
+        AeroLink air-taxi service
       </text>
       <text x={380} y={66} textAnchor="middle" fontSize={12} className="f-muted">
         boundary (system of interest)
@@ -92,7 +93,7 @@ export function OpenSystemFigure({ alt }: { alt: string }) {
       {/* elements and the links between them: demand → operations centre → fleet → chargers */}
       <Box x={272} y={80} w={96} h={44} lines={['Fleet']} tone="soft" />
       <Box x={392} y={80} w={96} h={44} lines={['Vertiports', '& chargers']} tone="soft" size={13} />
-      <Box x={272} y={148} w={96} h={44} lines={['Operations', 'centre']} tone="soft" size={13} />
+      <Box x={272} y={148} w={96} h={44} lines={['Operations', 'center']} tone="soft" size={13} />
       <Box x={392} y={148} w={96} h={44} lines={['Passenger', 'demand']} tone="soft" size={13} />
       <line x1={391} y1={170} x2={370} y2={170} className="f-arrow" markerEnd={`url(#${id}-ink)`} />
       <line x1={320} y1={147} x2={320} y2={126} className="f-arrow" markerEnd={`url(#${id}-ink)`} />
@@ -101,6 +102,7 @@ export function OpenSystemFigure({ alt }: { alt: string }) {
         elements interact
       </text>
       {/* state panel */}
+      {showState && (
       <g>
         <rect x={272} y={226} width={216} height={60} rx={6} className="f-panel" />
         <text x={284} y={244} fontSize={12} fontWeight={600} className="f-ink">
@@ -113,6 +115,7 @@ export function OpenSystemFigure({ alt }: { alt: string }) {
           Waiting time {start.waitMin.toFixed(1)} min
         </text>
       </g>
+      )}
       {[left, right].map((side, s) =>
         side.map((e, i) => {
           const x = s === 0 ? 8 : 760 - 8 - W
@@ -194,10 +197,10 @@ export function BoundaryLayers({ alt }: { alt: string }) {
             turnaround · seats · range
           </text>
           <text x={380} y={244} textAnchor="middle" fontSize={12} className="f-ink">
-            fleet size · dispatch · schedule · utilisation
+            fleet size · dispatch · schedule · utilization
           </text>
           <text x={380} y={288} textAnchor="middle" fontSize={12} className="f-ink">
-            vertiports & charging · operations centre · demand
+            vertiports & charging · operations center · demand
           </text>
           {/* the waiting-time token: outside A, straddling B (its charging cause outside), inside C */}
           <g>
@@ -233,7 +236,7 @@ export function DownAndUp({ alt }: { alt: string }) {
       <line x1={380} x2={380} y1={10} y2={290} className="f-divider" />
       {/* analysis tree */}
       <Box x={95} y={44} w={190} h={46} lines={['AeroLink service', 'enterprise']} tone="soft" size={13} bold />
-      {[['Fleet'], ['Chargers'], ['Operations', 'centre']].map((l, i) => (
+      {[['Fleet'], ['Chargers'], ['Operations', 'center']].map((l, i) => (
         <g key={i}>
           <line x1={190} y1={90} x2={60 + i * 130} y2={168} className="f-arrow" markerEnd={`url(#${id}-ink)`} />
           <Box x={10 + i * 130} y={170} w={100} h={46} lines={l} size={13} />
@@ -309,7 +312,7 @@ const LP_NODES: Record<string, { x: number; y: number; w: number; lines: string[
   adoption: { x: 40, y: 150, w: 140, lines: ['Word-of-mouth', 'adoption'] },
   riders: { x: 250, y: 150, w: 110, lines: ['Riders'] },
   demand: { x: 330, y: 30, w: 120, lines: ['Trip demand'] },
-  util: { x: 580, y: 30, w: 120, lines: ['Utilisation'] },
+  util: { x: 580, y: 30, w: 120, lines: ['Utilization'] },
   wait: { x: 580, y: 270, w: 120, lines: ['Waiting time'] },
   attract: { x: 330, y: 270, w: 140, lines: ['Service', 'attractiveness'] },
 }
@@ -377,7 +380,7 @@ export function ControlHierarchy({ alt }: { alt: string }) {
     <svg viewBox="0 0 420 270" className="lf-svg lf-svg-narrow" role="img" aria-label={alt}>
       <Markers id={id} />
       <Box x={110} y={10} w={200} h={46} lines={['Airspace authority']} size={14} bold />
-      <Box x={110} y={112} w={200} h={46} lines={['Operations centre']} tone="soft" size={14} bold />
+      <Box x={110} y={112} w={200} h={46} lines={['Operations center']} tone="soft" size={14} bold />
       <Box x={110} y={214} w={200} h={46} lines={['Dispatch']} tone="soft" size={14} bold />
       <line x1={210} y1={56} x2={210} y2={110} className="f-arrow" markerEnd={`url(#${id}-ink)`} />
       <text x={222} y={88} fontSize={13} className="f-edge-label">

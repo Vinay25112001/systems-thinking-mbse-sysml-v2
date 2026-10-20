@@ -80,7 +80,7 @@ const ARCHETYPE_FEEDBACK: Record<string, Partial<Record<string, Verdict>>> = {
   },
   delay: {
     'Balancing Process with Delay': { verdict: 'match', note: 'Delay in the response to ordering makes the ordering rule over-correct: the fleet over-builds.' },
-    'Limits to Growth': { verdict: 'partial', note: 'Riders do approach the market limit (about 91 % by month 60), but the behaviour this run isolates is the fleet over-build caused by the delivery delay.' },
+    'Limits to Growth': { verdict: 'partial', note: 'Riders do approach the market limit (about 91 % by month 60), but the behavior this run isolates is the fleet over-build caused by the delivery delay.' },
   },
   balanced: {
     'Limits to Growth': { verdict: 'match', note: 'Word of mouth (R1) meets market saturation (B4): the limit is now the market, not capacity (compare quiz item q1-5).' },
@@ -121,10 +121,10 @@ const CHARTS: { title: string; lines: Series[] }[] = [
     ],
   },
   {
-    title: 'Waiting time (min) and utilisation (%)',
+    title: 'Waiting time (min) and utilization (%)',
     lines: [
       { k: 'wait', n: 'Wait (min)', c: '#be123c' },
-      { k: 'util', n: 'Utilisation (%)', c: '#475569', dash: DASH.dash },
+      { k: 'util', n: 'Utilization (%)', c: '#475569', dash: DASH.dash },
     ],
   },
 ]
@@ -270,11 +270,11 @@ export function DynamicsExplorer() {
         <Slider label="Procurement delay" unit="months" value={params.procurementDelayMonths} min={0} max={24} step={1} onChange={(v) => set('procurementDelayMonths', v)} />
         <Slider label="Initial chargers" value={params.chargers} min={2} max={24} step={1} onChange={(v) => set('chargers', v)} />
         <Slider label="Word-of-mouth rate" unit="/month" value={params.wordOfMouth} min={0.05} max={0.6} step={0.05} onChange={(v) => set('wordOfMouth', v)} />
-        <Slider label="Target utilisation" value={params.targetUtilisation} min={0.5} max={0.95} step={0.05} onChange={(v) => set('targetUtilisation', v)} />
+        <Slider label="Target utilization" value={params.targetUtilisation} min={0.5} max={0.95} step={0.05} onChange={(v) => set('targetUtilisation', v)} />
         <Slider label="Months simulated" unit="months" value={params.months} min={36} max={120} step={12} onChange={(v) => set('months', v)} />
         <div className="space-y-1">
           <Toggle checked={params.expandFleet} onChange={(v) => set('expandFleet', v)}>
-            Management orders aircraft when utilisation is high
+            Management orders aircraft when utilization is high
           </Toggle>
           <Toggle checked={params.investInCharging} onChange={(v) => set('investInCharging', v)}>
             Chargers scale with the fleet
@@ -320,7 +320,7 @@ export function DynamicsExplorer() {
             Binding constraint: <strong>{REGIME_TEXT[end.bottleneck]}</strong>
           </li>
           <li>
-            Trips served: {fmt(end.served)} of {fmt(end.capacity)} capacity ({Math.round(100 * end.utilisation)}% utilisation). Capacity is set by the {end.limitingResource === 'charging' ? 'chargers' : 'fleet'}: fleet {Math.round(100 * end.fleetUtilisation)}% used, chargers {Math.round(100 * end.chargingUtilisation)}% used.
+            Trips served: {fmt(end.served)} of {fmt(end.capacity)} capacity ({Math.round(100 * end.utilisation)}% utilization). Capacity is set by the {end.limitingResource === 'charging' ? 'chargers' : 'fleet'}: fleet {Math.round(100 * end.fleetUtilisation)}% used, chargers {Math.round(100 * end.chargingUtilisation)}% used.
           </li>
           <li>
             Average wait: {end.waitMin.toFixed(1)} min (riders’ tolerance {params.waitToleranceMin} min)
@@ -336,7 +336,7 @@ export function DynamicsExplorer() {
           </li>
         </ul>
         <p className={`mt-2 text-xs ${muted}`}>
-          Instructor-authored teaching model (src/sim/aerolink.ts). Every behaviour the lesson claims is asserted by an automated test against a counterfactual run (src/sim/aerolink.test.ts). Not a forecast of any real operation.
+          Instructor-authored teaching model (src/sim/aerolink.ts). Every behavior the lesson claims is asserted by an automated test against a counterfactual run (src/sim/aerolink.test.ts). Not a forecast of any real operation.
         </p>
       </div>
 
@@ -356,7 +356,7 @@ export function DynamicsExplorer() {
             <caption className={`mb-1 text-left text-xs ${muted}`} style={wb ? { fontFamily: 'var(--wb-body)' } : undefined}>Simulated values by month for the current settings (FICTIONAL parameters)</caption>
             <thead>
               <tr className="border-b border-slate-300 dark:border-slate-700">
-                {['Month', 'Riders', 'Trips demanded', 'Trips served', 'Fleet capacity', 'Charging capacity', 'Aircraft', 'On order', 'Chargers', 'Wait (min)', 'Utilisation', 'Binding constraint', 'Surplus aircraft'].map((h) => (
+                {['Month', 'Riders', 'Trips demanded', 'Trips served', 'Fleet capacity', 'Charging capacity', 'Aircraft', 'On order', 'Chargers', 'Wait (min)', 'Utilization', 'Binding constraint', 'Surplus aircraft'].map((h) => (
                   <th key={h} scope="col" className="px-1.5 py-1 font-semibold">
                     {h}
                   </th>

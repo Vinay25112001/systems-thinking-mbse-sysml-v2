@@ -1,7 +1,7 @@
 // Flow storage helpers shared with the workbench and the dashboard (guarded localStorage).
 import { loadJSON, saveJSON } from '../lib/storage'
 
-export const FLOW_KEY = 'w1-flow'
+export const FLOW_KEY = 'w1-flow-v2'
 
 /** A section-check record (see state.tsx). `firstCorrect` is the first attempt, used for objective status. */
 export type CheckRecord = { selected: string; correct: boolean; attempts: number; firstCorrect?: boolean; retrying?: boolean }
@@ -10,7 +10,7 @@ export const firstAttemptCorrect = (r: CheckRecord | undefined): boolean | undef
 
 // ------------------------------------------------------------------------------------------- shared with the workbench
 /** The opener's prediction is stored under mission w1-m1-try, step `predict` (design D3), so the mission finds it done. */
-export const PREDICTION_MISSION = 'w1-m1-try'
+export const PREDICTION_MISSION = 'w1-m1-who'
 type StoredProgress = Record<string, { answers?: Record<string, { value: string; at: number }> } & Record<string, unknown>>
 
 export function readPrediction(): { value: string; at: number } | undefined {

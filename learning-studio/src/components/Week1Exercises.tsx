@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BOUNDARY_ITEMS, PRINCIPLES, WEEK1_INTRO, type BoundaryClass } from '../content/week1'
+import { BOUNDARY_ITEMS, BOUNDARY_QUESTION, PRINCIPLES, type BoundaryClass } from '../content/week1'
 import { useApp } from '../state/AppState'
 import { useMissionSignal } from '../workbench/signals'
 import { SIG_BOUNDARY } from '../workbench/week1/logic'
@@ -46,7 +46,7 @@ export function BoundaryExercise() {
   return (
     <div data-testid="boundary-exercise">
       <p className={wb ? 'm-0 text-[13px]' : 'text-sm'}>
-        Question: <em>{WEEK1_INTRO.question.split('.')[0]}.</em> System of interest: the AeroLink service enterprise. Classify each candidate element.
+        Question: <em>{BOUNDARY_QUESTION}</em> System of interest: the AeroLink air-taxi service. Classify each candidate element.
       </p>
       <table className={wb ? 'wb-table mt-3' : 'mt-3 w-full text-left text-sm'}>
         <thead>
@@ -106,7 +106,7 @@ export function BoundaryExercise() {
         )}
       </div>
       <p className={wb ? 'mt-2 mb-0 text-[12px] text-wb-muted' : 'mt-2 text-xs text-slate-500 dark:text-slate-400'}>
-        The key is instructor-authored and debatable by design: a well-argued different boundary can be valid. Record your reasoning in the L1 lab record.
+        The key is instructor-authored and debatable by design: a well-argued different boundary can be valid. Your team’s own system of interest and boundary go in its enterprise proposal.
       </p>
     </div>
   )

@@ -70,12 +70,12 @@ function Emergent() {
   return (
     <section aria-labelledby="l1-emergent-h" className="rounded border border-wb-line bg-wb-panel">
       <div className="wb-ph">
-        <h2 id="l1-emergent-h">Emergent behaviour (L1 step 4)</h2>
+        <h2 id="l1-emergent-h">Emergent behavior (L1 step 4)</h2>
       </div>
       <div className="space-y-2 p-3">
         <p className="text-[12px] text-wb-muted">{week01.lab.steps[3].detail}</p>
         <fieldset className="flex flex-wrap gap-4 border-0 p-0">
-          <legend className="wb-label">Behaviour</legend>
+          <legend className="wb-label">Behavior</legend>
           {(Object.keys(BEHAVIOUR_SCENARIO) as ('plateau' | 'overbuild')[]).map((k) => (
             <label key={k} className="flex items-center gap-1.5">
               <input type="radio" name={`${id}-b`} checked={rec.behaviour === k} onChange={() => patch({ behaviour: k })} />

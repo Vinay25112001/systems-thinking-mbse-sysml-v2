@@ -31,13 +31,31 @@ def norm(s):
     return re.sub(r'\W+', ' ', s).lower().strip()
 
 
+def heading(title, text):
+    """Return True if the title is a heading on the page: a whole line, or two or three consecutive lines
+    joined (a heading wrapped over lines), whose normalised text equals the normalised title."""
+    t = norm(title)
+    ls = [norm(x) for x in text.split('\n')]
+    ls = [x for x in ls if x]
+    return any(' '.join(ls[i:i + k]) == t for k in (1, 2, 3) for i in range(len(ls)))
+
+
 lines, ok = [], 0
 for rid, src, fname, first, last, title, level in mod.R:
+    # A glossary page holds several entries and its running header names only the first, so a substring match
+    # could hit the header, a cross-reference or a longer term ('Subsystem (glossary)' contains 'system glossary').
+    # A '(glossary)' title therefore counts only as an entry heading line; other titles may also match in text.
+    gloss = title.endswith('(glossary)')
     if not title:
         where = 'RANGE ONLY (not verified)'
-    elif norm(title) in norm(body(fname, first)):
-        where = 'title found on first page'
+    elif heading(title, body(fname, first)):
+        where = 'title found on first page (heading line)'
         ok += 1
+    elif norm(title) in norm(body(fname, first)) and not gloss:
+        where = 'title found on first page (in text)'
+        ok += 1
+    elif gloss and norm(title) in norm(body(fname, first)):
+        where = 'GLOSSARY TITLE IN TEXT BUT NOT AS AN ENTRY HEADING'
     elif first > 1 and norm(title) in norm(body(fname, first - 1)):
         where = 'TITLE ON PREVIOUS PAGE'
     else:
@@ -48,7 +66,7 @@ for rid, src, fname, first, last, title, level in mod.R:
             ls = [x.strip() for x in body(fname, n).split('\n') if x.strip()]
             if any(x in ('References', 'Works Cited') for x in ls[1:8]):
                 refs = f' | REFERENCE LIST STARTS ON p.{n}'
-                ok -= 1 if where == 'title found on first page' else 0
+                ok -= 1 if where.startswith('title found on first page') else 0
                 break
     lines.append(f'{rid} | {src} | PDF {first}-{last} | {last - first + 1} pp | {level} | {title} | {where}{refs}')
 

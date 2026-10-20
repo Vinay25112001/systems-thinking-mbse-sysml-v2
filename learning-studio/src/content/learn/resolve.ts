@@ -39,13 +39,15 @@ function workedText(w: Worked | undefined): string[] {
   if (!w) return []
   if (w.kind === 'bullets') return [resolveRef(w.intro), ...w.bullets.map((i) => resolveBullet(w.block, i))]
   if (w.kind === 'loop') return [w.intro.text]
+  if (w.kind === 'steps') return [w.intro.text, ...w.steps.map((s) => s.text)]
+  if (w.kind === 'table') return [resolveRef(w.intro), ...(blockOf(w.block).table?.rows.flat() ?? [])]
   return [resolveRef(w.setup), ...w.steps.flatMap((s) => [...(s.kind === 'input' ? [s.prompt] : []), ...s.body.map(resolveRef)])]
 }
 
 /** Student-facing prose of a section (design §2: figure labels, key terms and check options are not counted). */
 export function sectionProse(s: LearnSection): string[] {
   const body = [...s.body, ...(s.afterWorked ?? [])]
-  return [s.question.text, s.inShort.text, ...body.map(bodyText), ...body.flatMap((b) => (b.callout ? [b.callout] : [])), ...workedText(s.worked), ...s.figures.map((f) => f.caption.text)]
+  return [s.question.text, s.inShort.text, ...body.map(bodyText), ...body.flatMap((b) => (b.callout ? [b.callout] : [])), ...workedText(s.worked), ...s.figures.map((f) => f.caption.text), ...(s.apply ? [s.apply.text] : []), ...(s.convention ? [s.convention.text] : [])]
 }
 
 export const sectionWords = (s: LearnSection) => sectionProse(s).reduce((n, p) => n + words(p), 0)

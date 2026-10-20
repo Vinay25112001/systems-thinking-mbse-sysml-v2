@@ -14,7 +14,9 @@ export type BlockRef = { block: string; para: number; sentences?: [number, numbe
 
 export type BodyItem =
   | { ref: BlockRef; callout?: string }
-  | { text: string; provenance: 'instructor-authored'; review: NewReview; callout?: string }
+  /** New text. `cite` shows its source inline (required when the text paraphrases or quotes a reading); `quote` is a
+   *  verbatim source quotation, shown in quotation marks and never respelled (faculty feedback 2026-10-18, item 6). */
+  | { text: string; provenance: 'instructor-authored' | 'source-paraphrase'; review: NewReview; callout?: string; cite?: Citation[]; quote?: { text: string; cite: Citation } }
 
 export type NewText = { text: string; review: NewReview }
 
@@ -22,6 +24,8 @@ export type NewText = { text: string; review: NewReview }
 export type FigureSpec = {
   id: string
   title: string
+  /** The question the figure answers, shown above it (faculty feedback 2026-10-18, item 9). */
+  question?: NewText
   caption: NewText
   alt: string
   textEquivalent: string
@@ -31,7 +35,8 @@ export type FigureSpec = {
 }
 
 export type CheckOption = { id: string; text: string; correct: boolean; feedback: string }
-/** One retrieval check per section (ungraded; any answer marks the section ready to be read). */
+/** One retrieval check per section (ungraded; any answer marks the section ready to be read). `cite` is absent only
+ *  when the check tests a course convention that no reading defines (the section then carries `convention`). */
 export type SectionCheck = {
   id: string
   bloom: Bloom
@@ -39,7 +44,7 @@ export type SectionCheck = {
   objective: string
   prompt: string
   options: CheckOption[]
-  cite: Citation
+  cite?: Citation
   review: NewReview
 }
 
@@ -52,8 +57,14 @@ export type Worked =
   | { kind: 'bullets'; title: string; intro: BlockRef; block: string; bullets: number[] }
   | { kind: 'loop'; title: string; loop: string; intro: NewText }
   | { kind: 'faded'; title: string; setup: BlockRef; steps: WorkedStep[] }
+  /** A new (instructor-authored) worked example shown one step at a time. */
+  | { kind: 'steps'; title: string; intro: NewText; steps: NewText[] }
+  /** A reviewed block's table (e.g. register rows), introduced by one of its paragraphs. */
+  | { kind: 'table'; title: string; intro: BlockRef; block: string }
 
-export type KeyTerm = { term: string; def: string }
+/** Every key term says where its definition comes from: a register citation (source + page) or the label "course
+ *  working definition" (faculty feedback 2026-10-18, item 7). There is no unsourced variant. */
+export type KeyTerm = { term: string; def: string; source: Citation | 'course' }
 
 export type LearnSection = {
   id: string
@@ -82,4 +93,9 @@ export type LearnSection = {
   goDeeper: string[]
   /** One-line teaser for the opener's "What you will learn". */
   teaser: NewText
+  /** "Now apply it to your enterprise" (faculty direction 2026-10-18): what the team does with this section's method on
+   *  its own enterprise, and where in the Team Record it goes. */
+  apply?: NewText
+  /** Set when the section teaches a course convention that no reading defines (the section then cites nothing). */
+  convention?: NewText
 }

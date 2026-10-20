@@ -1,4 +1,6 @@
-# Week 1 learning design: blueprint (v1, 2026-10-12)
+# Week 1 learning design: blueprint (v1, 2026-10-12; rebuilt 2026-10-18, see §10)
+
+> **2026-10-18:** Week 1 was rebuilt for the whiteboard subject *Team Formation / Needs / Identifying Stakeholders*. §10 describes the rebuilt week and governs wherever §§1–9 (the systems-thinking design) differ.
 
 **Status.** Proposal, now implemented as a prototype for faculty review (2026-10-12): `/welcome`, and `/week/1` as the four-stage flow (`src/flow/`, `src/content/learn/`, `src/components/figures/`); the old page stays at `/week/1/classic`. Every new text item carries `review: 'new-pending-review'`. The open faculty decisions are in §8; they are **not** decided by the build. Deviations from this blueprint, on the lead's instruction or found during the build:
 - **D1 not applied.** Readings stay as reviewed (R01, R02, R04, R50 at 1 h; extension R03, R05 unchanged) and every reviewed workload row is kept, so the total stays 8.0 h. Only the online-instruction row is relabelled to say the Learn stage realistically takes ≈ 1.0 h against its 0.3 h budget; a caution states the realistic week total, ≈ 8.7 h. Each Learn section has a "Read more" to the exact reading pages that deepen it (opens `/sources/:id/:pages`).
@@ -425,3 +427,119 @@ Syllabus §2 was read for the welcome prerequisites.
 | N5 | **Fixed.** The Figure 6 caption now says "The crossover is marked only after the worked step below has been answered", which is true in both states. | `week01.ts`. |
 | N6 | **Fixed.** The m2 Practice-plan note now says that L6 asks where the capacities are equal, and m2 asks when charging takes over, so the first whole aircraft past the crossover is accepted there as well. It gives no number, so the note cannot give away the L6 answer. | `PRACTICE_PREREQ['w1-m2-worked']`. |
 
+---
+
+## 10. Rebuild for the whiteboard subject (2026-10-18) — supersedes §§1–9 where they differ
+
+**Why.** The authoritative schedule (`COURSE_SCHEDULE.md`, DECISION_LOG A19) makes Week 1 "Team Formation / Needs / Identifying Stakeholders". The independent review of the faculty-feedback pass (`_source_cache/review/week01_feedback_review.md`, REVISE, F01–F17) also found AeroLink still assigned as the team subject. Week 1 was rebuilt as the design template. Everything new carries `review: 'new-pending-review'`; `weeks/week01.ts` is marked `self-checked` until an independent review.
+
+**Kept, but no longer used in Week 1** (may return in a later week; no code deleted): the causal-loop diagram, the loop builder and loop rules, the dynamics explorer, the capacity, emergence, control-ring and life-cycle figures (`SystemFigures.tsx`, `EngineeringFigures.tsx`; their derived numbers moved to `learn/dynamicsNumbers.ts`), the principles explorer, the L1 record view, the views `dynamics`, `loops`, `l1`, `principles` (still registered in `views.ts`), and the reviewed blocks `w1-paradox`, `w1-analysis-synthesis`, `w1-feedback`, `w1-application` and `w1-emergence`/`w1-lifecycle` text. The old Week 1 module is not served as `#/draft/1` (it was rebuilt in place; `REBUILT_IN_PLACE` in `content/weeks/index.ts`); its text is in commit 9dec1e7.
+
+**Re-used, adapted:** `w1-se`, `w1-soi`, `w1-worked` and the boundary exercise (old Week 1); `w2-stakeholders` and the reference register STK-001…014 with CON items (old Week 2); `w3-needs`, `w3-worked-needs`, the need-statement criteria, the critique items and the generic-concern screen (old Week 3).
+
+### Outline
+
+| Stage | Content |
+|---|---|
+| Overview | What the week teaches and why (R11 p.552); the week's path figure; **Meet AeroLink** (before any question, F12); the week's question and the locked prediction; sections; plain-words objectives with American Bloom labels; assessment; realistic time plan |
+| L1 Forming your team | Lead roles, charter, decision rules, communication norms, owned ID prefixes (course convention, labeled; no reading cited) · worked charter · Figure: roles → prefixes · C1 |
+| L2 System, system of interest and enterprise | R38 (with SEBoK's "expanded version" caveat, F05), R39b, R07 p.815; course criteria for a team enterprise (AeroLink excluded) · Figure: three scopes · C2 |
+| L3 Boundary and context | `w1-soi` ¶0–2, worked three-SoI example (`w1-worked`) · Figure: AeroLink context (no dynamics panel) · C3 |
+| L4 Identifying stakeholders | R39a p.1631 definition (quoted), R11 p.552–553 (why, where to look, approving authorities), R63 p.234–235 · worked: context → stakeholders (14 vs 3) · Figure: three sources · C4 |
+| L5 Classifying stakeholders and concerns | Register (R11 p.553), four course classifications, specific concerns (RB-1.3), influence with a reason (R63 p.236), conflicts · worked: six register rows · Figure: a register row · C5 |
+| L6 Stakeholder needs | R39a p.1632 (quoted), R11 p.549–553 (perspective, validation basis, integrated set, elicitation) · worked: concern → need → Week 2 requirement · Figure: chain · C6 |
+| L7 Writing well-formed needs | R11 p.554–555, R53 p.296, the six criteria · worked: four AeroLink rewrites · Figure: anatomy of NEED-003 · C7 |
+| Practice | m1 Try first: who is missing? (predict, sort 14 candidates, compare) · m2 Guided: an AeroLink boundary · m3 Guided: classify AeroLink's stakeholders and write a register row · m4 Guided: diagnose drafts and write two AeroLink needs · m5 Own: the team's Week 1 Team Record (charter, proposal, context, register, needs, export) · m6 Recall |
+| Check & submit | Objective status · quiz Q1 (new items) · Team Record spec (evidence, minimums, format, LMS route, RB-1.1/1.2/1.3/2.2/2.5) with a live readiness check · model-inputs map (SysML v2 seeds) · graduate needs review · bridge |
+
+Every section ends with **"Now apply it to your team's enterprise"**, naming the part of the Team enterprise view it feeds. Every mission step is checked by the computer (no "mark done"), and each check has a passing and a failing test (`src/workbench/missions.test.ts`, `src/workbench/week1/team.test.ts`).
+
+### Workload, per student (lecture-first path, 2026-10-19; sign-off review Mo4 — supersedes the 8.9 h table and FD-29)
+
+One workload story for this section, the Session 2 lab-brief notes (S2-18), the Laboratory page and its Markdown, and the
+week page: all of them read `src/content/week1Path.ts` (`WORKLOAD`, `TEAM_RECORD_PERSON_HOURS`, `THREE_PERSON`) and
+`weeks/week01.ts` `workload`; `learn/week01.test.ts` and `lectures/week01/labBrief.test.ts` assert that they agree.
+
+| Row (counted) | h | Basis |
+|---|---|---|
+| In-class sessions (Session 1 lecture; Session 2 lecture and the 22-min Lab L1 launch) | 2.5 | 2 × 75 min |
+| Detailed lesson, both sessions (incl. the AeroLink worked examples) | 1.4 | lesson word count at 150 words a minute |
+| Readings R11 pp.549–555, R63 pp.234–235 | 0.6 | 9 pp at 15 pp/h |
+| Candidate enterprise for the Session 2 pitch | 0.3 | one per member |
+| Team Record out of class, per student | 2.5 | 10 person-hours for a team of four (below) |
+| Readiness quiz Q1 | 0.2 | 12 min |
+| Graduate needs review | 0.4 | four needs, ≤ 250 words |
+| Time log (FD-22) | 0.1 | |
+| **Total** | **8.0** | **the 8 h syllabus estimate exactly** |
+| Optional practice (AeroLink missions 1–4), not counted | 1.1 | 11 + 15 + 22 + 18 min |
+
+**Team Record, team of four (10.0 person-hours, 2.5 h each):** proposal with problem statement, mission and goals,
+system of interest and parts inside the boundary 0.5; context 1.0; stakeholder sweep and merge 2.0; register and
+relationships 2.5; needs 2.5; self-check, coverage audit and AI statement 1.0; integration review and export 0.5. The
+S2-18 notes said 2.4 h (9.5 person-hours without the proposal write-up); they now say 2.5 h.
+
+**Three-person team (flagged for faculty decision).** The lab tool applies the needs minimum the lecture proposes for
+three-person teams, six needs from four stakeholders (pending faculty approval). That shrinks the needs task to about
+1.9 person-hours, so the team carries about 9.4 person-hours, **about 3.1 h each, and its week is about 8.6 h, 0.6 h
+over the 8 h budget.** Staying within 8 h would need about 7.5 person-hours (for example, also reducing the register
+minimum to six stakeholders, still about 8.1 h); the faculty decides whether to accept 8.6 h or cut further.
+
+The definition-of-done workload check passes for Week 1 (8.0 h); FD-29 (the 8.9 h trim proposal) is superseded.
+
+### Review dispositions (F01–F17)
+
+| ID | Disposition |
+|---|---|
+| F01 | Lab, assignment, template, rubric scope, `w1-lab`, the classic page and the student export now describe the team's own enterprise; test forbids AeroLink-subject phrases in them |
+| F02 | Graduate expectation is the needs review; no explorer evidence anywhere |
+| F03 | m5 is the team's own record; its steps are checked, its export is checked |
+| F04 | Workload rebuilt (table above) |
+| F05 | Definition, key term and quote note carry "an expanded version of the standard's" |
+| F06 | The loop field and `parseLoopChain` are removed; no loop validation remains in Week 1 |
+| F07 | Seeds include `actor`, "documentation (`doc`)", `item def` with what flows, `port def` with direction, `concern`, `stakeholder`, `requirement def` with short name and `frame`. The old "question" field is superseded: the proposal's purpose seeds `doc` |
+| F08 | Seeds cite only Phase II slides (R70, R71, R74, R76, R77), labeled "Phase II reading"; no R81/R83 |
+| F09 | New objectives in American English; Quiz badges use `bloomLabel` for Week 1 (flow, workbench, classic); spelling test scans course.ts Week 1 and the new files |
+| F10 | Quiz keys a3 b2 c3 d2; no key is the longest or shortest option (ties included) in any check or quiz item; tested |
+| F11 | No figure question leaks a key; checks and quiz items share no 8-word run and no case; every quiz item's deciding phrase is asserted in its section |
+| F12 | Overview order: what/why → path → Meet AeroLink → question and prediction |
+| F13 | Mission tiles show a distinct short title that breaks only between words, progress under it; e2e checks 1440 and 400 px |
+| F14 | "Open the workbench" under the lede; the regions sketch scales; the plan becomes cards ≤ 640 px; region names give their tabs |
+| F15 | e2e walks every mission to "Practice complete" (screenshots at 1440 and 400 px) |
+| F16 | Readiness computed by the same checks as the Team enterprise view (stale export fails); LMS assignment named |
+| F17 | Welcome: "Week 1 uses this four-stage layout; later weeks will follow it"; "memo section 5" gone |
+
+### Review dispositions (rebuild review of commit 0f3ebcb, `_source_cache/review/week01_rebuild_review.md`, F01–F17)
+
+| ID | Disposition |
+|---|---|
+| F01 | **Superseded by the sign-off revision (2026-10-19, M1; confirmation N1):** the structure gate now requires the taught form “The [stakeholders] need the [system] to …”, with the system named by “the”, “our”, “its”, “a”, “an” or its proper name; the “&lt;subject&gt; need(s) &lt;object&gt;” gate described below is retired. Original disposition: new `src/workbench/week1/needQuality.ts` replaces the Week 3 lexical checker in Week 1. **Hard gates** (objective structure only): “&lt;subject&gt; need(s) &lt;object&gt;” with ≥ 2 content words in the object; the subject is a stakeholder in the register (or a subgroup of one; every “need” in the sentence is tried as the verb) and is not the team’s own enterprise or a generic “the system / the network”; the need ID is unique. **Record fields**: trace to register STK IDs, rationale ≥ 5 words, short name, and (team record) priority and CON links held by a source stakeholder. **Advisory warnings**: vague terms (“good”, “when possible”, “as soon as possible”, …), requirement words (shall, must, should, has to, will provide…), design and solution words, run only on the text after the subject (so “Elevator inspectors”, “hospital wings”, “using a wheelchair” are never flagged), a missing condition word (broad cues: within, on weekends, in winter storms, after each, between 22:00 and 06:00, for an hour after…), and a subject that is not a traced stakeholder. **Self-check**: the six L7 criteria are confirmed per need as a checklist, each item saying what the tool checked; editing the statement clears the confirmation. A need counts only with gates passed, fields complete, all six confirmed and every warning rewritten or justified (≥ 5 words). Every example in the review is a unit test in the right direction (`needQuality.test.ts`, `team.test.ts`), including eight copies of “Stakeholder n need good service when possible” failing part 5. L5 and L7 apply text, the Team enterprise view and the mission-4 writer say exactly what the tool checks and what the student judges. The mission-4 critique key is now authored (`CRITIQUE_KEY`), not computed by a screen; a test shows it agrees with the Week 3 screen on the six drafts. |
+| F02 | Three record states (`recordState`): **ready** = all five parts + AI usage statement + current export + decision “approved” with a real calendar date not in the future; **submitted for approval** = complete and exported but pending, labeled in the view, on Check & submit and in both exports, never shown as ready; **not ready** otherwise. “Revise”, “2099-99-99”, “2026-02-30” and future dates fail. The AI usage statement is part 6 of the Team enterprise view (≥ 12 words), a mission-5 step, a readiness row and section 6 of the Markdown export. Generic concerns and vague needs never count toward the minimums. Default decision recorded for faculty as FD-28: Week 1 may be submitted with approval pending (labeled); approval is required before the Week 2 submission. (Sign-off confirmation N4: now worded “six parts, five engineering outputs plus the AI usage statement”.) “Five parts plus the AI usage statement” was used in the Overview figure caption, the assessed-work line, TEAM_RECORD, the deliverable block, the lab and the assignment. |
+| F03 | Concern check = not generic (Week 2 heuristic, now also stripping “overall”, “in general”, “unhappy”, “financial”, “returns”) AND at least one concrete detail (a number or time, a condition, a place, an affected group, or a consequence). The four review examples fail; the fixture, the AeroLink reference rows and the C5 key pass (tests in both directions). L5’s apply text now says the check catches only the most generic phrasings and cannot judge truth or importance. |
+| F04 | `importModelInputs` validates every list and entry with messages naming the field (“context” must be a list; “stakeholders” item 1 is null; needs item 1 sources; a concern of a missing stakeholder), refuses wrong-form and duplicate IDs (EXT, STK, CON, NEED, PRT), never throws; the view wraps the read in try/catch. `checkContextPart`, `checkRegister` (STK and CON) and the need uniqueness gate flag duplicate IDs in the record. Version 1 files still import. |
+| F05 | Abbreviation-aware sentence count (U.S., e.g., a.m., Dr., initials); every lead role held by a different member; each of ENT, EXT, STK, CON, NEED owned by exactly one member; prefixes outside the course ID scheme (e.g. ZZ) rejected; prefix lines read case-insensitively; AeroLink rejected in the name, domain, system of interest and inside elements, but a contrast in the purpose is allowed. Near copies remain the instructor’s checkpoint call. |
+| F06 | Prediction options are neutral and similar in length (“Yes, the three are enough” / “No: add more users or customers” / “No: add other kinds of party” / “I cannot tell yet”); the generative part is the sort in step 2, before any explanation. “Meet AeroLink” no longer lists the external organizations above the prediction (L3 does). |
+| F07 | The `w1-worked` block is overridden (pending review) without “This is the resolution the Week 1 explorer uses”. `#/draft/1` shows a “rebuilt in place” page with no old objectives and no explorer-and-memo task; the student export omits `draft-week01.md` and its index link; the instructor export prefixes the old objective IDs `old-B1.x` and drops the old lab and graduate task. |
+| F08 | Workbench brand “Practice workbench”; breadcrumb root “Studio · your team’s enterprise” on the own mission, “AeroLink worked example” on rehearsals; classic header “Learning Studio · local prototype”; AeroLink workspace nav grouped as “AeroLink worked example (instructor’s case)”. RB-1.1 Beginning now reads “equal to a single product” (ASSESSMENT_RUBRICS.md, regenerated); rubric cells render **bold** instead of literal asterisks; the rubric note says AROU and CAP → NEED are not in scope in Week 1. |
+| F09 | w1q-1 and w1q-5 carry `courseSource` (course convention, L1 and L2) instead of borrowed R11/R07 citations (QuizQuestion.cite is optional; every item must have one or the other, tested); c5 has no reading citation (rendered as course convention; feedback names RB-1.3); key term “Concern” is a course working definition noting SEBoK gives none; the “shall” misconception cites R11 pp.549, 555; the actor seed says “in a use case”. R77 sl.115 is not cited in Week 1 (outside the register). |
+| F10 | **Superseded by the sign-off revision (2026-10-19, Mo4):** the workload table above now totals 8.0 h on the lecture-first path. Original disposition: per student, candidate-enterprise preparation budgeted, honest total 8.9 h (0.9 h over), trim proposed to faculty (FD-29), not applied. |
+| F11 | Need priority (high, medium, low) and need → concern links (CON IDs, held by a source stakeholder) are required record fields; a stakeholder holds one or more concerns, each with its own CON ID; elements inside the boundary are rows with PRT IDs. JSON model inputs version 2 carries priority, concerns, self-check, warnings kept, justification, inside IDs, the AI statement and the record status; the Markdown carries the same. The first record shape is upgraded on load. |
+| F12 | The system of interest is “the AeroLink air-taxi service” in L2/L3 text, figures, the boundary exercise, the context recorder default and mission 2; L2 and the proposal form add “your proposal names the enterprise and, inside it, the system of interest your team will engineer”. Residual: the Phase II reference model element ENT-001 and the SysML reference files keep “AeroLink Urban Mobility service enterprise” until Week 8 is rebuilt. |
+| F13 | Check & submit: tables become cards at ≤ 640 px (`.lf-cards`), captions sit outside the tables, the rubric rows, the model-inputs map and the graduate review details are collapsible; e2e asserts no clipped table, cell or caption at 400 px and a page under 14,000 px collapsed. |
+| F14 | After “Check”, each identify or classify row that differs from the key must be re-answered or acknowledged (“I have read why”) before the step completes; the first-check score is kept. Tested in both directions (unit and e2e). |
+| F15 | Regions drawing: “2. Guided”; a stacked narrow variant replaces the wide drawing at ≤ 600 px (labels ≥ 11 px, tested). “1 more step appears”. Mission goals are no longer line-clamped (M5 goal shortened). Model-browser dots are neutral for “incomplete”, “not recorded” and short counts. The stepper marks Check done only after the student has opened it. The duplicate “Practice complete” banner in the brief is removed. |
+| F16 | `aria-label="Color theme"`; the curriculum export’s lab table header reads “Artifact”. |
+| F17 | w1q-2 is now a transfer item (choosing the system of interest for an emergency-department waiting-time question; key b, keeping the a3 b2 c3 d2 balance; key neither longest nor shortest; answerable from “small enough to analyze” in L2/L3). OPENER.how says “a worked example introduced below”. |
+
+### Register additions awaiting faculty confirmation
+
+R39a SEBoK glossary "Stakeholder" (PDF pp.1631–1632; includes "Stakeholder Needs and Requirements") and R39b "System-of-Interest" (p.1652), added to `_source_cache/verification/readings.py`, verified by `verify_readings.py` (title found on first page; 92/93), exported with `npm run content:readings`.
+
+### Open decisions
+
+1. Reading of RB-1.2 "all S04 classes" for a team's own enterprise (course role groups; at least one approving authority and one non-customer stakeholder).
+2. Minimums (course conventions, single source `src/content/lectures/week01/labBrief.ts`, as the S2-18 lab brief states them): ≥ 3 parts inside the boundary (PRT), ≥ 6 context items, ≥ 8 stakeholders, ≥ 3 relationships with ≥ 1 conflict (REL, required as the lecture sets it), ≥ 8 needs from ≥ 5 stakeholders, each traced to its concern and to the mission or a goal.
+3. Whether the graduate needs review applies to all students (D2: audience level).
+4. Whether instructor approval must be recorded as "approved" before Week 2, or "pending" is enough at submission. **Default implemented (FD-28):** Week 1 may be submitted with the proposal “submitted for approval”, labeled and never shown as ready; approval is required before the Week 2 submission.
+5. Exam bank items in `src/instructor/exams/exam1.ts` still test the old Week 1 objectives (causal loops); exam placement is an open faculty decision.
+6. Week 1 workload: 8.0 h for a team of four (FD-29 superseded by the lecture-first path). Three-person teams: about 8.6 h with the reduced needs minimum (six needs from four stakeholders, implemented pending approval); accept, or cut further (see the workload subsection above).
+7. The concern detail cues and the need warning lexicons are instructor-authored screens; confirm that warnings may be kept with a written justification (the default) rather than blocking.

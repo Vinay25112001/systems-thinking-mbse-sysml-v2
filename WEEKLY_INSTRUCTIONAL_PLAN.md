@@ -24,6 +24,10 @@
 
 # Part B: Integrated 14-Week Course
 
+> **Schedule superseded (2026-10-18).** The week sequence of Part B is superseded by `COURSE_SCHEDULE.md`, the
+> authoritative faculty schedule (DECISION_LOG A19). The text below is kept unchanged as reviewed source material; the
+> schedule's reuse table says which earlier week feeds which new week.
+
 Default session plan (exceptions are stated per week):
 
 | Session | Segments (minutes) |

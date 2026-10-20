@@ -1,9 +1,23 @@
 import { useState } from 'react'
+import { getLecture } from '../content/lectures'
+import { allSlides } from '../content/lectures/text'
 import type { QuizQuestion } from '../content/quizWeek1'
+import type { QuizTaught } from '../content/schema'
 import { useApp } from '../state/AppState'
 import { Badge, Button, CitationText, ReviewControls } from './ui'
 
-function Question({ q, index }: { q: QuizQuestion; index: number }) {
+/** "Session 2, slide 9 “What makes a need well formed”; lesson: “Well-formed needs …”" for an item's `lecture`. */
+function taughtIn(t: QuizTaught): string | undefined {
+  const l = getLecture(t.week, t.session)
+  if (!l) return undefined
+  const slides = allSlides(l)
+  const i = slides.findIndex((s) => s.id === t.slide)
+  const sec = l.studentLesson.find((s) => s.id === t.section)
+  if (i < 0 || !sec) return undefined
+  return `Session ${t.session}, slide ${i + 1} “${slides[i].title}”; lesson: “${sec.title}”`
+}
+
+function Question({ q, index, bloomText }: { q: QuizQuestion; index: number; bloomText: (b: string) => string }) {
   const { quiz, answerQuiz } = useApp()
   const record = quiz[q.id]
   const [choice, setChoice] = useState<string>('')
@@ -14,7 +28,7 @@ function Question({ q, index }: { q: QuizQuestion; index: number }) {
   return (
     <fieldset className="rounded-lg border border-slate-200 p-4 dark:border-slate-800" data-testid={`quiz-${q.id}`}>
       <legend className="px-1 text-sm font-semibold">
-        Question {index + 1} <Badge>{q.bloom}</Badge> <Badge>{q.objective}</Badge>
+        Question {index + 1} <Badge>{bloomText(q.bloom)}</Badge> <Badge>{q.objective}</Badge>
       </legend>
       <p className="mb-3">{q.prompt}</p>
       <div className="space-y-2">
@@ -70,14 +84,20 @@ function Question({ q, index }: { q: QuizQuestion; index: number }) {
         {record && <span className="text-xs text-slate-500 dark:text-slate-400">Attempts: {record.attempts}</span>}
       </div>
       <p className="mt-2">
-        <CitationText c={q.cite} />
+        {q.cite ? <CitationText c={q.cite} /> : <span className="text-xs text-slate-600 dark:text-slate-300">Source: course convention ({q.courseSource})</span>}
       </p>
+      {q.lecture && taughtIn(q.lecture) && (
+        <p className="mt-1 text-xs text-slate-600 dark:text-slate-300" data-testid={`quiz-${q.id}-taught`}>
+          Taught in: {taughtIn(q.lecture)}
+        </p>
+      )}
       <ReviewControls id={`quiz-${q.id}`} label={`Quiz question ${index + 1}`} />
     </fieldset>
   )
 }
 
-export function Quiz({ questions }: { questions: QuizQuestion[] }) {
+/** `bloomText` maps the stored Bloom label for display (Week 1 passes its American label, review F09). */
+export function Quiz({ questions, bloomText = (b) => b }: { questions: QuizQuestion[]; bloomText?: (b: string) => string }) {
   const { quiz, resetQuiz } = useApp()
   // remount questions only on an explicit reset (remounting on answer would drop keyboard focus)
   const [version, setVersion] = useState(0)
@@ -100,7 +120,7 @@ export function Quiz({ questions }: { questions: QuizQuestion[] }) {
         </Button>
       </div>
       {questions.map((q, i) => (
-        <Question key={`${q.id}-${version}`} q={q} index={i} />
+        <Question key={`${q.id}-${version}`} q={q} index={i} bloomText={bloomText} />
       ))}
     </div>
   )

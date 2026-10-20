@@ -46,7 +46,8 @@ const concerns: [string, string, string, string[]][] = [
   ['CON-013', 'Step-free boarding access', 'Accessibility advocates are concerned that passengers using wheelchairs can board and alight without being lifted.', ['STK-014']],
   ['CON-014', 'Quantifiable operational risk', 'Insurers are concerned that operational risk is measured and recorded so that premiums can be set on evidence.', ['STK-012']],
   // W2-F04: every stakeholder has a concern of its own (STK-011 had none; STK-013 shared the residents' noise concern).
-  ['CON-015', 'Fleet delivery and certification progress', 'The aircraft manufacturer is concerned that AeroLink’s orders, operating data and certification milestones arrive as planned, because delivery slots and certification progress set its own production plan.', ['STK-011']],
+  // Week 8 model import: CON-015 reworded as the case's purchase-agreement concern (the deliberate audit gap of Week 1).
+  ['CON-015', 'Fleet orders and delivery milestones', 'The aircraft manufacturer is concerned that AeroLink’s aircraft orders, delivery slots and payment milestones are kept as agreed in the purchase agreement, because they set its own production plan.', ['STK-011']],
   ['CON-016', 'Land use and zoning of vertiport sites', 'The City planning authority is concerned that vertiport sites conform to zoning and land-use plans and connect to public transport, especially sites in residential districts.', ['STK-013']],
 ]
 

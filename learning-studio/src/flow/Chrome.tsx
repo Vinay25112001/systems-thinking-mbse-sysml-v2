@@ -3,6 +3,7 @@ import { Check, Lock } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from '../lib/router'
 import { useApp, type ThemePref } from '../state/AppState'
+import { MyProjectLink } from '../project/nav/MyProjectLink'
 
 import { STAGES, stagePath, type FlowStage as Stage } from './route'
 
@@ -16,7 +17,7 @@ function Settings() {
       </label>
       <label className="lf-toggle">
         <span className="lf-muted">Theme</span>
-        <select aria-label="Colour theme" className="lf-select" value={theme} onChange={(e) => setTheme(e.target.value as ThemePref)}>
+        <select aria-label="Color theme" className="lf-select" value={theme} onChange={(e) => setTheme(e.target.value as ThemePref)}>
           <option value="system">System</option>
           <option value="light">Light</option>
           <option value="dark">Dark</option>
@@ -26,7 +27,8 @@ function Settings() {
   )
 }
 
-export function TopBar({ title, right, children }: { title: string; right?: ReactNode; children?: ReactNode }) {
+/** `projectCurrent`: the page is part of My Project (the persistent My Project link is marked current). */
+export function TopBar({ title, right, children, projectCurrent = false }: { title: string; right?: ReactNode; children?: ReactNode; projectCurrent?: boolean }) {
   const { instructor } = useApp()
   return (
     <header className="lf-top">
@@ -37,13 +39,14 @@ export function TopBar({ title, right, children }: { title: string; right?: Reac
         <span className="lf-weekname" title={title}>
           {title}
         </span>
+        <MyProjectLink current={projectCurrent} />
         {right}
         <Settings />
       </div>
       {children}
       {instructor && (
         <div className="lf-instructor" role="status">
-          Instructor mode: Practice is unlocked without reading every section, and instructor material is visible. Stored in this browser only.
+          Instructor mode: instructor material is visible, including the faculty notes in the slide viewer. Stored in this browser only.
         </div>
       )}
     </header>

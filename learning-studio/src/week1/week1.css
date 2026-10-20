@@ -1,0 +1,282 @@
+/* Week 1 lecture-first path (DECISION_LOG A20): the week sub-navigation shared by the week pages, the slide viewer and
+   the reader, and the week-page components. Built on the workbench tokens (workbench/theme.css), like the flow and
+   the lecture viewer, so every text pair keeps the >= 4.5:1 contrast the axe scans check in both themes. */
+
+@layer components {
+  /* ------------------------------------------------------------ week sub-navigation */
+  .wk-nav {
+    border-top: 1px solid var(--wb-line);
+    background: var(--wb-panel);
+  }
+  .wk-nav ol {
+    list-style: none;
+    margin: 0;
+    padding: 0 8px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, auto));
+    justify-content: start;
+    gap: 0 2px;
+  }
+  .wk-nav a {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 12px 8px;
+    border-bottom: 3px solid transparent;
+    color: var(--wb-muted) !important;
+    text-decoration: none;
+    font: 500 13.5px/1.2 var(--wb-body);
+    white-space: nowrap;
+  }
+  .wk-nav a:hover {
+    color: var(--wb-fg) !important;
+    background: var(--wb-sunk);
+  }
+  .wk-nav a[aria-current='page'] {
+    color: var(--wb-fg) !important;
+    border-bottom-color: var(--wb-accent);
+    font-weight: 600;
+  }
+  .wk-nav-no {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font: 600 11px/1 var(--wb-mono);
+    border: 1.5px solid var(--wb-line-strong);
+    color: var(--wb-muted);
+  }
+  .wk-nav a[aria-current='page'] .wk-nav-no {
+    border-color: var(--wb-accent);
+    color: var(--wb-accent);
+  }
+  .wk-nav .wk-short {
+    display: none;
+  }
+  @media (max-width: 760px) {
+    .wk-nav ol {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 0 4px;
+    }
+    .wk-nav a {
+      padding: 7px 6px 6px;
+      font-size: 13px;
+    }
+    .wk-nav .wk-long {
+      display: none;
+    }
+    .wk-nav .wk-short {
+      display: inline;
+    }
+  }
+
+  /* ------------------------------------------------------------ week pages */
+  .wk-page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 16px 72px;
+  }
+  .wk-subject {
+    margin: 4px 0 0;
+    font: 500 15px/1.45 var(--wb-body);
+    color: var(--wb-muted);
+  }
+  .wk-section {
+    margin-top: 36px;
+  }
+  .wk-section > .lf-h2:first-child {
+    margin-top: 0;
+  }
+  .wk-entries {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  .wk-entry {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 16px 18px;
+    border: 1px solid var(--wb-line);
+    border-radius: 8px;
+    background: var(--wb-panel);
+  }
+  .wk-entry-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .wk-entry-no {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font: 600 12.5px/1 var(--wb-mono);
+    background: var(--wb-accent-soft);
+    color: var(--wb-accent-strong);
+  }
+  .wk-entry h3 {
+    margin: 0;
+    font: 600 17px/1.3 var(--wb-display);
+  }
+  .wk-entry p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+  .wk-entry-meta {
+    color: var(--wb-muted);
+    font: 500 12.5px/1.4 var(--wb-mono);
+  }
+  .wk-entry-actions {
+    margin-top: auto;
+    padding-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .wk-timeline {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    border: 1px solid var(--wb-line);
+    border-radius: 8px;
+    background: var(--wb-panel);
+    overflow: hidden;
+  }
+  .wk-timeline li {
+    padding: 14px 16px;
+    border-left: 1px solid var(--wb-line);
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+  .wk-timeline li:first-child {
+    border-left: 0;
+  }
+  .wk-tl-when {
+    margin: 0;
+    font: 600 12px/1.3 var(--wb-mono);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--wb-accent-strong);
+  }
+  .wk-tl-what {
+    margin: 4px 0 6px;
+    font: 600 16px/1.3 var(--wb-display);
+  }
+  .wk-tl-what + p {
+    margin: 0;
+  }
+  @media (max-width: 860px) {
+    .wk-timeline {
+      grid-template-columns: 1fr;
+    }
+    .wk-timeline li {
+      border-left: 0;
+      border-top: 1px solid var(--wb-line);
+    }
+    .wk-timeline li:first-child {
+      border-top: 0;
+    }
+  }
+  .wk-total td,
+  .wk-total th {
+    font-weight: 700;
+    border-top: 2px solid var(--wb-line-strong);
+  }
+  .wk-optional td,
+  .wk-optional th {
+    color: var(--wb-muted);
+    font-style: italic;
+  }
+  .wk-num {
+    text-align: right;
+    white-space: nowrap;
+    font-family: var(--wb-mono);
+  }
+  .wk-steps {
+    margin: 10px 0 0;
+    padding-left: 1.4em;
+  }
+  .wk-steps > li {
+    margin: 0 0 10px;
+    padding-left: 4px;
+  }
+  .wk-steps > li::marker {
+    font: 600 14px var(--wb-mono);
+    color: var(--wb-accent-strong);
+  }
+  .wk-note {
+    padding: 12px 16px;
+    border-left: 4px solid var(--wb-accent);
+    background: var(--wb-accent-soft);
+    color: var(--wb-fg);
+    border-radius: 0 6px 6px 0;
+    font-size: 15px;
+  }
+  .wk-note.is-caution {
+    border-left-color: var(--wb-warn);
+    background: var(--wb-warn-soft);
+  }
+  .wk-slide {
+    max-width: 900px;
+    margin: 14px 0 6px;
+  }
+  .wk-lesson {
+    max-width: 78ch;
+    font-size: 16.5px;
+    line-height: 1.62;
+  }
+  .wk-lesson > p,
+  .wk-lesson > div,
+  .wk-lesson > ol,
+  .wk-lesson > ul,
+  .wk-lesson > figure {
+    margin: 0 0 16px;
+  }
+  .wk-lesson h3 {
+    margin: 24px 0 8px;
+    font: 600 18px/1.3 var(--wb-display);
+  }
+  .wk-reveal > summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--wb-accent);
+  }
+  .wk-tool-frame {
+    border-bottom: 1px solid var(--wb-line);
+    background: var(--wb-panel);
+    padding: 8px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    font-size: 14px;
+  }
+  .wk-selfcheck {
+    margin-top: 28px;
+    padding: 14px 16px;
+    border: 1px dashed var(--wb-line-strong);
+    border-radius: 8px;
+    background: var(--wb-panel);
+  }
+  .wk-selfcheck > summary {
+    cursor: pointer;
+    font: 600 15px/1.4 var(--wb-body);
+  }
+  .wk-selfcheck[open] > summary {
+    margin-bottom: 10px;
+  }
+}

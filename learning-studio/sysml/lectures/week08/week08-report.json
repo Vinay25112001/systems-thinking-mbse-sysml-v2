@@ -1,0 +1,416 @@
+{
+  "tool": {
+    "name": "OMG SysML v2 Pilot Implementation (SysMLInteractive, Jupyter kernel jar)",
+    "release": "2026-08",
+    "kernelVersion": "0.62.0",
+    "kernelJar": "jupyter-sysml-kernel-0.62.0-all.jar",
+    "standardLibrary": "sysml.library bundled in jupyter-sysml-kernel-0.62.0.zip"
+  },
+  "java": {
+    "version": "21.0.12.1+1-LTS",
+    "vendor": "Eclipse Adoptium"
+  },
+  "timestamp": "2026-10-19T19:32:02+00:00",
+  "checks": "parse + name resolution against the standard library + pilot implementation validation rules (errors fail; warnings reported)",
+  "summary": {
+    "files": 25,
+    "PASS": 19,
+    "FAIL": 6,
+    "ERROR": 0
+  },
+  "files": [
+    {
+      "file": "sysml/lectures/week08/aerolink_context_stakeholders_v01.sysml",
+      "sha256": "814a7c10086741c3eecf037be7f170dcda4d763422aff1b7c40e06df801a8644",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/deck_quotes_textual_notation.sysml",
+      "sha256": "b45c4ea94eafccf5f814060130e3319b23c23e83b77dccbc0e95b73525fbc684",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/exercise_microgrid_defects12_fixed.sysml",
+      "sha256": "2d8f479b69a6b3903db63d93e7e7e623d5e4d57db54b540291a19c200d02998a",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/invalid_exercise_microgrid_seeded.sysml",
+      "sha256": "7de9eaba89cd75208d4eb49e0c8cffe84060dc46d82971455b5c0b0268d17ee5",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 5,
+          "column": 2,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input 'import' expecting '}'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 5,
+          "column": 21,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '::'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 8,
+          "column": 15,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input '-' expecting '>'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 8,
+          "column": 21,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input ''Student residents''"
+        },
+        {
+          "severity": "ERROR",
+          "line": 18,
+          "column": 1,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "extraneous input '}' expecting EOF"
+        },
+        {
+          "severity": "ERROR",
+          "line": 11,
+          "column": 24,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Type 'Boolean'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 16,
+          "column": 27,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Type ''STK-002''."
+        },
+        {
+          "severity": "ERROR",
+          "line": 11,
+          "column": 3,
+          "code": "validateAttributeUsageType_",
+          "message": "An attribute must be typed by attribute definitions."
+        },
+        {
+          "severity": "ERROR",
+          "line": 16,
+          "column": 3,
+          "code": "validateOccurrenceUsageType_",
+          "message": "An occurrence, item or part must be typed by occurrence definitions."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week08/invalid_tool_proof_unquoted_id.sysml",
+      "sha256": "5e732d703b20e2b083bb9dd623e86af80c5964b25e1c6f4995859503e60de248",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 9,
+          "column": 12,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input '-' expecting '>'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 9,
+          "column": 18,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'roadNetwork'"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week08/labtool_collision_model_v01.sysml",
+      "sha256": "3a18d5af55fe07f62d88753894c6e41bcf477db9c624cb4789bd81db51bfceae",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/labtool_stress_model_v01.sysml",
+      "sha256": "02a82906fa8a73cea79c4e88cbec79dee9a212250ce3ae991c20292611a36ee8",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 57,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 64,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/labtool_team07_model_v01.sysml",
+      "sha256": "321c7dc4a5583467b42ddbfdc85455701d52292b68959e8d09f9bc3dce0dbd9d",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/stakeholders_concerns_adapted.sysml",
+      "sha256": "1a7941bfcee3e1b21a40d26927447ec3ada6e79be6e6ef4af0971d0f7887742c",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/tool_proof_pass.sysml",
+      "sha256": "06cbd623dc25504edcae0796b52fc2c17b8aaae8a031e9d5204197788df53e94",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/warmup_library_rooms.sysml",
+      "sha256": "4637d8f2741c4b513195b00044383215c4e205e855af864d5e13588dc5f79900",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week08/writing_check_bakery.sysml",
+      "sha256": "8a8b8900eeacce22ab71c2a88fd7a682b1ab0dc2478326ca69012939eaca7282",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/instructor/week08/exercise_microgrid_key.sysml",
+      "sha256": "77fcb39529be902ddce161c70292a8e990e8e0a6ddd2ec1697524a2e2c5e7779",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/aerolink_def_usage.sysml",
+      "sha256": "3e8384c02d861d8d405e5a4022518a111863208c78a6cb405ed8538798af38b7",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/aerolink_l9_skeleton.sysml",
+      "sha256": "bf17b0a9da76b0e11b703529fc9d2fb70003db466b31b89c76bf697e10b8544d",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/invalid_pc5_block_keyword.sysml",
+      "sha256": "2a1efb9f6843030ff816b7aa28a08e11c7b0ab01c68aca6df4ce0f246db78cc7",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 4,
+          "column": 8,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'EVTOLAircraft'"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/predict_pc2_duplicate_short_name.sysml",
+      "sha256": "bf5c2338877830a4982098ac85ac03203aa8802bfdcefdb7fab1f5f7036e1544",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 9,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 7,
+          "column": 9,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/predict_pc6_attribute_def_with_part.sysml",
+      "sha256": "cbfbcac7ae3897bb2c7b29ddb310b1cdf12cf1cfafcda904f121cab50f5c78d2",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/week09/invalid_pc3_import_without_visibility.sysml",
+      "sha256": "8fd6f412ae664d16ea752424ee836738d85496ca9493880d80dbaed4330f7bdc",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 3,
+          "column": 2,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input 'import' expecting '}'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 3,
+          "column": 12,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '::'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 4,
+          "column": 11,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '::'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 8,
+          "column": 1,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "extraneous input '}' expecting EOF"
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 27,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Type 'SpeedValue'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 45,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'km'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 48,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Element 'h'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 3,
+          "code": "validateAttributeUsageType_",
+          "message": "An attribute must be typed by attribute definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 45,
+          "code": "validateOperatorExpressionQuantity",
+          "message": "Should be a measurement reference (unit)."
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 45,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 48,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/invalid_pc8_usage_subsets_a_definition.sysml",
+      "sha256": "219ca2059595033be823db98b508dfd3a1b66380d6d119705d4e0a2b4e527714",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 34,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Feature 'Vertiport'."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/week09/invalid_unquoted_short_name.sysml",
+      "sha256": "38ab597ba8c1dd2dfc5a7149347566616d5a11c5a641f417b6d08babb229f3fb",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 15,
+          "column": 12,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input '-' expecting '>'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 15,
+          "column": 18,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'chargingSystems'"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/reference/aerolink_v01_skeleton.sysml",
+      "sha256": "d9dc6aac65eca5d32fd28007d9e640975e4059839547a0aa781e7ad5bbda6e0c",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/reference/aerolink_v02_req_structure.sysml",
+      "sha256": "db870281c4bae59f754e661520306640cc91bb264a27ea7e0ae78d7e67739985",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/reference/aerolink_v03_behavior.sysml",
+      "sha256": "0f0cc7e3f17be6060f19c54a9b8d40482eb3d389711b2b2d50e4cf6f02be2d67",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/reference/aerolink_v04_full.sysml",
+      "sha256": "13490c057f3d5152aa93b1cc08e5faed2cd7f73c27da2a444d58df596bf6fb17",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    }
+  ]
+}

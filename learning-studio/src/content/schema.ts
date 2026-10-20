@@ -29,10 +29,16 @@ export type LessonBlock = {
   citations: Citation[]
   provenance: ContentProvenance
   quote?: { text: string; cite: Citation }
+  /** Set on a block written or rewritten after the last independent review (search for 'new-pending-review'). */
+  review?: 'new-pending-review'
 }
 
 export type QuizOption = { id: string; text: string; correct: boolean; explanation: string }
-export type QuizQuestion = { id: string; bloom: Bloom; objective: string; prompt: string; options: QuizOption[]; cite: Citation }
+/** Every question names its source: a register citation, or (`courseSource`) the course convention it tests, so a
+ *  course rule is never dressed in a borrowed citation (Week 1 rebuild review F09). `lecture` (optional) names where the
+ *  item is taught: the lecture slide (by id) and the detailed-lesson section (by id) of that week's session. */
+export type QuizTaught = { week: number; session: number; slide: string; section: string }
+export type QuizQuestion = { id: string; bloom: Bloom; objective: string; prompt: string; options: QuizOption[]; cite?: Citation; courseSource?: string; lecture?: QuizTaught; review?: 'new-pending-review' }
 
 /** An interactive learning activity rendered by a registered component (src/activities/registry.tsx). */
 export type ActivitySpec = {
@@ -45,6 +51,7 @@ export type ActivitySpec = {
   objectives: string[]
   /** ID of the lesson block the activity is shown inside. */
   inBlock: string
+  review?: 'new-pending-review'
 }
 
 export type LabSpec = {
@@ -61,6 +68,7 @@ export type LabSpec = {
   continuity: string
   /** Links to app tools students use in the lab. */
   tools: { label: string; to: string }[]
+  review?: 'new-pending-review'
 }
 
 export type AssignmentSpec = {
@@ -79,6 +87,7 @@ export type AssignmentSpec = {
   rubricScope: string
   aiUse: string
   objectives: string[]
+  review?: 'new-pending-review'
 }
 
 export type InstructorNotes = {
@@ -90,10 +99,15 @@ export type InstructorNotes = {
   answerKey: string[]
   /** Errata or source cautions (e.g. a source example known to be wrong). */
   cautions: string[]
+  review?: 'new-pending-review'
 }
 
 /** `review: 'new-pending-review'` marks a line changed for the book-style flow and not yet independently reviewed. */
-export type WorkloadItem = { activity: string; hours: number; review?: 'new-pending-review' }
+/** `optional`: shown for planning but not counted in the week's total (e.g. Week 1's optional AeroLink practice). */
+export type WorkloadItem = { activity: string; hours: number; review?: 'new-pending-review'; optional?: boolean }
+
+/** The week's counted workload: every row except the optional ones. */
+export const workloadTotal = (rows: WorkloadItem[]) => Math.round(rows.filter((w) => !w.optional).reduce((a, w) => a + w.hours, 0) * 100) / 100
 
 export type ContentReview = {
   status: 'draft' | 'self-checked' | 'independently-reviewed'
@@ -155,7 +169,7 @@ export function weekChecks(c: WeekContent, objectiveIds: string[], rubricIds: Se
   const quizObjectives = new Set(c.quiz.map((q) => q.objective))
   const practiced = new Set([...c.lab.objectives, ...c.assignment.objectives, ...c.activities.flatMap((a) => a.objectives)])
   const blooms = new Set(c.quiz.map((q) => q.bloom))
-  const workload = c.workload.reduce((a, w) => a + w.hours, 0)
+  const workload = workloadTotal(c.workload)
   const target = WORKLOAD_TARGET[c.week]
   const blockIds = new Set(c.blocks.map((b) => b.id))
   const sessionErrors = c.instructorNotes.sessions.filter((s) => s.segments.reduce((a, g) => a + g.minutes, 0) !== s.minutes)
@@ -174,7 +188,7 @@ export function weekChecks(c: WeekContent, objectiveIds: string[], rubricIds: Se
     { id: 'quiz-bloom', label: 'Knowledge check spans ≥ 2 Bloom levels', ok: blooms.size >= 2 },
     { id: 'practice-coverage', label: 'Every objective is practised in the activity, lab or assignment', ok: objectiveIds.every((o) => practiced.has(o)), detail: objectiveIds.filter((o) => !practiced.has(o)).join(', ') },
     { id: 'notes', label: 'Instructor notes: session plans that add up, ≥ 2 misconceptions, answer key', ok: c.instructorNotes.sessions.length >= 2 && sessionErrors.length === 0 && c.instructorNotes.misconceptions.length >= 2 && c.instructorNotes.answerKey.length > 0, detail: sessionErrors.map((s) => s.title).join(', ') },
-    { id: 'workload', label: `Itemised workload equals the syllabus estimate (${target} h)`, ok: Math.abs(workload - target) < 0.01, detail: `${workload} h` },
+    { id: 'workload', label: `Itemised workload equals the syllabus estimate (${target} h)`, ok: Math.abs(workload - target) < 0.01, detail: `${Math.round(workload * 100) / 100} h` },
     { id: 'review', label: 'Independent content review passed with no open issues', ok: c.review.status === 'independently-reviewed' && c.review.openIssues.length === 0, detail: c.review.status },
   ]
 }

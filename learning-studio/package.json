@@ -15,7 +15,9 @@
     "content:rubrics": "python -I scripts/export_rubrics.py",
     "content:sysml": "python -I scripts/check_sysml.py",
     "export:curriculum": "node scripts/export-curriculum.mjs",
-    "build:student": "tsc -b && vite build --mode student --outDir dist-student && node scripts/check-student-build.mjs"
+    "build:student": "tsc -b && vite build --mode student --outDir dist-student && node scripts/check-student-build.mjs",
+    "lectures:pptx": "node scripts/build-lectures.mjs",
+    "lab:md": "node scripts/build-lab-md.mjs"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",
@@ -42,8 +44,11 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "fake-indexeddb": "^6.2.6",
     "jsdom": "^30.1.2",
+    "jszip": "3.10.1",
     "oxlint": "^1.81.0",
+    "pptxgenjs": "4.0.1",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",

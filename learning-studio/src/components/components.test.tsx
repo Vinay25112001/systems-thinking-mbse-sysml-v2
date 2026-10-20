@@ -15,7 +15,7 @@ describe('knowledge check', () => {
   it('reveals the explanation, records the score, and allows a retry', async () => {
     const user = userEvent.setup()
     render(<AppStateProvider><Quiz questions={WEEK1_QUIZ.slice(0, 2)} /></AppStateProvider>)
-    const q = screen.getByTestId('quiz-q1-1')
+    const q = screen.getByTestId('quiz-w1q-1')
     const correct = WEEK1_QUIZ[0].options.find((o) => o.correct)!
     await user.click(within(q).getByLabelText(correct.text))
     await user.click(within(q).getByRole('button', { name: 'Check answer' }))
@@ -23,7 +23,7 @@ describe('knowledge check', () => {
     expect(within(q).getByText(correct.explanation)).toBeInTheDocument()
     expect(screen.getByTestId('quiz-score')).toHaveTextContent('Score: 1 correct of 2')
 
-    const q2 = screen.getByTestId('quiz-q1-2')
+    const q2 = screen.getByTestId('quiz-w1q-2')
     const wrong = WEEK1_QUIZ[1].options.find((o) => !o.correct)!
     await user.click(within(q2).getByLabelText(wrong.text))
     await user.click(within(q2).getByRole('button', { name: 'Check answer' }))

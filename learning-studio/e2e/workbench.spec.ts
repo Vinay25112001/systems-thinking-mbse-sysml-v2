@@ -1,32 +1,31 @@
-// AeroLink Workbench (Week 1 prototype): missions, problems → selection, theme, keyboard, drawers, axe, screenshots.
+// AeroLink Workbench, Week 1 (rebuilt 2026-10-18: stakeholders, boundary, needs, the team's own record): missions,
+// problems → selection, theme, keyboard, drawers, axe, screenshots. Screenshots go to screenshots/week1-workbench/, so the
+// earlier files in screenshots/workbench/ (shared with another stream) are not touched.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
+import { PREDICTION_OPTIONS } from '../src/content/missions/week01'
+import { CANDIDATES } from '../src/workbench/week1/stakeholders'
 
-const SHOTS = 'screenshots/workbench'
+const SHOTS = 'screenshots/week1-workbench'
 const VIEWS = [
-  ['dynamics', 'Dynamics'],
-  ['loops', 'Causal loops'],
-  ['boundary', 'Boundary & context'],
-  ['l1', 'L1 record'],
-  ['principles', 'Principles'],
   ['stakeholders', 'Stakeholders'],
+  ['boundary', 'Boundary & context'],
+  ['needs', 'Needs'],
+  ['team', 'Team enterprise'],
 ] as const
 
-/** Week 1's workbench is the Practice stage of the book-style flow: seed the flow as read so Practice is unlocked. */
-const READ_ALL = { checks: {}, read: { l1: true, l2: true, l3: true, l4: true, l5: true, l6: true, l7: true }, selfRating: {}, timePlan: {}, worked: {}, memo: {}, practiceStarted: true }
-async function fresh(page: Page, path = '/week/1/practice') {
+/** Week 1's workbench is embedded in the lecture-first week pages (2026-10-19): the optional AeroLink practice on the
+ *  worked-examples page (missions 1–4 first) and the lab tool. Nothing has to be read or answered first. */
+async function fresh(page: Page, path = '/week/1/examples/practice') {
   await page.goto('/#/')
-  await page.evaluate((flow) => {
-    window.localStorage.clear()
-    window.localStorage.setItem('sysml-studio:v1:w1-flow', JSON.stringify(flow))
-  }, READ_ALL)
+  await page.evaluate(() => window.localStorage.clear())
   await page.goto(`/#${path}`)
   await expect(page.getByTestId('workbench')).toBeVisible({ timeout: 30_000 }) // the shell is a lazy chunk
 }
 
 /** Theme and instructor mode live in the flow's top bar above the embedded workbench. */
 async function setTheme(page: Page, theme: 'light' | 'dark' | 'system') {
-  await page.getByLabel('Colour theme').selectOption(theme)
+  await page.getByLabel(/Colou?r theme/).selectOption(theme)
 }
 
 function trackErrors(page: Page): string[] {
@@ -38,39 +37,46 @@ function trackErrors(page: Page): string[] {
   return errors
 }
 
-test('Week 1 Practice opens the workbench with every region, and the classic page stays available', async ({ page }) => {
+test('the Week 1 workbench opens under the week navigation with every region, and no lock', async ({ page }) => {
   const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Week 1 — Systems, systems thinking and the engineered enterprise')
-  for (const name of ['Top bar', 'Workbench tools', 'Model browser', 'Centre view', 'Properties', 'Mission brief', 'Status bar'])
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Week 1 — Team Formation / Needs / Identifying Stakeholders')
+  for (const name of ['Top bar', 'Workbench tools', 'Model browser', 'Center view', 'Properties', 'Mission brief', 'Status bar'])
     await expect(page.getByLabel(name, { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('navigation', { name: 'Main' })).toHaveCount(0) // the classic sidebar is hidden
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
-  await page.getByRole('link', { name: 'Classic page' }).click()
-  await expect(page.getByTestId('lab-panel')).toBeVisible()
+  await expect(page.getByTestId('week-nav-examples')).toHaveAttribute('aria-current', 'page')
+  await expect(page.getByTestId('practice-locked')).toHaveCount(0)
   expect(errors).toEqual([])
 })
 
-test('try-first mission: the prediction is locked before the run, then compared with it', async ({ page }) => {
+test('try-first mission: the prediction is locked before the sort, then compared with it, with nothing given away early', async ({ page }) => {
   const errors = trackErrors(page)
   await fresh(page)
   const brief = page.getByTestId('mission-brief')
-  await brief.getByLabel('Only up to a point — then extra aircraft stop helping').check()
+  await brief.getByLabel(PREDICTION_OPTIONS[0].text).check()
   await brief.getByRole('button', { name: 'Record: Your prediction' }).click()
   await expect(page.getByTestId('step-predict')).toHaveAttribute('data-status', 'done')
-  await expect(page.getByTestId('step-run')).toHaveAttribute('data-status', 'current')
-  await page.getByTestId('dynamics-explorer').getByRole('button', { name: 'Fleet grows, charging does not' }).click()
-  await expect(page.getByTestId('step-run')).toHaveAttribute('data-status', 'done')
+  await expect(page.getByTestId('step-identify')).toHaveAttribute('data-status', 'current')
+  const view = page.getByTestId('view-stakeholders')
+  // the key is not shown before the student checks with every candidate marked
+  await expect(page.getByTestId('stk-identify').getByRole('button', { name: 'Check', exact: true })).toBeDisabled()
+  for (const c of CANDIDATES) await view.getByLabel(`Is ${c.name} a stakeholder?`).selectOption(c.name === 'Weather' ? 'yes' : c.stakeholder ? 'yes' : 'no')
+  await expect(view).not.toContainText('a natural system in the context')
+  await page.getByTestId('stk-identify').getByRole('button', { name: 'Check', exact: true }).click()
+  await expect(page.getByTestId('stk-identify-score')).toHaveText(`${CANDIDATES.length - 1} of ${CANDIDATES.length} agree with the key`)
+  await expect(view).toContainText('a natural system in the context')
+  // rebuild review F14: the step is not done while a difference from the key is unread
+  await expect(page.getByTestId('step-identify')).not.toHaveAttribute('data-status', 'done')
+  await expect(page.getByTestId('stk-identify-open')).toContainText('1 to read')
+  await view.getByLabel('I have read why').check()
+  await expect(page.getByTestId('step-identify')).toHaveAttribute('data-status', 'done')
   const compare = page.getByTestId('step-compare')
-  await expect(compare).toContainText('You predicted: “Only up to a point')
-  await expect(compare).toContainText('12 → 40 aircraft')
+  await expect(compare).not.toContainText('primary source')
   await compare.getByLabel('Partly').check()
   await compare.getByRole('button', { name: /Record/ }).click()
-  await expect(page.getByTestId('step-feedback')).toContainText('7,788')
-  await expect(page.getByTestId('console')).toHaveCount(0) // console tab not open; the run is still logged
-  await page.getByRole('tab', { name: /Console/ }).click()
-  await expect(page.getByTestId('console')).toContainText('Dynamics run · Fleet grows, charging does not')
+  await expect(page.getByTestId('step-feedback')).toContainText('primary source of needs')
   expect(errors).toEqual([])
 })
 
@@ -78,14 +84,14 @@ test('guided boundary mission: classify, check against the key, name the criteri
   const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
-  await page.getByRole('button', { name: /^Mission 3: Guided: a boundary fit for the question/ }).click()
+  await page.getByRole('button', { name: /^Mission 2: Guided: an AeroLink boundary fit for its question/ }).click()
   await expect(page.getByTestId('view-boundary')).toBeVisible()
   await expect(page.getByTestId('step-check')).toHaveCount(0) // guided missions show only the steps reached so far
   const ex = page.getByTestId('boundary-exercise')
   const answers: [string, string][] = [
-    ['AeroLink aircraft fleet', 'inside'], ['Vertiport chargers', 'inside'], ['Dispatch and scheduling (operations centre)', 'inside'],
+    ['AeroLink aircraft fleet', 'inside'], ['Vertiport chargers', 'inside'], ['Dispatch and scheduling (operations center)', 'inside'],
     ['Passenger demand and rider word-of-mouth', 'inside'], ['Electric grid', 'environment'], ['Airspace managed by the air navigation service provider', 'environment'],
-    ['Weather', 'environment'], ['Aircraft cabin interior colour scheme', 'irrelevant'], ['Aircraft manufacturer delivery lead time', 'irrelevant'],
+    ['Weather', 'environment'], ['Aircraft cabin interior color scheme', 'irrelevant'], ['Aircraft manufacturer delivery lead time', 'irrelevant'],
   ]
   for (const [name, v] of answers) await ex.getByLabel(`Classify ${name}`).selectOption(v)
   await expect(page.getByTestId('step-classify')).toHaveAttribute('data-status', 'done')
@@ -116,15 +122,15 @@ test('problems: a rule violation is listed, clicking it selects the element, fix
   await ext.getByLabel('Owner (initials)').fill('JS')
   await ext.getByRole('button', { name: /Add external system/ }).click()
   const problems = page.getByTestId('problems-table')
-  await expect(problems).toContainText('EXT-001 has no labelled exchange')
+  await expect(problems).toContainText('EXT-001 has no labeled exchange')
   await page.getByRole('button', { name: 'Clear selection' }).click()
-  await page.getByRole('tab', { name: 'Dynamics' }).click()
+  await page.getByRole('tab', { name: 'Needs' }).click()
   await problems.getByRole('button', { name: /Select EXT-001/ }).click()
   await expect(page.getByTestId('tree-EXT-001')).toHaveAttribute('aria-selected', 'true')
   await expect(page.getByTestId('view-boundary')).toBeVisible() // the problem opened the element's view
   const props = page.getByTestId('properties')
   await props.getByLabel('Exchange with the SoI').fill('power')
-  await expect(page.getByTestId('dock')).not.toContainText('EXT-001 has no labelled exchange')
+  await expect(page.getByTestId('dock')).not.toContainText('EXT-001 has no labeled exchange')
   await page.getByRole('tab', { name: /Changes & impact/ }).click()
   await expect(page.getByTestId('changes-list')).toContainText('cleared')
   await expect(page.getByTestId('changes-list')).toContainText('EXT elements: 0 → 1')
@@ -152,49 +158,45 @@ test('undo / redo: Ctrl+Z reverts a model edit, Ctrl+Shift+Z restores it, and bo
   await page.screenshot({ path: `${SHOTS}/undo-1440x900-light.png` })
   await page.keyboard.press('Control+Shift+z')
   await expect(page.getByTestId('tree-EXT-001')).toBeVisible()
-  await expect(page.getByTestId('problems-table')).toContainText('EXT-001 has no labelled exchange') // its problem is back
+  await expect(page.getByTestId('problems-table')).toContainText('EXT-001 has no labeled exchange') // its problem is back
   await page.getByRole('tab', { name: /Changes & impact/ }).click()
   await expect(page.getByTestId('changes-list')).toContainText('Redo of change 1')
   expect(errors).toEqual([])
 })
 
-test('the dynamics explorer keeps a committed archetype after a reload', async ({ page }) => {
+test('team enterprise: an AeroLink proposal is an error in Problems until the team proposes its own enterprise', async ({ page }) => {
+  const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
-  const dyn = page.getByTestId('dynamics-explorer')
-  await dyn.getByRole('combobox').first().selectOption('Limits to Growth')
-  await dyn.getByRole('button', { name: 'Reveal the instructor’s label' }).click()
-  await expect(dyn.getByTestId('scenario-reveal')).toContainText('Your answer: Limits to Growth')
-  await page.reload()
-  await expect(page.getByTestId('dynamics-explorer').getByTestId('scenario-reveal')).toContainText('Your answer: Limits to Growth')
+  await page.getByRole('tab', { name: 'Team enterprise' }).click()
+  const p = page.getByTestId('team-proposal')
+  await p.getByLabel('Enterprise name').fill('AeroLink vertiport network')
+  await expect(page.getByTestId('problems-table')).toContainText('The enterprise proposal names AeroLink')
+  await expect(page.getByTestId('team-proposal-check')).toContainText('AeroLink is the instructor’s worked example')
+  await p.getByLabel('Enterprise name').fill('Riverside Food Bank Network')
+  await expect(page.getByTestId('dock')).not.toContainText('names AeroLink')
+  await page.screenshot({ path: `${SHOTS}/team-proposal-1440x900-light.png` })
+  expect(errors).toEqual([])
 })
 
-test('layout at 1440x900: dock folded, Properties folded while nothing is selected, causal-loop labels legible', async ({ page }) => {
+test('layout at 1440x900: dock folded, Properties folded while nothing is selected, the current step fits', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
   const dockH = await page.getByTestId('dock').evaluate((el) => el.getBoundingClientRect().height)
   expect(dockH).toBeLessThan(40)
   const propsH = await page.getByLabel('Properties', { exact: true }).first().evaluate((el) => el.getBoundingClientRect().height)
   expect(propsH).toBeLessThan(40)
-  // the brief's current step fits without scrolling inside the brief
+  // the brief's current step can be acted on without scrolling inside the brief: its task, its "You enter" / "Done when"
+  // statements and its action button are in view (revised 2026-10-18: the step statements and the labeled mission list
+  // added to the brief move the hint and reference buttons below the fold at this size)
   const brief = page.getByTestId('mission-brief')
   const fits = await brief.evaluate((el) => {
-    const scroller = el.parentElement!
-    const step = el.querySelector('[data-status="current"]')!.getBoundingClientRect()
-    return step.bottom <= scroller.getBoundingClientRect().bottom
+    const bottom = el.parentElement!.getBoundingClientRect().bottom
+    const step = el.querySelector('[data-status="current"]')!
+    const parts = [step.querySelector('[data-testid="step-brief"]'), step.querySelector('button.wb-btn.primary')]
+    return parts.every((x) => !!x && x.getBoundingClientRect().bottom <= bottom)
   })
   expect(fits).toBe(true)
-  await page.getByRole('tab', { name: 'Causal loops' }).click()
-  const node = page.locator('.react-flow__node').first()
-  await expect(node).toBeVisible()
-  await page.waitForTimeout(400)
-  const px = await node.evaluate((el) => {
-    const font = parseFloat(getComputedStyle(el).fontSize)
-    const vp = el.closest('.react-flow__viewport') as HTMLElement
-    const scale = new DOMMatrixReadOnly(getComputedStyle(vp).transform).a
-    return font * scale
-  })
-  expect(px).toBeGreaterThanOrEqual(11)
   // a new problem opens the dock
   await page.getByRole('tab', { name: 'Boundary & context' }).click()
   const ext = page.getByTestId('ext-form')
@@ -219,27 +221,38 @@ test('medium width: the model browser opens as an overlay drawer, the centre kee
   await expect(drawer).toHaveCount(0)
 })
 
-test('loop builder: a declared type that disagrees with the polarities is an error until fixed', async ({ page }) => {
+test('needs writer (rebuild review F01): structure and trace are gated, subjective points are warnings, the six checks are confirmed by the student', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
-  await page.getByRole('tab', { name: 'Causal loops' }).click()
-  await page.getByRole('button', { name: 'New loop' }).click()
-  const b = page.getByTestId('loop-builder')
-  await b.getByLabel('Variable 2', { exact: true }).selectOption({ label: 'Word-of-mouth adoption' })
-  await b.getByLabel('Polarity of the link from variable 1 to variable 2').selectOption('+')
-  await b.getByLabel('Polarity of the link from variable 2 to variable 1').selectOption('+')
-  await b.getByLabel('Declared loop type').selectOption('Balancing')
-  await b.getByLabel('Owner (initials)').fill('JS')
-  await expect(page.getByTestId('problems-table')).toContainText('LOOP-001 is declared balancing, but its polarities make it reinforcing')
-  await expect(page.getByTestId('status-bar')).toContainText('1 error')
-  await b.getByLabel('Declared loop type').selectOption('Reinforcing')
-  await expect(page.getByTestId('dock')).not.toContainText('declared balancing')
-  await page.getByRole('button', { name: /^Mission 4:/ }).click()
-  await expect(page.getByTestId('step-reinforcing')).toHaveCount(0) // step 1 (count B2) must be done first
-  const count = page.getByTestId('step-count')
-  await count.getByRole('textbox', { name: 'Negative links in B2' }).fill('3')
-  await count.getByRole('button', { name: /Record/ }).click()
-  await expect(page.getByTestId('step-reinforcing')).toHaveAttribute('data-status', 'done')
+  await page.getByRole('tab', { name: 'Needs' }).click()
+  const w = page.getByTestId('needs-write')
+  await w.getByLabel('Short name').fill('Fire warning')
+  await w.getByLabel('Need statement').fill('The vertiport shall warn responders of a battery fire.')
+  await w.getByLabel('Rationale (why they need it)').fill('responders must reach a fire quickly and safely')
+  const crit = page.getByTestId('needs-criteria')
+  // A21: rejected for its real defects, a requirement (“shall”) with no registered stakeholder in need
+  await expect(crit).toContainText('marks a requirement')
+  await expect(crit).toContainText('No stakeholder from your register is named')
+  await expect(crit).toContainText('Choose at least one stakeholder')
+  await expect(w.getByRole('button', { name: 'Record need' })).toBeDisabled()
+  // a vague need passes the structure but is warned about, and cannot be recorded without a justification
+  await w.getByLabel('Comes from (stakeholder)').selectOption('STK-006')
+  // A21: the outcome form is a valid need: accepted with a note recommending "The [stakeholders] need the [system] to …"
+  await w.getByLabel('Need statement').fill('Emergency responders need early warning of a battery fire at a vertiport, at any hour of operation.')
+  await expect(crit).toContainText('Accepted: it names the stakeholder and the outcome')
+  await expect(crit).not.toContainText('Fix')
+  await expect(crit).not.toContainText('Warning')
+  await w.getByLabel('Need statement').fill('Emergency responders need the air-taxi service to give good service when possible.')
+  await expect(crit).toContainText('Vague')
+  await expect(crit).not.toContainText('Fix')
+  await w.getByLabel('Need statement').fill('Emergency responders need the air-taxi service to give them early warning of a battery fire at a vertiport, at any hour of operation.')
+  await expect(crit).not.toContainText('Fix')
+  await expect(crit).not.toContainText('Warning')
+  await expect(w.getByRole('button', { name: 'Record need' })).toBeDisabled()
+  const boxes = page.getByTestId('needs-selfcheck').getByRole('checkbox')
+  for (let i = 0; i < 6; i++) await boxes.nth(i).check()
+  await w.getByRole('button', { name: 'Record need' }).click()
+  await expect(page.getByTestId('needs-recorded')).toContainText('STK-006')
 })
 
 test('keyboard: F6 cycles regions, the tree navigates with arrows, ? and Esc open and close dialogs', async ({ page }) => {
@@ -256,21 +269,21 @@ test('keyboard: F6 cycles regions, the tree navigates with arrows, ? and Esc ope
   await tree.getByRole('treeitem').first().focus()
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('ArrowDown')
-  await page.keyboard.press('ArrowRight')
   await page.keyboard.press('Enter')
-  await expect(page.getByTestId('tree-boundary:b1')).toHaveAttribute('aria-selected', 'true')
-  await expect(page.getByTestId('properties')).toContainText('AeroLink aircraft fleet')
+  await expect(page.getByTestId('tree-team:proposal')).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByTestId('properties')).toContainText('Team Record, part 2 Enterprise proposal')
   await page.keyboard.press('?')
   await expect(page.getByRole('dialog', { name: 'Keyboard shortcuts' })).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog', { name: 'Keyboard shortcuts' })).toHaveCount(0)
   // Read more opens the reference drawer at the step's lesson block; Esc closes it
-  // in the Week 1 flow the step first links to its Learn section; the drawer keeps the full reviewed text
-  await expect(page.getByTestId('step-predict').getByTestId('step-lesson-link')).toHaveText(/Lesson: L4 Emergence and hierarchy/)
+  // on the lecture-first path the step first links to the lesson section that teaches it; the drawer keeps the full reviewed text
+  await expect(page.getByTestId('step-predict').getByTestId('step-lesson-link')).toHaveText(/Lesson: Identifying stakeholders/)
+  await expect(page.getByTestId('step-predict').getByTestId('step-lesson-link')).toHaveAttribute('href', '#/week/1/lesson/s1-lesson-stakeholders')
   await page.getByTestId('step-predict').getByRole('button', { name: 'Full text' }).click()
   const drawer = page.getByTestId('reference-drawer')
   await expect(drawer).toBeVisible()
-  await expect(drawer.getByTestId('block-w1-intuition')).toBeInViewport()
+  await expect(drawer.getByTestId('block-w1-stakeholders')).toBeInViewport()
   await page.keyboard.press('Escape')
   await expect(drawer).toHaveCount(0)
 })
@@ -280,13 +293,13 @@ test('assessments panel: recall quiz, lab and assignment; instructor notes only 
   await fresh(page)
   await page.getByRole('button', { name: 'Assessments' }).click()
   const panel = page.getByTestId('assessments-panel')
-  const q = panel.getByTestId('quiz-q1-3')
-  await q.getByLabel(/A purposeful combination of interdependent resources/).check()
+  const q = panel.getByTestId('quiz-w1q-3')
+  await q.getByLabel(/The system whose life cycle is under consideration/).check()
   await q.getByRole('button', { name: 'Check answer' }).click()
   await expect(q.getByRole('status')).toHaveText('Correct')
   await expect(panel.getByRole('tab', { name: 'Instructor notes' })).toHaveCount(0)
   await panel.getByRole('tab', { name: 'Lab L1' }).click()
-  await expect(panel.getByTestId('lab-panel')).toContainText('L1 — Context and causal loops')
+  await expect(panel.getByTestId('lab-panel')).toContainText('L1 — Team charter, enterprise proposal, stakeholder register and initial needs')
   await page.screenshot({ path: `${SHOTS}/assessments-1440x900-light.png` })
   await page.keyboard.press('Escape')
   await page.getByLabel('Instructor mode').check()

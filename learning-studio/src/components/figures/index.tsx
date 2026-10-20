@@ -4,10 +4,19 @@ import type { FigureSpec } from '../../content/learn/types'
 import { FigureFrame } from './Frame'
 import { BoundaryLayers, ControlHierarchy, DownAndUp, JamFigure, LessThanSum, LoopPair, OpenSystemFigure } from './SystemFigures'
 import { CapacityCrossover, ControlRings, LifeCycleAgents } from './EngineeringFigures'
+import { EnterpriseScopeFigure, NeedAnatomyFigure, NeedChainFigure, RegisterRowFigure, StakeholderSourcesFigure, TeamCharterFigure, WeekPathFigure } from './StakeholderFigures'
 
 const STATIC: Record<string, (alt: string, revealed: boolean) => ReactNode> = {
   jam: (alt) => <JamFigure alt={alt} />,
-  'open-system': (alt) => <OpenSystemFigure alt={alt} />,
+  // Week 1 (rebuilt 2026-10-18) uses the context drawing without the dynamics state panel
+  'open-system': (alt) => <OpenSystemFigure alt={alt} showState={false} />,
+  'week-path': (alt) => <WeekPathFigure alt={alt} />,
+  'team-charter': (alt) => <TeamCharterFigure alt={alt} />,
+  'enterprise-scope': (alt) => <EnterpriseScopeFigure alt={alt} />,
+  'stakeholder-sources': (alt) => <StakeholderSourcesFigure alt={alt} />,
+  'register-row': (alt) => <RegisterRowFigure alt={alt} />,
+  'need-chain': (alt) => <NeedChainFigure alt={alt} />,
+  'need-anatomy': (alt) => <NeedAnatomyFigure alt={alt} />,
   'down-and-up': (alt) => <DownAndUp alt={alt} />,
   'less-than-sum': (alt) => <LessThanSum alt={alt} />,
   'loop-pair': (alt) => <LoopPair alt={alt} />,

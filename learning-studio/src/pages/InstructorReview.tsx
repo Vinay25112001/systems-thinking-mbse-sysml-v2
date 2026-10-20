@@ -1,26 +1,35 @@
 import { useMemo, useState } from 'react'
 import { WEEKS } from '../content/course'
-import { WEEK_CONTENT } from '../content/weeks'
+import { DRAFT_WEEKS } from '../content/draftWeeks'
+import { CURRENT_CONTENT, WEEK_CONTENT } from '../content/weeks'
 import { useApp, type ReviewStatus } from '../state/AppState'
 import { Link } from '../lib/router'
 import { Badge, Button, Card, PageHeader, ProvenanceBadge } from '../components/ui'
 
 type Item = { id: string; label: string; area: string; provenance?: string; link: string }
 
+// Item IDs are stable so recorded decisions survive the A19 schedule change: the reviewed draft modules keep their IDs and
+// are now listed (and linked) as earlier draft material; the new schedule's week outlines have their own IDs.
 export function reviewableItems(): Item[] {
+  const live = (week: number) => !!CURRENT_CONTENT[week]
+  const where = (week: number) => (live(week) ? { area: `Week ${week}`, link: `/week/${week}` } : { area: `Earlier draft (old Week ${week})`, link: `/draft/${week}` })
   return [
     ...Object.values(WEEK_CONTENT)
       .sort((x, y) => x.week - y.week)
-      .flatMap((c) => [
-        ...c.blocks.map((b) => ({ id: b.id, label: b.title, area: `Week ${c.week} lesson`, provenance: b.provenance, link: `/week/${c.week}` })),
-        { id: `w${c.week}-lab`, label: `${c.lab.id} — ${c.lab.title}`, area: `Week ${c.week} lab`, link: `/week/${c.week}` },
-        { id: `w${c.week}-assignment`, label: c.assignment.title, area: `Week ${c.week} assignment`, link: `/week/${c.week}` },
-        ...c.quiz.map((q, i) => ({ id: `quiz-${q.id}`, label: `Q${i + 1}: ${q.prompt}`, area: `Week ${c.week} knowledge check`, link: `/week/${c.week}` })),
-      ]),
-    ...WEEKS.map((w) => ({ id: `week-${w.number}-outline`, label: `Week ${w.number} outline: ${w.title}`, area: 'Course outline', link: `/week/${w.number}` })),
+      .flatMap((c) => {
+        const { area, link } = where(c.week)
+        return [
+          ...c.blocks.map((b) => ({ id: b.id, label: b.title, area: `${area} lesson`, provenance: b.provenance, link })),
+          { id: `w${c.week}-lab`, label: `${c.lab.id} — ${c.lab.title}`, area: `${area} lab`, link },
+          { id: `w${c.week}-assignment`, label: c.assignment.title, area: `${area} assignment`, link },
+          ...c.quiz.map((q, i) => ({ id: `quiz-${q.id}`, label: `Q${i + 1}: ${q.prompt}`, area: `${area} knowledge check`, link })),
+        ]
+      }),
+    ...WEEKS.map((w) => ({ id: `week-${w.number}-schedule`, label: `Week ${w.number} outline: ${w.title}`, area: 'Course outline (A19 schedule)', link: `/week/${w.number}` })),
+    ...DRAFT_WEEKS.map((w) => ({ id: `week-${w.number}-outline`, label: `Earlier outline, old Week ${w.number}: ${w.title}`, area: 'Earlier outline (superseded)', link: `/draft/${w.number}` })),
     { id: 'data-sheet', label: 'AeroLink Data Sheet (fictional parameters)', area: 'Case study', provenance: 'fictional', link: '/workspace/aerolink' },
     { id: 'stakeholder-checks', label: 'Stakeholder map acceptance checks', area: 'Lab L2', link: '/workspace/stakeholders' },
-    { id: 'toolchain-statement', label: 'SysML toolchain statement', area: 'Part II', link: '/sysml' },
+    { id: 'toolchain-statement', label: 'SysML toolchain statement', area: 'Phase II', link: '/sysml' },
   ]
 }
 

@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 8 baseline transformation · MBSE Studio (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* SysML Learning Studio — proposed design system ("Studio DS"), mockup edition.
+   Source of truth for the static mockups in docs/ux/mockups/*.html (each mockup inlines a copy of this file so it
+   stays self-contained). Tokens extend, not replace, learning-studio/src/workbench/theme.css (--wb-*) and the
+   brand ramp in learning-studio/src/index.css; see UI_UX_REDESIGN_PROPOSAL.md §6 for the mapping.
+   Proposal only: nothing here is wired into the app. */
+
+:root {
+  color-scheme: light;
+  /* Neutrals (from --wb-*, unchanged values where they exist) */
+  --bg: #f3f5f8;            /* = --wb-bg */
+  --panel: #ffffff;         /* = --wb-panel */
+  --sunk: #eceff3;          /* = --wb-sunk */
+  --line: #d3d9e1;          /* = --wb-line */
+  --line-strong: #b4bdc9;   /* = --wb-line-strong */
+  --ink: #18202d;           /* = --wb-fg */
+  --ink-2: #3a4456;         /* new: secondary text, 9.6:1 on panel */
+  --muted: #566071;         /* = --wb-muted, 6.3:1 on panel */
+
+  /* Role colours. Each role = solid (text/icons, >= 4.5:1 on panel) + soft (fills) + edge (borders/bands). */
+  --course: #0f6e8c;        /* = --wb-accent / brand-600: course, lecture, navigation */
+  --course-strong: #0b5a73;
+  --course-soft: #e1eff4;
+  --project: #3d4ac4;       /* NEW: "Your enterprise" (My Project). 6.9:1 on white */
+  --project-strong: #2f3aa3;
+  --project-soft: #e8eafb;
+  --project-edge: #8f98e6;
+  --example: #8a3a78;       /* NEW: "Instructor example" (AeroLink, Practice). 7.1:1 on white */
+  --example-soft: #f6e8f2;
+  --example-edge: #d39cc5;
+  --mbse: #155e52;          /* NEW: MBSE Studio (Weeks 8–14) model surfaces */
+  --mbse-soft: #e0f0ec;
+
+  /* Status (from --wb-ok/warn/bad) — never used as role colour */
+  --ok: #23683b;   --ok-soft: #e2f1e7;
+  --warn: #8a5200; --warn-soft: #fbefd9;
+  --bad: #b3261e;  --bad-soft: #fbe4e2;
+  --info: var(--course); --info-soft: var(--course-soft);
+
+  /* Type */
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --t-caption: 0.8125rem;  /* 13 — floor for any text */
+  --t-small: 0.875rem;     /* 14 — UI secondary */
+  --t-ui: 1rem;            /* 16 — UI base */
+  --t-read: 1.125rem;      /* 18 — reader body */
+  --t-h4: 1.25rem;         /* 20 */
+  --t-h3: 1.5rem;          /* 24 */
+  --t-h2: 1.875rem;        /* 30 */
+  --t-h1: 2.375rem;        /* 38 */
+  --t-display: 3rem;       /* 48 */
+
+  /* Space (4-pt) */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+  /* Radii: hierarchy, not one radius for everything */
+  --r-chip: 999px; --r-control: 6px; --r-card: 10px; --r-surface: 14px;
+  /* Elevation: two levels only */
+  --e1: 0 1px 2px rgba(24, 32, 45, 0.06), 0 0 0 1px var(--line);
+  --e2: 0 8px 24px rgba(24, 32, 45, 0.12), 0 0 0 1px var(--line);
+  /* Motion */
+  --m-fast: 120ms; --m-base: 180ms; --ease: cubic-bezier(0.2, 0, 0, 1);
+  --focus: 0 0 0 2px var(--panel), 0 0 0 4px var(--course);
+  --rail-w: 248px;
+}
+
+/* Dark: designed, not inverted (values from --wb-* dark where they exist) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #11151c; --panel: #181e27; --sunk: #141920; --line: #2b3340; --line-strong: #3d4757;
+    --ink: #e3e8ef; --ink-2: #c3cbd7; --muted: #9ba5b4;
+    --course: #4fb3d4; --course-strong: #7cc9e2; --course-soft: #15313b;
+    --project: #9aa4ff; --project-strong: #b8bfff; --project-soft: #1f2347; --project-edge: #4b54a8;
+    --example: #e391cf; --example-soft: #3a1d33; --example-edge: #7d3f6d;
+    --mbse: #6fcfb9; --mbse-soft: #12302a;
+    --ok: #5cc27e; --ok-soft: #15301f; --warn: #e8a33c; --warn-soft: #382a12; --bad: #f07a70; --bad-soft: #3a1b19;
+    --e1: 0 0 0 1px var(--line); --e2: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line-strong);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #11151c; --panel: #181e27; --sunk: #141920; --line: #2b3340; --line-strong: #3d4757;
+  --ink: #e3e8ef; --ink-2: #c3cbd7; --muted: #9ba5b4;
+  --course: #4fb3d4; --course-strong: #7cc9e2; --course-soft: #15313b;
+  --project: #9aa4ff; --project-strong: #b8bfff; --project-soft: #1f2347; --project-edge: #4b54a8;
+  --example: #e391cf; --example-soft: #3a1d33; --example-edge: #7d3f6d;
+  --mbse: #6fcfb9; --mbse-soft: #12302a;
+  --ok: #5cc27e; --ok-soft: #15301f; --warn: #e8a33c; --warn-soft: #382a12; --bad: #f07a70; --bad-soft: #3a1b19;
+  --e1: 0 0 0 1px var(--line); --e2: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line-strong);
+}
+
+/* Projector density: instructor toggle scales the whole type ramp (and figure labels with it) */
+:root[data-density='projector'] { font-size: 125%; }
+:root[data-density='compact'] { --t-ui: 0.9375rem; --t-read: 1rem; }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 var(--t-ui)/1.5 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.005em; margin: 0; line-height: 1.2; }
+h1 { font-size: var(--t-h1); }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); }
+h4 { font-size: var(--t-h4); }
+p { margin: 0; }
+a { color: var(--course); text-underline-offset: 2px; }
+.id { font-family: var(--font-mono); font-size: 0.95em; letter-spacing: 0; }
+.muted { color: var(--muted); }
+.small { font-size: var(--t-small); }
+.caption { font-size: var(--t-caption); color: var(--muted); }
+:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- App shell ---------- */
+.app { display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr); min-height: 100dvh;
+  background: linear-gradient(to right, var(--panel) calc(var(--rail-w) - 1px), var(--line) calc(var(--rail-w) - 1px) var(--rail-w), transparent var(--rail-w)); }
+@media (max-width: 1023px) { .app { background: none; } }
+.rail {
+  position: sticky; top: 0; height: 100dvh; overflow: auto;
+  background: var(--panel); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; padding: var(--s4) var(--s3);
+}
+.brand { display: flex; gap: 10px; align-items: center; padding: 4px 8px 16px; color: var(--ink); text-decoration: none; }
+.brand-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--course); display: grid; place-items: center; flex: none; }
+.brand-mark svg { width: 18px; height: 18px; }
+.brand b { font: 600 1.0625rem/1.1 var(--font-display); display: block; }
+.brand span { font-size: var(--t-caption); color: var(--muted); }
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.nav a {
+  display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 8px 10px; border-radius: var(--r-control);
+  color: var(--ink-2); text-decoration: none; font-weight: 500;
+}
+.nav a svg { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; }
+.nav a:hover { background: var(--sunk); color: var(--ink); }
+.nav a[aria-current='page'] { background: var(--course-soft); color: var(--course-strong); }
+.nav .lock { margin-left: auto; font-size: var(--t-caption); color: var(--muted); font-weight: 400; }
+.nav-sep { height: 1px; background: var(--line); margin: 10px 6px; }
+.nav-project {
+  margin: 6px 0; padding: 12px; border-radius: var(--r-card); text-decoration: none; color: var(--ink);
+  background: var(--project-soft); border: 1px solid var(--project-edge); display: block;
+}
+.nav-project[aria-current='page'] { box-shadow: inset 4px 0 0 var(--project); }
+.nav-project .np-head { display: flex; align-items: center; gap: 8px; color: var(--project-strong); font-weight: 600; }
+.nav-project .np-head svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+.nav-project .caption { display: block; margin-top: 2px; }
+.nav-project .np-name { display: block; margin-top: 6px; font-size: var(--t-small); font-weight: 500; }
+.nav-project .np-bar { margin-top: 8px; }
+.rail-foot { margin-top: auto; padding-top: var(--s4); display: grid; gap: 8px; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: var(--t-small); color: var(--ink-2); padding: 4px 8px; }
+
+.main { min-width: 0; }
+.topbar {
+  position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: var(--s4);
+  min-height: 56px; padding: 8px var(--s6); background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.crumbs { display: flex; gap: 8px; align-items: center; font-size: var(--t-small); color: var(--muted); min-width: 0; flex-wrap: wrap; }
+.crumbs a { color: var(--muted); text-decoration: none; }
+.crumbs a:hover { color: var(--ink); text-decoration: underline; }
+.crumbs .sep { color: var(--line-strong); }
+.crumbs [aria-current] { color: var(--ink); font-weight: 500; }
+.topbar .spacer { flex: 1; }
+.topbar > * { white-space: nowrap; }
+.topbar .crumbs { white-space: normal; }
+.save-state { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-small); color: var(--muted); white-space: nowrap; }
+.save-state i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.topbar .menu-btn { display: none; }
+.content { padding: var(--s6); max-width: 1320px; margin: 0 auto; }
+.bottom-nav { display: none; }
+
+/* Compact rail: Lecture Studio and MBSE Studio give the canvas the width */
+.app.is-compact { --rail-w: 76px; }
+.app.is-compact .rail { padding: var(--s4) 12px; }
+.app.is-compact .brand { justify-content: center; padding: 4px 0 16px; }
+.app.is-compact .brand > span:last-child, .app.is-compact .nav-project .np-name, .app.is-compact .nav-project .caption,
+.app.is-compact .nav-project .np-bar, .app.is-compact .rail-foot, .app.is-compact .nav .lock { display: none; }
+.app.is-compact .nav a, .app.is-compact .nav-project .np-head { font-size: 0; justify-content: center; gap: 0; }
+.app.is-compact .nav-project { padding: 10px 0; display: grid; place-items: center; }
+
+/* ---------- Buttons, chips, fields ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px;
+  border-radius: var(--r-control); border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink);
+  font: 500 var(--t-small)/1.2 var(--font-body); cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background var(--m-fast) var(--ease), border-color var(--m-fast) var(--ease);
+}
+.btn:hover { background: var(--sunk); }
+.btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.9; flex: none; }
+.btn-primary { background: var(--course); border-color: var(--course); color: #fff; }
+.btn-primary:hover { background: var(--course-strong); }
+.btn-project { background: var(--project); border-color: var(--project); color: #fff; }
+.btn-project:hover { background: var(--project-strong); }
+:root[data-theme='dark'] .btn-primary, :root[data-theme='dark'] .btn-project { color: #0d1218; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .btn-primary, :root:not([data-theme='light']) .btn-project { color: #0d1218; } }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--course); }
+.btn-lg { min-height: 48px; padding: 12px 20px; font-size: var(--t-ui); }
+.btn-icon { width: 40px; padding: 0; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: var(--r-chip);
+  font-size: var(--t-caption); font-weight: 600; line-height: 1; white-space: nowrap; border: 1px solid transparent;
+}
+.chip svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+.chip-ok { background: var(--ok-soft); color: var(--ok); }
+.chip-warn { background: var(--warn-soft); color: var(--warn); }
+.chip-bad { background: var(--bad-soft); color: var(--bad); }
+.chip-info { background: var(--course-soft); color: var(--course-strong); }
+.chip-neutral { background: var(--sunk); color: var(--ink-2); border-color: var(--line); }
+.chip-draft { background: transparent; color: var(--ink-2); border: 1px dashed var(--line-strong); }
+.chip-project { background: var(--project-soft); color: var(--project-strong); }
+.chip-example { background: var(--example-soft); color: var(--example); }
+
+.field { display: grid; gap: 6px; }
+.field label, .label { font-size: var(--t-small); font-weight: 600; color: var(--ink-2); }
+.field .hint { font-size: var(--t-caption); color: var(--muted); }
+.input, .select, .textarea {
+  width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: var(--r-control);
+  background: var(--panel); color: var(--ink); font: 400 var(--t-ui)/1.4 var(--font-body);
+}
+.textarea { min-height: 84px; resize: vertical; }
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--course); box-shadow: 0 0 0 3px var(--course-soft); }
+.input.is-error { border-color: var(--bad); }
+
+/* ---------- Surfaces ---------- */
+.card { background: var(--panel); border-radius: var(--r-card); box-shadow: var(--e1); padding: var(--s5); }
+.surface { background: var(--panel); border-radius: var(--r-surface); box-shadow: var(--e1); }
+.section-title { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); margin: 0 0 var(--s4); flex-wrap: wrap; }
+.section-title h2 { font-size: var(--t-h3); }
+.stack > * + * { margin-top: var(--s4); }
+.grid { display: grid; gap: var(--s5); }
+
+.bar { display: block; height: 6px; background: var(--sunk); border-radius: 99px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
+.bar > i { display: block; height: 100%; background: var(--course); border-radius: 99px; }
+.bar.project > i { background: var(--project); }
+
+/* ---------- Identity banners: who owns this content ---------- */
+.banner {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: var(--r-card);
+  font-size: var(--t-small); border: 1px solid;
+}
+.banner svg { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; }
+.banner strong { font-weight: 600; }
+.banner .banner-act { margin-left: auto; }
+.banner-project { background: var(--project-soft); border-color: var(--project-edge); color: var(--ink); }
+.banner-project svg, .banner-project strong { color: var(--project-strong); }
+.banner-example {
+  background: repeating-linear-gradient(135deg, var(--example-soft) 0 12px, color-mix(in srgb, var(--example-soft) 70%, var(--panel)) 12px 24px);
+  border-color: var(--example-edge); color: var(--ink);
+}
+.banner-example svg, .banner-example strong { color: var(--example); }
+.edge-project { box-shadow: inset 4px 0 0 var(--project), var(--e1); }
+.edge-example { box-shadow: inset 4px 0 0 var(--example), var(--e1); }
+
+/* ---------- Stage stepper (per week) ---------- */
+.stepper { display: flex; gap: 0; list-style: none; margin: 0; padding: 0; counter-reset: st; overflow-x: auto; scrollbar-width: thin; }
+.stepper li { flex: 1 1 0; min-width: 104px; }
+.stepper a { padding-right: 10px; }
+.stepper a {
+  position: relative; display: grid; grid-template-columns: 28px 1fr; gap: 2px 10px; align-items: center;
+  padding: 12px 12px 12px 0; text-decoration: none; color: var(--ink-2); min-height: 56px;
+}
+.stepper a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line); }
+.stepper .dot {
+  grid-row: span 2; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  font: 600 var(--t-caption)/1 var(--font-body); border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink-2);
+}
+.stepper .dot svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.6; }
+.stepper .st-label { font-weight: 600; font-size: var(--t-small); color: var(--ink); line-height: 1.2; }
+.stepper .st-sub { font-size: var(--t-caption); color: var(--muted); line-height: 1.2; }
+.stepper .done .dot { background: var(--course); border-color: var(--course); color: #fff; }
+.stepper .done a::after { background: var(--course); }
+.stepper [aria-current='step'] .dot { border: 2px solid var(--course); color: var(--course); box-shadow: 0 0 0 4px var(--course-soft); }
+.stepper [aria-current='step']::after { background: linear-gradient(90deg, var(--course) 50%, var(--line) 50%); }
+.stepper .is-example .dot { border-color: var(--example-edge); }
+.stepper .is-project .dot { border-color: var(--project-edge); }
+.stepper .is-example .st-sub { color: var(--example); }
+.stepper .is-project .st-sub { color: var(--project); }
+
+/* ---------- Tables ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: var(--t-small); }
+.table th { text-align: left; font-weight: 600; color: var(--muted); font-size: var(--t-caption); padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--sunk); position: sticky; top: 0; }
+.table td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.table tr:hover td { background: color-mix(in srgb, var(--sunk) 60%, transparent); }
+.table tr[aria-selected='true'] td { background: var(--project-soft); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .app { grid-template-columns: 1fr; }
+  .rail { display: none; }
+  .topbar .menu-btn { display: inline-flex; }
+  .topbar { padding: 8px var(--s4); }
+  .content { padding: var(--s5) var(--s4) 96px; }
+  .bottom-nav {
+    display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+    background: var(--panel); border-top: 1px solid var(--line); padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav a { display: grid; justify-items: center; gap: 2px; padding: 6px 2px; min-height: 52px; color: var(--muted); text-decoration: none; font-size: var(--t-caption); font-weight: 500; border-radius: 8px; }
+  .bottom-nav a svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+  .bottom-nav a[aria-current='page'] { color: var(--course-strong); background: var(--course-soft); }
+  .bottom-nav a.bn-project { color: var(--project-strong); }
+  .bottom-nav a.bn-project[aria-current='page'] { background: var(--project-soft); }
+  h1 { font-size: 1.875rem; }
+}
+@media (max-width: 599px) {
+  .hide-sm { display: none !important; }
+  .save-state span { display: none; }
+}
+
+</style>
+<style>
+  .tx-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s4); align-items: end; margin: var(--s4) 0 var(--s4); }
+  .tx-head h1 { font-size: var(--t-h2); }
+  .tx-head p { color: var(--ink-2); margin-top: 6px; max-width: 76ch; }
+
+  /* Status vocabulary: shape + colour + word, never colour alone */
+  .st { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-caption); font-weight: 600; white-space: nowrap; }
+  .st svg { width: 16px; height: 16px; flex: none; }
+  .st-none { color: var(--muted); } .st-none svg { stroke: currentColor; fill: none; stroke-width: 2; }
+  .st-prop { color: var(--course-strong); } .st-prop svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-dasharray: 3 2.5; }
+  .st-ok { color: var(--ok); } .st-ok svg { fill: currentColor; }
+  .st-rev { color: var(--warn); } .st-rev svg { fill: currentColor; }
+  .st-bad { color: var(--bad); } .st-bad svg { fill: currentColor; }
+
+  .summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s4); align-items: center; padding: var(--s4) var(--s5); }
+  .stack-bar { display: flex; height: 12px; border-radius: 99px; overflow: hidden; gap: 2px; background: var(--panel); }
+  .stack-bar i { display: block; height: 100%; }
+  .legend { display: flex; gap: 6px 18px; flex-wrap: wrap; margin-top: 10px; }
+  .legend .st b { font-variant-numeric: tabular-nums; color: var(--ink); margin-left: 2px; }
+
+  .explain { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: var(--s3); margin: var(--s4) 0; }
+  .explain div { padding: 12px 14px; border-radius: var(--r-card); background: var(--panel); box-shadow: var(--e1); font-size: var(--t-small); color: var(--ink-2); }
+  .explain b { display: block; color: var(--ink); font-size: var(--t-ui); margin-bottom: 2px; }
+  .explain .k1 { box-shadow: inset 4px 0 0 var(--project), var(--e1); }
+  .explain .k2 { box-shadow: inset 4px 0 0 var(--mbse), var(--e1); }
+  .explain .k3 { box-shadow: inset 4px 0 0 var(--line-strong), var(--e1); }
+
+  .panes { display: grid; grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); align-items: stretch; }
+  .pane { padding: 0; overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+  .pane-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 14px var(--s5); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .pane-h h2 { font-size: var(--t-h4); display: flex; gap: 8px; align-items: center; }
+  .pane-h h2 svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .pane.src .pane-h { background: var(--project-soft); } .pane.src .pane-h h2 { color: var(--project-strong); }
+  .pane.mdl .pane-h { background: var(--mbse-soft); } .pane.mdl .pane-h h2 { color: var(--mbse); }
+  .tree { list-style: none; margin: 0; padding: 6px 0; font-size: var(--t-small); }
+  .tree .grp { padding: 12px var(--s5) 4px; font-weight: 600; color: var(--muted); font-size: var(--t-caption); display: flex; justify-content: space-between; }
+  .tree .it { display: grid; grid-template-columns: 74px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 8px var(--s5); min-height: 40px; cursor: pointer; }
+  .tree .it:hover { background: var(--sunk); }
+  .tree .it[aria-selected='true'] { background: var(--bad-soft); box-shadow: inset 3px 0 0 var(--bad); }
+  .tree .it .id { color: var(--ink-2); }
+  .tree .it .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mdl .it { grid-template-columns: 18px minmax(0,1fr) auto; }
+  .mdl .it.l2 { padding-left: calc(var(--s5) + 22px); }
+  .mdl .it.l3 { padding-left: calc(var(--s5) + 44px); }
+  .mdl .it .kw { font-family: var(--font-mono); color: var(--mbse); font-size: 0.95em; }
+  .mdl .it svg.pk { width: 16px; height: 16px; stroke: var(--mbse); fill: none; stroke-width: 1.8; }
+  .src-chip { font-family: var(--font-mono); font-size: var(--t-caption); padding: 2px 7px; border-radius: 5px; background: var(--project-soft); color: var(--project-strong); white-space: nowrap; }
+  .placeholder { color: var(--muted); font-style: italic; }
+  .gutter { display: grid; align-content: center; justify-items: center; gap: 10px; color: var(--muted); font-size: var(--t-caption); text-align: center; }
+  .gutter svg { width: 26px; height: 26px; stroke: var(--line-strong); fill: none; stroke-width: 1.8; }
+
+  .detail { margin-top: var(--s5); padding: 0; overflow: hidden; }
+  .det-h { display: flex; gap: 12px; align-items: center; padding: var(--s4) var(--s5); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .det-h h2 { font-size: var(--t-h4); }
+  .det-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .det-grid > div { padding: var(--s5); }
+  .det-grid > div + div { border-left: 1px solid var(--line); }
+  .det-grid h3 { font: 600 var(--t-small)/1.3 var(--font-body); color: var(--muted); margin-bottom: 10px; }
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 8px 12px; font-size: var(--t-small); }
+  .kv dt { color: var(--muted); } .kv dd { margin: 0; }
+  .gap { margin-top: var(--s4); padding: 12px 14px; border-radius: var(--r-card); background: var(--bad-soft); font-size: var(--t-small); display: grid; grid-template-columns: 20px 1fr; gap: 10px; }
+  .gap svg { width: 18px; height: 18px; stroke: var(--bad); fill: none; stroke-width: 2.2; margin-top: 1px; }
+  .gap b { display: block; color: var(--bad); }
+  pre.code { margin: 0; padding: 14px 16px; border-radius: var(--r-card); background: var(--sunk); box-shadow: inset 0 0 0 1px var(--line); font: 400 0.875rem/1.6 var(--font-mono); overflow-x: auto; color: var(--ink); }
+  .code .k { color: var(--mbse); font-weight: 500; } .code .c { color: var(--muted); font-style: italic; } .code .s { color: var(--project-strong); } .code .todo { color: var(--bad); }
+  .honest { margin-top: 10px; font-size: var(--t-caption); color: var(--muted); }
+  .det-acts { display: flex; gap: 8px; flex-wrap: wrap; padding: var(--s4) var(--s5); border-top: 1px solid var(--line); background: var(--sunk); }
+
+  @media (max-width: 1100px) {
+    .panes { grid-template-columns: minmax(0,1fr); gap: var(--s3); }
+    .gutter { grid-auto-flow: column; padding: 4px 0; }
+    .gutter svg { transform: rotate(90deg); }
+    .det-grid { grid-template-columns: minmax(0,1fr); }
+    .det-grid > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 700px) {
+    .tx-head, .summary { grid-template-columns: minmax(0,1fr); }
+    .explain { grid-template-columns: minmax(0,1fr); }
+    .tree .it { grid-template-columns: 66px minmax(0,1fr); }
+    .tree .it .st span { display: none; }
+    .tree .it .st { grid-column: 2; }
+    .kv { grid-template-columns: minmax(0,1fr); gap: 2px; }
+    .kv dd { margin-bottom: 8px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="s-none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/></symbol>
+  <symbol id="s-prop" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/></symbol>
+  <symbol id="s-ok" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7"/><path d="M4.6 8.2 7 10.6l4.4-5" stroke="#fff" stroke-width="1.8" fill="none"/></symbol>
+  <symbol id="s-rev" viewBox="0 0 16 16"><path d="M8 1.5 15 14H1z"/><path d="M8 6v3.6M8 11.4v.4" stroke="#fff" stroke-width="1.7"/></symbol>
+  <symbol id="s-bad" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="2.5"/><path d="M5.3 5.3l5.4 5.4M10.7 5.3l-5.4 5.4" stroke="#fff" stroke-width="1.8"/></symbol>
+</svg>
+<div class="app is-compact">
+<nav class="rail" aria-label="Main">
+  <a class="brand" href="dashboard.html"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#fff;fill:none;stroke-width:1.9"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12 20 7.4M12 12 4 7.4M12 12v9.2"/></svg></span><span><b>SysML Learning Studio</b><span>Systems Thinking and MBSE</span></span></a>
+  <div class="nav">
+    <a href="dashboard.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>Dashboard</a>
+    <a href="week-page.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8M8 11h6"/></svg>Course</a>
+    <a href="lecture-viewer.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/><path d="M7 8h6M7 11h9"/></svg>Lecture Studio</a>
+    <a href="practice-handoff.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M9 3h6"/><path d="M10 3v6L4.5 18.5A1.6 1.6 0 0 0 5.9 21h12.2a1.6 1.6 0 0 0 1.4-2.5L14 9V3"/><path d="M7.5 15h9"/></svg>Practice</a>
+  </div>
+  <a class="nav-project" href="project-overview.html">
+    <span class="np-head"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M8 14h8"/></svg>My Project</span>
+    <span class="np-name">SkyMed Regional Delivery Network</span>
+    <span class="caption">Team 4 · Week 2 milestone in progress</span>
+    <span class="bar project np-bar"><i style="width:18%"></i></span>
+  </a>
+  <div class="nav">
+    <a href="week8-transformation.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12 20 7.4M12 12 4 7.4M12 12v9.2"/></svg>MBSE Studio</a>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav">
+    <a href="#"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Sources and readings</a>
+  </div>
+  <div class="rail-foot">
+    <div class="toggle-row"><span>Instructor mode</span><span class="chip chip-neutral">Off</span></div>
+    <div class="toggle-row"><span>Theme</span><span class="chip chip-neutral">System</span></div>
+  </div>
+</nav>
+<div class="main">
+  <header class="topbar">
+    <button class="btn btn-icon btn-ghost menu-btn" aria-label="Open navigation"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="#">MBSE Studio</a><span class="sep">/</span><span aria-current="page">Week 8 · Baseline transformation</span></nav>
+    <span class="spacer"></span>
+    <span class="save-state" role="status"><i></i><span>Saved 1 min ago</span></span>
+  </header>
+  <main class="content" id="main" style="max-width:1480px">
+    <div class="tx-head">
+      <div>
+        <h1>Turn your Phase I package into a model baseline</h1>
+        <p>Every artifact your team recorded in Weeks 1–7 is listed on the left with its original ID. Map each one to a place in the model on the right. Where the document does not say enough to model, the mapping stays open until you supply what is missing.</p>
+      </div>
+      <a class="btn btn-primary" href="#"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M7 4.5v15l12-7.5z"/></svg>Run the course checker</a>
+    </div>
+
+    <section class="card summary" aria-labelledby="sum">
+      <div>
+        <h2 id="sum" class="sr-only">Mapping status</h2>
+        <div class="stack-bar" role="img" aria-label="41 artifacts: 22 mapped, 9 proposed, 5 need review, 2 invalid or incomplete, 3 not mapped">
+          <i style="flex:22;background:var(--ok)"></i><i style="flex:9;background:var(--course);opacity:.55"></i><i style="flex:5;background:var(--warn)"></i><i style="flex:2;background:var(--bad)"></i><i style="flex:3;background:var(--line-strong)"></i>
+        </div>
+        <div class="legend">
+          <span class="st st-ok"><svg><use href="#s-ok"/></svg>Mapped <b>22</b></span>
+          <span class="st st-prop"><svg><use href="#s-prop"/></svg>Mapping proposed <b>9</b></span>
+          <span class="st st-rev"><svg><use href="#s-rev"/></svg>Needs review <b>5</b></span>
+          <span class="st st-bad"><svg><use href="#s-bad"/></svg>Invalid or incomplete <b>2</b></span>
+          <span class="st st-none"><svg><use href="#s-none"/></svg>Not mapped <b>3</b></span>
+        </div>
+      </div>
+      <span class="chip chip-warn"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/></svg>Baseline not ready: 2 invalid, 3 unmapped</span>
+    </section>
+
+    <div class="explain" aria-label="Three different things">
+      <div class="k1"><b>Engineering document</b>What your team wrote in Phase I: a register row, a narrative, a table. Kept unchanged as the source.</div>
+      <div class="k2"><b>Model element</b>A typed element in the SysML v2 model, such as a part definition or a concern, with the source ID kept as its short name.</div>
+      <div class="k3"><b>Traceable relationship</b>An explicit, typed link between elements, such as a stakeholder framing a concern. Never implied by layout.</div>
+    </div>
+
+    <div class="panes">
+      <section class="card pane src" aria-labelledby="ps">
+        <div class="pane-h"><h2 id="ps"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M8 14h8"/></svg>Phase I package · SkyMed</h2><span class="caption">Read-only source · Week 7 baseline, rev 5</span></div>
+        <ul class="tree" role="listbox" aria-label="Phase I artifacts">
+          <li class="grp"><span>Stakeholders (Week 1)</span><span>14</span></li>
+          <li class="it" role="option"><span class="id">STK-001</span><span class="t">Hospital laboratory services</span><span class="st st-ok"><svg><use href="#s-ok"/></svg><span>Mapped</span></span></li>
+          <li class="it" role="option"><span class="id">STK-005</span><span class="t">Aviation regulator</span><span class="st st-ok"><svg><use href="#s-ok"/></svg><span>Mapped</span></span></li>
+          <li class="it" role="option"><span class="id">STK-006</span><span class="t">Residents under flight paths</span><span class="st st-prop"><svg><use href="#s-prop"/></svg><span>Proposed</span></span></li>
+          <li class="it" role="option" aria-selected="true"><span class="id">STK-009</span><span class="t">Hospital pharmacy</span><span class="st st-bad"><svg><use href="#s-bad"/></svg><span>Incomplete</span></span></li>
+          <li class="it" role="option"><span class="id">STK-012</span><span class="t">County emergency management</span><span class="st st-rev"><svg><use href="#s-rev"/></svg><span>Review</span></span></li>
+          <li class="grp"><span>Concerns and needs (Week 1)</span><span>19</span></li>
+          <li class="it" role="option"><span class="id">CON-004</span><span class="t">Sample arrives within its stability window</span><span class="st st-ok"><svg><use href="#s-ok"/></svg><span>Mapped</span></span></li>
+          <li class="it" role="option"><span class="id">NEED-004</span><span class="t">Lab needs samples before they degrade</span><span class="st st-prop"><svg><use href="#s-prop"/></svg><span>Proposed</span></span></li>
+          <li class="grp"><span>Scenarios and requirements (Week 2)</span><span>8</span></li>
+          <li class="it" role="option"><span class="id">SCN-003</span><span class="t">Night delivery in icing conditions</span><span class="st st-none"><svg><use href="#s-none"/></svg><span>Not mapped</span></span></li>
+          <li class="it" role="option"><span class="id">SR-007</span><span class="t">Deliver within 45 min of dispatch</span><span class="st st-rev"><svg><use href="#s-rev"/></svg><span>Review</span></span></li>
+        </ul>
+      </section>
+      <div class="gutter" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>maps to</span></div>
+      <section class="card pane mdl" aria-labelledby="pm">
+        <div class="pane-h"><h2 id="pm"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12 20 7.4M12 12 4 7.4M12 12v9.2"/></svg>Model baseline v0.1</h2><span class="caption">Generated SysML v2 text · checker not yet run</span></div>
+        <ul class="tree" role="tree" aria-label="Model structure">
+          <li class="it" role="treeitem"><svg class="pk" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v11H3z"/></svg><span><span class="kw">package</span> SkyMed</span><span></span></li>
+          <li class="it l2" role="treeitem"><svg class="pk" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v11H3z"/></svg><span><span class="kw">package</span> Stakeholders</span><span class="caption">13 of 14</span></li>
+          <li class="it l3" role="treeitem"><span></span><span><span class="kw">part def</span> HospitalLab</span><span class="src-chip">STK-001</span></li>
+          <li class="it l3" role="treeitem"><span></span><span><span class="kw">part def</span> AviationRegulator</span><span class="src-chip">STK-005</span></li>
+          <li class="it l3" role="treeitem" style="background:var(--bad-soft)"><span></span><span><span class="kw">part def</span> HospitalPharmacy</span><span class="src-chip">STK-009</span></li>
+          <li class="it l2" role="treeitem"><svg class="pk" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v11H3z"/></svg><span><span class="kw">package</span> Concerns</span><span class="caption">11 of 12</span></li>
+          <li class="it l3" role="treeitem"><span></span><span><span class="kw">concern def</span> SampleStability</span><span class="src-chip">CON-004</span></li>
+          <li class="it l2" role="treeitem"><svg class="pk" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v11H3z"/></svg><span><span class="kw">package</span> Context</span><span class="caption">7 of 7</span></li>
+          <li class="it l2" role="treeitem"><svg class="pk" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v11H3z"/></svg><span><span class="kw">package</span> Requirements</span><span class="caption">filled in Week 9</span></li>
+          <li class="it l3" role="treeitem"><span></span><span class="placeholder">Requirement definitions arrive in Week 9</span><span></span></li>
+          <li class="it l2" role="treeitem"><svg class="pk" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v11H3z"/></svg><span><span class="kw">package</span> Behavior</span><span class="caption">filled in Week 10</span></li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card detail" aria-labelledby="dt">
+      <div class="det-h">
+        <h2 id="dt"><span class="id">STK-009</span> Hospital pharmacy</h2>
+        <span class="st st-bad"><svg><use href="#s-bad"/></svg>Invalid or incomplete</span>
+      </div>
+      <div class="det-grid">
+        <div>
+          <h3>Source document</h3>
+          <dl class="kv">
+            <dt>Artifact</dt><dd>Stakeholder register row, Week 1 Team Record rev 3</dd>
+            <dt>Class</dt><dd>Customer</dd>
+            <dt>Influence / interest</dt><dd>High / not recorded</dd>
+            <dt>Concerns</dt><dd>None recorded</dd>
+            <dt>Relationships</dt><dd>Supplied by <span class="id">EXT-003</span> Blood center</dd>
+          </dl>
+          <div class="gap" role="alert"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M6 6l12 12M18 6 6 18"/></svg><div><b>The document does not say enough to model this stakeholder</b>In the model a stakeholder is attached to the concerns it holds. <span class="id">STK-009</span> has no concern in the register, so no concern can name it and the stakeholder would sit in the model unconnected. Record its concern in My Project; the mapping updates when you do.</div></div>
+        </div>
+        <div>
+          <h3>Proposed model text</h3>
+<pre class="code"><span class="k">package</span> Stakeholders {
+    <span class="c">// source: STK-009, Week 1 register rev 3</span>
+    <span class="k">part def</span> <span class="s">&lt;'STK-009'&gt;</span> HospitalPharmacy;
+}
+<span class="k">package</span> Concerns {
+    <span class="todo">// open: no concern recorded for STK-009</span>
+    <span class="c">// concern def … { stakeholder pharmacy : HospitalPharmacy; }</span>
+}</pre>
+          <p class="honest">Generated text for teaching. Whether it is valid SysML v2 is decided by the course checker (the reference implementation), not by this view.</p>
+        </div>
+      </div>
+      <div class="det-acts">
+        <a class="btn btn-project" href="stakeholder-editor.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M8 14h8"/></svg>Add the concern in My Project</a>
+        <button class="btn">Mark as needs review</button>
+        <button class="btn btn-ghost">Record why it stays unmapped</button>
+      </div>
+    </section>
+  </main>
+</div>
+</div>
+<nav class="bottom-nav" aria-label="Main">
+  <a href="dashboard.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>Home</a>
+  <a href="week-page.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8M8 11h6"/></svg>Course</a>
+  <a href="practice-handoff.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M9 3h6"/><path d="M10 3v6L4.5 18.5A1.6 1.6 0 0 0 5.9 21h12.2a1.6 1.6 0 0 0 1.4-2.5L14 9V3"/><path d="M7.5 15h9"/></svg>Practice</a>
+  <a class="bn-project" href="project-overview.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M8 14h8"/></svg>My Project</a>
+  <a href="week8-transformation.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12 20 7.4M12 12 4 7.4M12 12v9.2"/></svg>MBSE</a>
+</nav>
+</body>
+</html>

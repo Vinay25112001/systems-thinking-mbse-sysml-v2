@@ -1,13 +1,17 @@
 import type { ReactNode } from 'react'
-import { PARTS, weekByNumber, WEEKS, type Week } from '../content/course'
+import { modelsLabel, PARTS, weekByNumber, WEEKS, type Week, type WeekOutline } from '../content/course'
+import { DRAFT_WEEKS, draftWeekByNumber } from '../content/draftWeeks'
 import type { ActivitySpec, LessonBlock, WeekContent } from '../content/schema'
-import { weekContent } from '../content/weeks'
+import { workloadTotal } from '../content/schema'
+import { draftContent, REBUILT_IN_PLACE, weekContent } from '../content/weeks'
 import { getRubric, RATING_SCALE } from '../content/rubrics'
 import { ACTIVITY_REGISTRY } from '../activities/registry'
 import { Link } from '../lib/router'
+import { hasLecture } from '../content/lectures'
+import { LectureEntry } from '../lectures/LectureEntry'
 import { useApp } from '../state/AppState'
 import { fraction, weekProgress } from '../state/progress'
-import { checksForWeek, STATUS_LABEL, statusOfWeek } from '../state/weekStatus'
+import { checksForDraft, checksForWeek, STATUS_LABEL, statusOfWeek } from '../state/weekStatus'
 import { Badge, Button, Card, Citations, CitationText, PageHeader, ProgressBar, ProvenanceBadge, ReviewBadge, ReviewControls } from '../components/ui'
 import { Quiz } from '../components/Quiz'
 import { SysmlListingView } from '../components/SysmlListing'
@@ -24,7 +28,9 @@ const KIND_LABEL: Record<LessonBlock['kind'], string> = {
   deliverable: 'Deliverable',
 }
 
-const partTitle = (w: Week) => PARTS[w.part].title
+const partTitle = (w: WeekOutline) => PARTS[w.part].title
+/** Bloom levels are stored with the register's spelling; shown in American English. */
+const bloomLabel = (b: string) => (b === 'Analyse' ? 'Analyze' : b)
 
 function WeekNav({ n }: { n: number }) {
   return (
@@ -40,14 +46,14 @@ function StatusBadge({ n }: { n: number }) {
   return <Badge tone={s === 'complete' ? 'emerald' : s === 'in-development' ? 'amber' : 'slate'}>{STATUS_LABEL[s]}</Badge>
 }
 
-export function Objectives({ w }: { w: Week }) {
+export function Objectives({ w }: { w: WeekOutline }) {
   return (
     <ul className="space-y-1 text-sm">
       {w.objectives.map((o) => (
         <li key={o.id} className="flex flex-wrap items-baseline gap-2">
           <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{o.id}</span>
           <span>{o.text}</span>
-          <Badge>{o.bloom}</Badge>
+          <Badge>{bloomLabel(o.bloom)}</Badge>
           <span className="text-xs text-slate-500 dark:text-slate-400">{o.clo.join(', ')}</span>
         </li>
       ))}
@@ -55,7 +61,7 @@ export function Objectives({ w }: { w: Week }) {
   )
 }
 
-export function Readings({ w }: { w: Week }) {
+export function Readings({ w }: { w: WeekOutline }) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div>
@@ -76,23 +82,24 @@ export function Readings({ w }: { w: Week }) {
               <CitationText c={c} />
             </li>
           ))}
+          {w.extension.length === 0 && <li className="text-sm text-slate-500 dark:text-slate-400">None assigned yet.</li>}
         </ul>
       </div>
     </div>
   )
 }
 
-function OutlineWeek({ w }: { w: Week }) {
+/** An earlier-outline week that never had a module (old Week 14): its outline, shown in the draft archive. */
+function OutlineWeek({ w }: { w: WeekOutline }) {
   return (
     <div className="space-y-4">
-      <PageHeader title={`Week ${w.number}: ${w.title}`} subtitle={partTitle(w)}>
+      <PageHeader title={draftTitle(w)} subtitle="Earlier provisional outline (superseded)">
         <Badge>Outline only</Badge>
       </PageHeader>
+      <DraftBanner w={w} />
       <Card className="border-slate-300 bg-slate-100 dark:bg-slate-900">
         <p className="text-sm">
-          This week shows the approved outline while its full module (lesson, worked examples, interactive activity, lab, assignment, knowledge check, rubric and
-          instructor notes) is being written. Nothing below is placeholder text: objectives come from the weekly instructional plan and every reading is a verified
-          reference.
+          This earlier week had an outline but no written module. Its objectives come from the weekly instructional plan and every reading is a verified reference.
         </p>
       </Card>
       <Card>
@@ -131,7 +138,146 @@ function OutlineWeek({ w }: { w: Week }) {
           <dt className="text-slate-500 dark:text-slate-400">Graduate task</dt>
           <dd>{w.graduateTask}</dd>
         </dl>
-        <ReviewControls id={`week-${w.number}-outline`} label={`Week ${w.number} outline`} />
+        <ReviewControls id={`week-${w.number}-outline`} label={`Earlier outline, old Week ${w.number}`} />
+      </Card>
+      <DraftNav n={w.number} />
+    </div>
+  )
+}
+
+// ------------------------------------------------------------------------------------------- earlier draft archive
+// The reviewed draft modules were written for the earlier outline (draftWeeks.ts). They are preserved unedited and served
+// under #/draft/<oldWeek> with this banner, so none of them appears under a current week title (DECISION_LOG A19).
+
+const draftTitle = (w: WeekOutline) => `Earlier draft, old Week ${w.number}: ${w.title}`
+
+/** Current weeks that re-use an earlier week's material (COURSE_SCHEDULE.md reuse table). */
+const reusedBy = (oldWeek: number) => WEEKS.filter((w) => w.draftSources.some((d) => d.week === oldWeek))
+
+function DraftBanner({ w }: { w: WeekOutline }) {
+  const users = reusedBy(w.number)
+  return (
+    <Card className="border-amber-400 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30">
+      <div role="note" data-testid="draft-banner" className="text-sm text-amber-950 dark:text-amber-100">
+        <p className="font-semibold">Archive: earlier reviewed draft material, not a current week.</p>
+        <p className="mt-1">
+          This page was written as Week {w.number} of the earlier provisional outline. The authoritative schedule (COURSE_SCHEDULE.md, faculty direction of
+          2026-10-18) has replaced that outline. The material is kept unchanged so it can be re-used when the new weeks are rebuilt; it is not assigned work.
+        </p>
+        {users.length > 0 && (
+          <p className="mt-1">
+            Re-used by:{' '}
+            {users.map((u, i) => (
+              <span key={u.number}>
+                {i > 0 && '; '}
+                <Link to={`/week/${u.number}`} className="underline">
+                  Week {u.number}: {u.title}
+                </Link>{' '}
+                ({u.draftSources.filter((d) => d.week === w.number).map((d) => d.scope).join('; ')})
+              </span>
+            ))}
+            .
+          </p>
+        )}
+      </div>
+    </Card>
+  )
+}
+
+function DraftNav({ n }: { n: number }) {
+  return (
+    <nav aria-label="Draft archive navigation" className="mt-8 flex justify-between text-sm">
+      {n > 1 ? <Link to={`/draft/${n - 1}`} className="text-brand-600 underline dark:text-brand-100">← Earlier draft, old Week {n - 1}</Link> : <span />}
+      {n < DRAFT_WEEKS.length ? <Link to={`/draft/${n + 1}`} className="text-brand-600 underline dark:text-brand-100">Earlier draft, old Week {n + 1} →</Link> : <span />}
+    </nav>
+  )
+}
+
+// ------------------------------------------------------------------------------------------- weeks being rebuilt
+/** A current week that is being rebuilt from the Week 1 template: its new outline and links to the earlier draft material. */
+function RebuildWeek({ w }: { w: Week }) {
+  const models = modelsLabel(w)
+  return (
+    <div className="space-y-4">
+      <PageHeader title={`Week ${w.number}: ${w.title}`} subtitle={partTitle(w)}>
+        <Badge tone="amber">Provisional: being rebuilt</Badge>
+      </PageHeader>
+      <Card className="border-slate-300 bg-slate-100 dark:bg-slate-900">
+        <p className="text-sm" data-testid="rebuild-notice">
+          This week is being rebuilt from the Week 1 template, following the authoritative course schedule (COURSE_SCHEDULE.md, faculty direction of 2026-10-18).
+          Below is its new outline. The objectives are provisional drafts; every reading is a verified reference re-used from the earlier weeks listed at the end.
+        </p>
+      </Card>
+      <Card>
+        <h2 className="font-semibold">Team output</h2>
+        <p className="mt-1 text-sm" data-testid="team-output">
+          {w.output}
+        </p>
+        {w.due && (
+          <p className="mt-2 text-sm">
+            <strong>Due this week:</strong> {w.due}
+          </p>
+        )}
+        {models && (
+          <p className="mt-2 text-sm" data-testid="continuity">
+            <strong>Continuity:</strong> this week models the Phase I artifacts of {models}:{' '}
+            {w.models!.map((m, i) => (
+              <span key={m}>
+                {i > 0 && '; '}
+                <Link to={`/week/${m}`} className="text-brand-600 underline dark:text-brand-100">
+                  Week {m}: {weekByNumber(m)!.title}
+                </Link>
+              </span>
+            ))}
+            .
+          </p>
+        )}
+      </Card>
+      <Card>
+        <h2 className="font-semibold">Learning objectives (provisional)</h2>
+        <div className="mt-2">
+          <Objectives w={w} />
+        </div>
+      </Card>
+      <Card>
+        <h2 className="font-semibold">Topics</h2>
+        <ul className="mt-2 list-disc pl-5 text-sm">
+          {w.topics.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+      </Card>
+      <Card>
+        <h2 className="font-semibold">Readings</h2>
+        <div className="mt-2">
+          <Readings w={w} />
+        </div>
+      </Card>
+      <Card>
+        <h2 className="font-semibold">Lab and assessment</h2>
+        <dl className="mt-2 grid grid-cols-[auto,1fr] gap-x-4 gap-y-1 text-sm">
+          <dt className="text-slate-500 dark:text-slate-400">Lab / practice</dt>
+          <dd>{w.lab}</dd>
+          <dt className="text-slate-500 dark:text-slate-400">Assessment</dt>
+          <dd>{w.assessment}</dd>
+          <dt className="text-slate-500 dark:text-slate-400">Graduate task</dt>
+          <dd>{w.graduateTask}</dd>
+        </dl>
+        <ReviewControls id={`week-${w.number}-schedule`} label={`Week ${w.number} outline (A19 schedule)`} />
+      </Card>
+      <Card>
+        <h2 className="font-semibold">Earlier reviewed draft material</h2>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Written for the earlier outline and independently reviewed; it will be re-used when this week is rebuilt. Each link opens the labeled archive.</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm" data-testid="draft-links">
+          {w.draftSources.map((d) => (
+            <li key={`${d.week}-${d.scope}`}>
+              <Link to={`/draft/${d.week}`} className="text-brand-600 underline dark:text-brand-100">
+                Old Week {d.week}: {draftWeekByNumber(d.week)!.title}
+              </Link>{' '}
+              <span className="text-slate-600 dark:text-slate-400">({d.scope})</span>
+            </li>
+          ))}
+        </ul>
       </Card>
       <WeekNav n={w.number} />
     </div>
@@ -190,8 +336,9 @@ export function Block({ b, children }: { b: LessonBlock; children?: ReactNode })
 }
 
 export function DataTable({ caption, header, rows }: { caption: string; header: string[]; rows: string[][] }) {
+  // a wide table scrolls inside its own frame, which must be keyboard-focusable (axe scrollable-region-focusable)
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto" tabIndex={0} role="group" aria-label={caption}>
       <table className="w-full text-left text-sm">
         <caption className="mb-1 text-left text-xs font-medium text-slate-600 dark:text-slate-400">{caption}</caption>
         <thead>
@@ -349,12 +496,12 @@ export function AssignmentPanel({ c }: { c: WeekContent }) {
 }
 
 export function WorkloadPanel({ c }: { c: WeekContent }) {
-  const total = c.workload.reduce((a, w) => a + w.hours, 0)
+  const total = workloadTotal(c.workload)
   return (
     <Card>
       <h2 className="text-lg font-semibold">Estimated student workload</h2>
       <div className="mt-2">
-        <DataTable caption={`Total ≈ ${total} h this week (estimate; validated by the Weeks 1–4 time-log pilot, FD-22)`} header={['Activity', 'Hours']} rows={c.workload.map((w) => [w.activity, String(w.hours)])} />
+        <DataTable caption={`Total ≈ ${total} h this week (estimate; validated by the Weeks 1–4 time-log pilot, FD-22)`} header={['Activity', 'Hours']} rows={c.workload.map((w) => [w.optional ? `${w.activity} (optional, not counted)` : w.activity, String(w.hours)])} />
       </div>
       {c.references.length > 0 && (
         <>
@@ -372,9 +519,9 @@ export function WorkloadPanel({ c }: { c: WeekContent }) {
   )
 }
 
-export function InstructorPanel({ c }: { c: WeekContent }) {
+export function InstructorPanel({ c, draft = false }: { c: WeekContent; draft?: boolean }) {
   const n = c.instructorNotes
-  const checks = checksForWeek(c.week) ?? []
+  const checks = (draft ? checksForDraft(c.week) : checksForWeek(c.week)) ?? []
   return (
     <Card className="border-amber-300 dark:border-amber-800">
       <section aria-labelledby="inotes-h" data-testid="instructor-notes">
@@ -440,18 +587,27 @@ export function InstructorPanel({ c }: { c: WeekContent }) {
   )
 }
 
-function AuthoredWeek({ w, c }: { w: Week; c: WeekContent }) {
+function AuthoredWeek({ w, c, draft = false }: { w: WeekOutline; c: WeekContent; draft?: boolean }) {
   const { completed, quiz, boundary, instructor } = useApp()
   const p = weekProgress(w.number, completed, quiz, boundary)
   const actsByBlock = (id: string) => c.activities.filter((a) => a.inBlock === id)
   return (
     <div className="space-y-5">
-      <PageHeader title={`Week ${w.number} — ${w.title}`} subtitle={`${partTitle(w)} · draft pending faculty review`}>
-        <div className="flex w-72 flex-col items-end gap-2">
-          <StatusBadge n={w.number} />
-          <ProgressBar value={fraction(p)} label={`Week ${w.number}: ${p.done}/${p.total} activities`} />
-        </div>
-      </PageHeader>
+      {draft ? (
+        <>
+          <PageHeader title={draftTitle(w)} subtitle="Earlier reviewed draft material (archive)">
+            <Badge tone="amber">Archive</Badge>
+          </PageHeader>
+          <DraftBanner w={w} />
+        </>
+      ) : (
+        <PageHeader title={`Week ${w.number} — ${w.title}`} subtitle={`${partTitle(w)} · draft pending faculty review`}>
+          <div className="flex w-72 flex-col items-end gap-2">
+            <StatusBadge n={w.number} />
+            <ProgressBar value={fraction(p)} label={`Week ${w.number}: ${p.done}/${p.total} activities`} />
+          </div>
+        </PageHeader>
+      )}
       <Card className="border-brand-500/40 bg-brand-50 dark:bg-slate-900">
         <h2 className="font-semibold">Driving question</h2>
         <p className="mt-1">{c.drivingQuestion}</p>
@@ -480,13 +636,13 @@ function AuthoredWeek({ w, c }: { w: Week; c: WeekContent }) {
         <h2 className="text-lg font-semibold">Knowledge check</h2>
         <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Formative. Every option has an explanation; each question cites its source.</p>
         <div className="mt-3">
-          <Quiz questions={c.quiz} />
+          <Quiz questions={c.quiz} bloomText={c.week === 1 ? bloomLabel : undefined} />
         </div>
       </Card>
       <AssignmentPanel c={c} />
       <WorkloadPanel c={c} />
-      {instructor && <InstructorPanel c={c} />}
-      <WeekNav n={w.number} />
+      {instructor && <InstructorPanel c={c} draft={draft} />}
+      {draft ? <DraftNav n={w.number} /> : <WeekNav n={w.number} />}
     </div>
   )
 }
@@ -501,5 +657,54 @@ export function WeekPage({ n }: { n: number }) {
     )
   }
   const c = weekContent(n)
-  return c ? <AuthoredWeek w={w} c={c} /> : <OutlineWeek w={w} />
+  const page = c ? <AuthoredWeek w={w} c={c} /> : <RebuildWeek w={w} />
+  if (!hasLecture(n)) return page
+  // lecture-first entry point (DECISION_LOG A20), above the unchanged week page
+  return (
+    <>
+      <div className="mb-4">
+        <LectureEntry week={n} />
+      </div>
+      {page}
+    </>
+  )
+}
+
+/** #/draft/<oldWeek>: an earlier reviewed draft module (or, for old Week 14, its outline), with the archive banner. */
+export function DraftWeekPage({ n }: { n: number }) {
+  const w = draftWeekByNumber(n)
+  if (!w) {
+    return (
+      <p>
+        There is no earlier draft Week {n}. <Link to="/roadmap" className="underline">Open the roadmap</Link>.
+      </p>
+    )
+  }
+  if (REBUILT_IN_PLACE.has(n)) return <RebuiltInPlace w={w} />
+  const c = draftContent(n)
+  return c ? <AuthoredWeek w={w} c={c} draft /> : <OutlineWeek w={w} />
+}
+
+/** An earlier week that was rebuilt in place as a current week (old Week 1 → Week 1). Its earlier objectives reused the
+ *  IDs B1.1–B1.4 with other meanings and its earlier graduate task (an explorer and a memo) no longer exists, so the
+ *  archive page shows neither (rebuild review F07); the earlier text stays in the repository history. */
+function RebuiltInPlace({ w }: { w: WeekOutline }) {
+  return (
+    <div className="space-y-4">
+      <PageHeader title={draftTitle(w)} subtitle="Earlier provisional outline (superseded)">
+        <Badge>Rebuilt in place</Badge>
+      </PageHeader>
+      <DraftBanner w={w} />
+      <Card className="border-slate-300 bg-slate-100 dark:bg-slate-900">
+        <p className="text-sm" data-testid="rebuilt-in-place">
+          This earlier week was rebuilt in place as the current Week {w.number}. Its reusable reviewed text now appears in{' '}
+          <Link to={`/week/${w.number}`} className="underline">
+            Week {w.number}
+          </Link>
+          ; the earlier objectives, lab and graduate task are no longer assigned, and the earlier version is kept in the repository history.
+        </p>
+      </Card>
+      <DraftNav n={w.number} />
+    </div>
+  )
 }

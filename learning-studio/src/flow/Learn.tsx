@@ -1,7 +1,7 @@
 // Learn stage: one section at a time (WEEK1_LEARNING_DESIGN §5). Template: question, in short, explanation (reviewed
 // text by reference), figure(s), worked example, key terms, check (must be answered to mark the section read),
 // sources and "Go deeper" (the full reviewed blocks).
-import { ArrowLeft, ArrowRight, Check as CheckIcon, Play } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check as CheckIcon, Users } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { ALL_LOOPS, LOOP_LINKS, LOOP_NODES } from '../content/causalLoops'
 import { WEEKS } from '../content/course'
@@ -9,16 +9,14 @@ import { bodyText, blockOf, resolveBullet, resolveRef } from '../content/learn/r
 import type { LearnSection, Worked } from '../content/learn/types'
 import { LEARN_SECTIONS, SUMMARY } from '../content/learn/week01'
 import { formatCitation } from '../content/readings'
-import { PrinciplesExplorer } from '../components/Week1Exercises'
-import { SurfaceContext } from '../components/surface'
 import { LearnFigure } from '../components/figures'
 import { ConceptMap } from '../components/figures/EngineeringFigures'
 import { FigureFrame } from '../components/figures/Frame'
 import { Link, navigate } from '../lib/router'
 import { useApp } from '../state/AppState'
 import { Cite } from './Cite'
+import { bloomLabel } from './route'
 import { useFlow } from './state'
-import { preselectWorkbenchView } from './storage'
 
 const LEARN_PAGES = [...LEARN_SECTIONS.map((s) => s.id), 'summary']
 
@@ -159,9 +157,7 @@ export function SectionCheckView({ s }: { s: LearnSection }) {
           </>
         )}
       </div>
-      <p className="m-0 mt-2">
-        <Cite c={s.check.cite} />
-      </p>
+      <p className="m-0 mt-2">{s.check.cite ? <Cite c={s.check.cite} /> : <span className="lf-term-src course">Course convention</span>}</p>
     </fieldset>
   )
 }
@@ -254,6 +250,8 @@ function WorkedView({ s }: { s: LearnSection }) {
       </h2>
       {w.kind === 'bullets' && <BulletStepThrough intro={resolveRef(w.intro)} items={w.bullets.map((i) => resolveBullet(w.block, i))} />}
       {w.kind === 'loop' && <LoopStepThrough loopId={w.loop} intro={w.intro.text} />}
+      {w.kind === 'steps' && <BulletStepThrough intro={w.intro.text} items={w.steps.map((x) => x.text)} />}
+      {w.kind === 'table' && <TableWorked intro={resolveRef(w.intro)} block={w.block} />}
       {w.kind === 'faded' && (
         <div className="lf-prose">
           <p>{resolveRef(w.setup)}</p>
@@ -268,6 +266,40 @@ function WorkedView({ s }: { s: LearnSection }) {
         </div>
       )}
     </section>
+  )
+}
+
+/** A worked example that is a reviewed block's table (e.g. register rows), shown in full after its introduction. */
+function TableWorked({ intro, block }: { intro: string; block: string }) {
+  const t = blockOf(block).table
+  if (!t) return null
+  return (
+    <div className="lf-prose">
+      <p>{intro}</p>
+      <div className="lf-table-wrap" tabIndex={0} role="group" aria-label={t.caption}>
+        <table className="lf-table" data-testid={`worked-table-${block}`}>
+          <caption className="lf-figcaption" style={{ captionSide: 'bottom', textAlign: 'left' }}>
+            {t.caption}
+          </caption>
+          <thead>
+            <tr>
+              {t.header.map((h) => (
+                <th key={h} scope="col">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {t.rows.map((r, i) => (
+              <tr key={i}>
+                {r.map((c, j) => (j === 0 ? <th key={j} scope="row" className="text-left wb-mono text-[12.5px]">{c}</th> : <td key={j}>{c}</td>))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }
 
@@ -293,6 +325,22 @@ function BulletStepThrough({ intro, items }: { intro: string; items: string[] })
 }
 
 // ------------------------------------------------------------------------------------------- one section
+/** A body paragraph; new text that paraphrases or quotes a reading shows its source inline (faculty item 6). */
+function BodyPara({ b }: { b: LearnSection['body'][number] }) {
+  const cites = 'cite' in b ? (b.cite ?? []) : []
+  return (
+    <p>
+      {bodyText(b)}
+      {cites.map((c, j) => (
+        <span key={j}>
+          {' '}
+          <Cite c={c} />
+        </span>
+      ))}
+    </p>
+  )
+}
+
 function BodyView({ items }: { items: LearnSection['body'] }) {
   return (
     <>
@@ -300,15 +348,21 @@ function BodyView({ items }: { items: LearnSection['body'] }) {
         b.callout ? (
           <aside key={i} className="lf-callout" aria-label={b.callout}>
             <h3>{b.callout}</h3>
-            <p>{bodyText(b)}</p>
+            {'quote' in b && b.quote && (
+              <blockquote className="lf-quote" data-testid="definition-quote">
+                “{b.quote.text}” <Cite c={b.quote.cite} />
+              </blockquote>
+            )}
+            <BodyPara b={b} />
           </aside>
         ) : (
-          <p key={i}>{bodyText(b)}</p>
+          <BodyPara key={i} b={b} />
         ),
       )}
     </>
   )
 }
+
 
 function GoDeeper({ ids }: { ids: string[] }) {
   return (
@@ -378,18 +432,16 @@ function GoDeeper({ ids }: { ids: string[] }) {
 }
 
 function SectionView({ s, index }: { s: LearnSection; index: number }) {
-  const { state, markRead, allRead } = useFlow()
-  const { instructor } = useApp()
+  const { state, markRead } = useFlow()
   const answered = !!state.checks[s.id]
   const read = !!state.read[s.id]
   const next = LEARN_PAGES[index + 1]
   const prev = index > 0 ? LEARN_PAGES[index - 1] : null
   const nextTitle = next === 'summary' ? 'Summary and concept map' : LEARN_SECTIONS[index + 1]?.title
-  const seSection = s.id === 'l7' ? WEEKS[0] : null
   return (
     <article className="lf-article" aria-labelledby={`${s.id}-h`} data-testid={`section-${s.id}`}>
       <p className="lf-kicker">
-        Learn · {s.code} of L{LEARN_SECTIONS.length} · {s.minutes} min · {s.objectives.join(', ')} · {s.bloom}
+        Learn · {s.code} of L{LEARN_SECTIONS.length} · {s.minutes} min · {s.objectives.join(', ')} · {bloomLabel(s.bloom)}
       </p>
       <h1 id={`${s.id}-h`} className="lf-h1" tabIndex={-1}>
         {s.title}
@@ -401,49 +453,23 @@ function SectionView({ s, index }: { s: LearnSection; index: number }) {
       </div>
       <div className="lf-prose">
         <BodyView items={s.body} />
-        {seSection && blockOf('w1-se').quote && (
-          <blockquote className="lf-quote">
-            “{blockOf('w1-se').quote!.text}” <Cite c={blockOf('w1-se').quote!.cite} />
-          </blockquote>
-        )}
       </div>
       {s.figures.map((f, i) => (
         <LearnFigure key={f.id} spec={f} number={`${s.code.slice(1)}${s.figures.length > 1 ? String.fromCharCode(97 + i) : ''}`} revealed={state.worked[s.id] !== undefined} />
       ))}
-      {s.id === 'l3' && (
-        <details className="lf-deeper" open>
-          <summary>The eight systems principles (open Holism and Separation of concerns first)</summary>
-          <p className="lf-muted mt-3 text-[15px]">
-            <strong>View:</strong> a representation based on one system aspect or concern; a complex system needs several.
-          </p>
-          <div className="mt-3">
-            <SurfaceContext.Provider value="workbench">
-              <PrinciplesExplorer initiallyOpen={['Holism', 'Separation of concerns']} />
-            </SurfaceContext.Provider>
-          </div>
-        </details>
-      )}
-      {s.id === 'l6' && (
-        <p className="lf-actions" style={{ marginTop: 0 }}>
-          <button
-            type="button"
-            className="lf-btn"
-            disabled={!allRead && !instructor}
-            onClick={() => {
-              preselectWorkbenchView('dynamics')
-              navigate('/week/1/practice')
-            }}
-          >
-            <Play size={14} aria-hidden /> Run it in the Dynamics view
-          </button>
-          <span className="lf-muted text-[14px]">{allRead || instructor ? 'Select “Fleet grows, charging does not”.' : 'Opens in Practice once every Learn section is read.'}</span>
-        </p>
-      )}
       <WorkedView s={s} />
       {s.afterWorked && s.afterWorked.length > 0 && (
         <div className="lf-prose">
           <BodyView items={s.afterWorked} />
         </div>
+      )}
+      {s.apply && (
+        <aside className="lf-callout lf-apply" aria-labelledby={`${s.id}-apply`} data-testid={`apply-${s.id}`}>
+          <h2 id={`${s.id}-apply`} className="lf-h3" style={{ marginTop: 0 }}>
+            <Users size={16} aria-hidden className="mr-1 inline" /> Now apply it to your team’s enterprise
+          </h2>
+          <p className="m-0">{s.apply.text}</p>
+        </aside>
       )}
       <section aria-labelledby={`${s.id}-terms`}>
         <h2 id={`${s.id}-terms`} className="lf-h3">
@@ -453,31 +479,46 @@ function SectionView({ s, index }: { s: LearnSection; index: number }) {
           {s.keyTerms.items.map((t) => (
             <div key={t.term} className="contents">
               <dt>{t.term}</dt>
-              <dd>{t.def}</dd>
+              <dd>
+                {t.def}
+                {t.source === 'course' ? (
+                  <span className="lf-term-src course">Course working definition</span>
+                ) : (
+                  <span className="lf-term-src">
+                    Source: <Cite c={t.source} />
+                  </span>
+                )}
+              </dd>
             </div>
           ))}
         </dl>
       </section>
       <SectionCheckView s={s} />
-      <div className="lf-readmore" data-testid={`read-more-${s.id}`}>
-        <strong>Read more</strong>
-        <ul>
-          {s.readMore.map((c, i) => (
-            <li key={i}>
-              <Link to={`/sources/${c.reading}${c.pages ? `/${encodeURIComponent(c.pages)}` : ''}`}>{formatCitation(c)}</Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {s.readMore.length > 0 && (
+        <div className="lf-readmore" data-testid={`read-more-${s.id}`}>
+          <strong>Read more</strong>
+          <ul>
+            {s.readMore.map((c, i) => (
+              <li key={i}>
+                <Link to={`/sources/${c.reading}${c.pages ? `/${encodeURIComponent(c.pages)}` : ''}`}>{formatCitation(c)}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="lf-sources">
         <strong>Sources</strong>
-        <ul>
-          {s.cite.map((c, i) => (
-            <li key={i}>
-              <Cite c={c} />
-            </li>
-          ))}
-        </ul>
+        {s.cite.length > 0 ? (
+          <ul>
+            {s.cite.map((c, i) => (
+              <li key={i}>
+                <Cite c={c} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="m-0" data-testid={`convention-${s.id}`}>{s.convention?.text}</p>
+        )}
       </div>
       {s.goDeeper.length > 0 && <GoDeeper ids={s.goDeeper} />}
       <div className="lf-pager">

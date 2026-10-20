@@ -40,9 +40,14 @@ export type StepInput = {
   feedback?: Record<string, string>
 }
 
+/** A plain statement of a step (faculty feedback 2026-10-18, item 12): the task, the input expected, and what "done"
+ *  looks like. New wording, so it carries its own review flag; the reviewed `instruction` stays available. */
+export type StepBrief = { task: string; input: string; done: string; review: 'new-pending-review' }
+
 export type MissionStep = {
   id: string
   instruction: string
+  brief?: StepBrief
   hint?: string
   /** Centre view to open for this step. */
   view?: string
@@ -65,7 +70,11 @@ export type Mission = {
   week: number
   kind: MissionKind
   title: string
+  /** One-to-three-word title for the mission list, so every tile can be told apart at any width (review F13). */
+  short?: string
   goal: string
+  /** Set when the goal is new wording that has not passed review. */
+  goalReview?: 'new-pending-review'
   minutes: number
   objectives: string[]
   /** The reviewed workload line (WeekContent.workload[].activity, matched by prefix) whose time this mission uses. */

@@ -15,7 +15,10 @@ export const STAGES: { id: FlowStage; label: string; short: string; sub: string 
   { id: 'overview', label: 'Overview', short: 'Overview', sub: 'Question and goals' },
   { id: 'learn', label: 'Learn', short: 'Learn', sub: 'Seven short sections' },
   { id: 'practice', label: 'Practice', short: 'Practice', sub: 'Workbench missions' },
-  { id: 'check', label: 'Check & submit', short: 'Check', sub: 'Quiz, lab record, memo' },
+  { id: 'check', label: 'Check & submit', short: 'Check', sub: 'Quiz, Team Record' },
 ]
 export const stagePath = (s: FlowStage) => (s === 'overview' ? '/week/1' : `/week/1/${s}`)
 
+
+/** American display of a Bloom label (the shared course type keeps the value 'Analyse'; faculty feedback item 8). */
+export const bloomLabel = (b: string) => (b === 'Analyse' ? 'Analyze' : b)

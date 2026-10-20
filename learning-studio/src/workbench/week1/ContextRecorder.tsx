@@ -17,7 +17,7 @@ function SoiForm() {
   const wb = useWorkbench()
   const { select } = useSelection()
   const ent = model.elements.find((e) => e.kind === 'ENT' && e.status === 'active')
-  const [draft, setDraft] = useState({ name: 'AeroLink service enterprise', text: '', rejected: '' })
+  const [draft, setDraft] = useState({ name: 'AeroLink air-taxi service', text: '', rejected: '' })
   const [po, setPo] = useState<ProvenanceOwner>(DEFAULT_PROVENANCE_OWNER)
   const [msg, setMsg] = useState('')
   const id = useId()
@@ -149,7 +149,7 @@ function ExtForm() {
       <div className="flex flex-wrap items-end gap-2">
         <label className="min-w-48 flex-1" htmlFor={`${id}-n`}>
           <span className="wb-label">External system or actor</span>
-          <input id={`${id}-n`} className="wb-input w-full" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Air navigation service provider" />
+          <input id={`${id}-n`} className="wb-input w-full" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Controlled airspace (air traffic service)" />
         </label>
         <label htmlFor={`${id}-x`}>
           <span className="wb-label">Exchange with the SoI</span>

@@ -1,0 +1,149 @@
+/* Week 8 lab tool (Week8LabTool.tsx), on the workbench tokens (theme.css) like the Week 2 tool, so light and dark use
+   the validated token pairs. Status always has a word and a glyph, never color alone. Wide content (the mapping table,
+   the SysML preview) scrolls inside its own focusable region, never the page. */
+.w8-tool {
+  font: 15px/1.5 var(--wb-body);
+  color: var(--wb-fg);
+  display: grid;
+  gap: 16px;
+  padding: 16px 0;
+  max-width: 1400px;
+  min-width: 0;
+}
+.w8-part {
+  background: var(--wb-panel);
+  border: 1px solid var(--wb-line);
+  border-radius: 8px;
+  min-width: 0;
+}
+.w8-ph {
+  font: 600 16px/1.3 var(--wb-body);
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--wb-line);
+}
+.w8-body {
+  display: grid;
+  gap: 12px;
+  padding: 12px 14px 14px;
+  min-width: 0;
+}
+.w8-group h3 {
+  font: 600 15px/1.3 var(--wb-body);
+  margin: 4px 0;
+}
+.w8-help {
+  color: var(--wb-muted);
+  margin: 0;
+  font-size: 14px;
+}
+.w8-note {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--wb-line);
+  border-left: 4px solid var(--wb-accent);
+  border-radius: 6px;
+  background: var(--wb-panel);
+  font-size: 14px;
+}
+.w8-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: flex-end;
+}
+.w8-field {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  min-width: 0;
+}
+.w8-field > span {
+  color: var(--wb-muted);
+}
+.w8-check {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+.w8-input,
+.w8-textarea,
+.w8-field select,
+.w8-file {
+  font: inherit;
+  color: var(--wb-fg);
+  background: var(--wb-bg, var(--wb-panel));
+  border: 1px solid var(--wb-line);
+  border-radius: 6px;
+  padding: 5px 8px;
+  max-width: 100%;
+  min-width: 0;
+}
+.w8-input.narrow {
+  width: 6em;
+}
+.w8-textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.w8-msg {
+  margin: 0;
+  font-weight: 600;
+}
+.w8-msg.err {
+  color: var(--wb-warn);
+}
+.w8-summary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+  margin: 0;
+}
+.w8-summary dt {
+  font-weight: 600;
+}
+.w8-summary dd {
+  margin: 0;
+}
+.w8-scroll {
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid var(--wb-line);
+  border-radius: 6px;
+}
+.w8-scroll:focus-visible {
+  outline: 2px solid var(--wb-accent);
+  outline-offset: 2px;
+}
+.w8-table {
+  border-collapse: collapse;
+  font-size: 13.5px;
+  min-width: 860px;
+  width: 100%;
+}
+.w8-table th,
+.w8-table td {
+  border-bottom: 1px solid var(--wb-line);
+  padding: 5px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+.w8-pre {
+  margin: 0;
+  padding: 10px 12px;
+  font: 12.5px/1.45 var(--wb-mono, ui-monospace, monospace);
+  max-height: 520px;
+  white-space: pre;
+}
+.w8-findings,
+.w8-ready,
+.w8-audit {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+.w8-answer {
+  margin: 4px 0 0;
+}

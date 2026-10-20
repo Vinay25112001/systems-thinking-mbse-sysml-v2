@@ -200,23 +200,27 @@ graph TD
 
 ## 7. Weekly schedule (two 75-minute sessions + ≈ 30 min online per week)
 
-| Wk | Topics | Session 1 | Session 2 | Due | Individual |
+The schedule below is the authoritative faculty schedule of 2026-10-18 (`COURSE_SCHEDULE.md`; DECISION_LOG A19), which replaces the earlier table in this section. Week titles are the whiteboard subjects verbatim. Each team develops its own instructor-approved enterprise; AeroLink Urban Mobility is the instructor's worked example. Every week keeps the two 75-minute sessions (concept studio, lab). Weeks 2–14 are provisional while they are rebuilt from the Week 1 template.
+
+| Wk | Phase | Whiteboard subject | Team output (what the week adds to the package or model) | Due | Individual |
 |---|---|---|---|---|---|
-| 1 | Systems, SoI, emergence, feedback; capstone briefing | Concept studio | L1 Context & causal loops; team charter | Charter (formative) | Q1 |
-| 2 | Enterprise vs SoS; life cycles and reviews; stakeholders | Concept studio | L2 Stakeholder ecosystem map; AROU v0 | — | Q2 |
-| 3 | Mission; needs; capabilities; ConOps; use cases | Concept studio | L3 Needs→capabilities; 3 scenarios | **CP1** | Q3 |
-| 4 | Needs vs requirements; well-formed requirements | Concept studio | L4 Requirements studio | — | Q4 |
-| 5 | Quality; traceability; MOE/MOP/TPM | Concept studio | L5 Peer audit; measures (55) + **SysML reading micro-lab 1** (20) | — | Q5 |
-| 6 | TRL; uncertainty; risk; AROU | Concept studio | **SRR-style review**, 8 teams × 7 min (56) + L6 debrief (19). L6 TRL/AROU work done before class. **Micro-lab 2 online** (20 min) | **CP2** | Q6 |
-| 7 | Decision analysis | Concept studio (45) + L7 kick-off (30) | **Exam 1** (75) | — | Exam 1 |
-| 8 | Architecture; allocation; interfaces; information | Concept studio | L8 Architecture concept (55) + **micro-lab 3** (20) | **CP3** | Q7 |
-| 9 | MBSE; SysML v2 foundations | **CP3 defences**, 8 × 5 min (40) + concept studio (35) | L9 Tool onboarding; model skeleton | — | Q8 |
-| 10 | SysML requirements and structure | Concept studio | L10 Requirements & structure | — | Q9 |
-| 11 | SysML behaviour | Concept studio | L11 Behaviour (formative) (45) + CP4 RID-review kick-off (30) | **CP4**; asynchronous PDR-style RID review in days 1–3 of Week 12 | Q10 |
-| 12 | Verification; measures in model; thread audit | Concept studio | L12 Verification & thread audit | CP4 RIDs returned | Q11 |
-| 13 | Change impact; consistency; risk metadata; resilience and AI (awareness) | Worked impact example (45) + L13 kick-off (30) | **Exam 2 practical** (75) | — | Exam 2 |
-| 14 | Evolution (awareness); views; review practice (concept content delivered online) | **CP5 reviews** | **CP5 reviews** | **CP5** | Q12; peer evaluation |
+| 1 | I. Systems Thinking | Team Formation / Needs / Identifying Stakeholders | Team charter; enterprise proposal (instructor-approved); stakeholder register; initial stakeholder needs | — | Q1 |
+| 2 | I | ConOps / Requirements | ConOps with operational scenarios; stakeholder and system requirements traced to needs | — | Q2 |
+| 3 | I | Technology Assessment / Risk Management / Trade Study | Technology readiness assessment; risk register; trade study with a justified decision | — | Q3 |
+| 4 | I | Architecture / Information View | Architecture description: viewpoints, functional decomposition, information view | — | Q4 |
+| 5 | I | Components / Interfaces | Component breakdown; interface definitions (N² chart / interface table) | — | Q5 |
+| 6 | I | Evolution Roadmap | Enterprise evolution roadmap (increments, technology insertion, transition) | — | Q6 |
+| 7 | I | Final Presentation | Systems Thinking Engineering Package (Weeks 1–6 integrated) and the Phase I presentation | **Systems Thinking Engineering Package** | No quiz (default; open decision) |
+| 8 | II. MBSE with SysML v2 | Import Systems Thinking Artifacts / Stakeholders | Introduction to MBSE and SysML v2; model skeleton; the package imported; stakeholders and concerns modeled (models Week 1) | — | Q7 |
+| 9 | II | Needs / Requirements | Needs and requirements as SysML v2 requirement definitions and usages, with traces (models Week 2) | — | Q8 |
+| 10 | II | Logical / Behavioral Modeling | Logical architecture; actions, states and use cases for the ConOps scenarios (models Weeks 2 and 4) | — | Q9 |
+| 11 | II | Physical / Interfaces | Physical parts, ports, interfaces and connections; allocation from logical to physical (models Week 5) | — | Q10 |
+| 12 | II | Digital Thread / Verification and Validation | Verification cases, satisfy and verify relationships; digital-thread audit (models Weeks 2 and 3) | — | Q11 |
+| 13 | II | Trade Study / Analysis | Analysis cases and constraints; the Week 3 trade study redone in the model (models Week 3) | — | Q12 |
+| 14 | II | Final Presentation | Coherent SysML v2 enterprise model built from the team's own Systems Thinking package; final review (models Weeks 6 and 7) | **SysML v2 enterprise model** | No quiz (default; open decision) |
 | Finals | — | Make-ups; overflow reviews (FD-18) | | | |
+
+Exam placement is an open faculty decision (the earlier table had Exam 1 in Week 7 and Exam 2 in Week 13; both are now presentation weeks). The minute plan below was written for the earlier checkpoints CP1–CP5 and is kept as source material until the presentation weeks are rebuilt.
 
 **Minute plan for review weeks (review M3):**
 - **CP2:** SRR-style review is live, 8 × 7 min.

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { WEEKS } from '../content/course'
-import { WEEK_CONTENT } from '../content/weeks'
+import { CURRENT_CONTENT } from '../content/weeks'
 import { validateStakeholderMap } from '../model/stakeholderValidation'
 import { removeKey } from '../lib/storage'
 import { useApp } from '../state/AppState'
@@ -13,13 +13,13 @@ export function ProgressPage() {
   const [confirm, setConfirm] = useState(false)
   const w1 = weekProgress(1, completed, quiz, boundary)
   const checks = validateStakeholderMap(map.stakeholders, map.relationships)
-  const data = WEEKS.map((w) => ({ week: `W${w.number}`, percent: Math.round(fraction(weekProgress(w.number, completed, quiz, boundary)) * 100), available: !!WEEK_CONTENT[w.number] }))
-  const attempts = Object.values(WEEK_CONTENT).flatMap((c) => c.quiz).reduce((a, q) => a + (quiz[q.id]?.attempts ?? 0), 0)
+  const data = WEEKS.map((w) => ({ week: `W${w.number}`, percent: Math.round(fraction(weekProgress(w.number, completed, quiz, boundary)) * 100), available: !!CURRENT_CONTENT[w.number] }))
+  const attempts = Object.values(CURRENT_CONTENT).flatMap((c) => c.quiz).reduce((a, q) => a + (quiz[q.id]?.attempts ?? 0), 0)
   const axis = resolvedTheme === 'dark' ? '#94a3b8' : '#475569'
 
   return (
     <div className="space-y-5">
-      <PageHeader title="My progress" subtitle="Computed from what you have actually done in this browser. Weeks without interactive content yet show 0% and are marked as outline only." />
+      <PageHeader title="My progress" subtitle="Computed from what you have actually done in this browser. Weeks being rebuilt from the Week 1 template have no interactive content yet; they show 0% and are marked provisional." />
       <Card>
         <h2 className="font-semibold">Week 1</h2>
         <div className="mt-3 space-y-3">
@@ -55,7 +55,7 @@ export function ProgressPage() {
             {data.map((d) => (
               <tr key={d.week} className="border-b border-slate-100 dark:border-slate-800">
                 <td className="py-1">{d.week}</td>
-                <td className="py-1">{d.available ? 'Authored module' : 'Outline only'}</td>
+                <td className="py-1">{d.available ? 'Authored module' : 'Provisional: being rebuilt'}</td>
                 <td className="py-1">{d.available ? `${d.percent}%` : '—'}</td>
               </tr>
             ))}

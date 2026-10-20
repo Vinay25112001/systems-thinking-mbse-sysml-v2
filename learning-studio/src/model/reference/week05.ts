@@ -21,7 +21,9 @@ const moe: Element[] = [
   el('MOE-002', 'Daily trips served', 'Revenue trips flown per operating day, network-wide, compared with trips requested.',
     { unit: 'trips/day', threshold: 240, sense: 'higher-is-better', dataSource: 'Flight log (INFO-002) and booking records', collection: 'Daily; reported monthly' }),
   el('MOE-003', 'Noise compliance rate', 'Share of take-offs and landings at or below 65 dBA LAmax at the pad edge.',
-    { unit: '%', threshold: 100, sense: 'higher-is-better', dataSource: 'Pad-edge noise monitors at each vertiport', collection: 'Every movement; reported quarterly to the city' }),
+    { unit: '%', threshold: 100, sense: 'higher-is-better', dataSource: 'Pad-edge noise monitors at each vertiport', collection: 'Every movement; reported quarterly to the city',
+      // Event-cap dimension of the corrected NEED-003, added by Week 3 (src/content/lectures/week03/aerolinkCase.ts EVENT_CAP).
+      eventCap: 'Week 3: noise compliance is reported in two parts, the share of movements at or below 65 dBA and the share of evening and early-morning pad-hours within the agreed event cap (measured as MOE-007).' }),
   el('MOE-004', 'Dispatches outside approved limits', 'Number of flights dispatched outside approved weather, energy-reserve or airworthiness limits.',
     { unit: 'count/quarter', threshold: 0, sense: 'lower-is-better', dataSource: 'Dispatch records cross-checked with weather (INFO-004) and maintenance data (INFO-003)', collection: 'Quarterly safety review' }),
   el('MOE-005', 'Capital to meet the Year-2 capacity objective', 'Capital required over months 0-24 to add the capacity in a plan, in USD millions (course cost measure, handled explicitly per RB-6.2).',
@@ -56,7 +58,9 @@ const tpm: Element[] = [
   el('TPM-001', 'Charge time to dispatch threshold', 'Charge time from 20 % reserve to the dispatch threshold, tracked through charger and battery design maturity.',
     { unit: 'min', sense: 'lower-is-better', threshold: 20, objective: 15, currentEstimate: 18, margin: 2, basis: 'Supplier charge-curve analysis (FICTIONAL estimate)' }, 'instructor-fictional'),
   el('TPM-002', 'Pad-edge noise', 'Aircraft LAmax at the pad edge on the published procedures, tracked through aircraft and procedure design.',
-    { unit: 'dBA', sense: 'lower-is-better', threshold: 65, objective: 62, currentEstimate: 63.5, margin: 1.5, basis: 'Noise prediction analysis; no measurement yet (FICTIONAL estimate)' }, 'instructor-fictional'),
+    { unit: 'dBA', sense: 'lower-is-better', threshold: 65, objective: 62, currentEstimate: 63.5, margin: 1.5, basis: 'Noise prediction analysis; no measurement yet (FICTIONAL estimate)',
+      // Week 3 TPM decision on the event cap (src/content/lectures/week03/aerolinkCase.ts EVENT_CAP).
+      eventCap: 'Week 3 decision: the evening and early-morning event cap gets no aircraft TPM. It is not a design parameter that matures with development; the scheduling function enforces it (REQ-SYS-011, verified by test) and MOP-010 tracks it in operation. TPM-002 tracks the level of each event only.' }, 'instructor-fictional'),
   el('TPM-003', 'Landing energy reserve on the design trip', 'Usable energy remaining after the 25 km design trip, tracked through battery capacity and fade estimates.',
     { unit: '%', sense: 'higher-is-better', threshold: 20, objective: 25, currentEstimate: 23, margin: 3, basis: 'Energy analysis with end-of-life cell capacity (FICTIONAL estimate)' }, 'instructor-fictional'),
 ]

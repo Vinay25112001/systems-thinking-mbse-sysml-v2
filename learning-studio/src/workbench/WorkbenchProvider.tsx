@@ -15,6 +15,9 @@ import { SelectionContext, type Selection } from './selection'
 import { SignalPublishContext, SignalReadContext } from './signals'
 import type { EngineeringModel } from '../model/engineering'
 import type { MapState } from '../state/AppState'
+import { useProjectState } from '../project/store/ProjectProvider'
+import { toTeamRecord } from '../project/adapters/week1'
+import { TEAM_KEY } from './week1/team'
 
 const HISTORY = 30
 const HIGHLIGHT_MS = 1600
@@ -90,16 +93,27 @@ export function WorkbenchProvider({ def, ui, children }: { def: WorkbenchWeek; u
     [setArtefacts],
   )
 
-  const state: WeekState = useMemo(() => ({ model, artefacts, boundary: app.boundary, signals }), [model, artefacts, app.boundary, signals])
+  // My Project (A22, P1): when a project exists, the Week 1 Team Record every reader in the workbench sees (missions,
+  // problems, tree, properties) is the project's projection; the stored artefact is kept in sync (ProjectLegacyMirror
+  // writes the same value) so this provider never writes back an older copy. Undo/redo here no longer covers the record:
+  // its snapshot below leaves it out, and the project's own undo handles it.
+  const projectState = useProjectState()
+  const projectedTeam = useMemo(() => (week === 1 && projectState.doc ? toTeamRecord(projectState.doc) : null), [week, projectState.doc])
+  const rawArtefacts = artefacts
+  useEffect(() => {
+    if (projectedTeam && JSON.stringify(rawArtefacts[TEAM_KEY]) !== JSON.stringify(projectedTeam)) setArtefacts((a) => ({ ...a, [TEAM_KEY]: projectedTeam }))
+  }, [projectedTeam, rawArtefacts, setArtefacts])
+  const viewArtefacts = useMemo(() => (projectedTeam ? { ...rawArtefacts, [TEAM_KEY]: projectedTeam } : rawArtefacts), [projectedTeam, rawArtefacts])
+  const state: WeekState = useMemo(() => ({ model, artefacts: viewArtefacts, boundary: app.boundary, signals }), [model, viewArtefacts, app.boundary, signals])
 
   const rules = useMemo(() => [...CORE_RULES, ...def.rules], [def.rules])
   const problems = useMemo(
-    () => runRules(rules, model, { week, artefacts, boundary: app.boundary, stakeholders: app.map.stakeholders, relationships: app.map.relationships }),
-    [rules, model, week, artefacts, app.boundary, app.map.stakeholders, app.map.relationships],
+    () => runRules(rules, model, { week, artefacts: viewArtefacts, boundary: app.boundary, stakeholders: app.map.stakeholders, relationships: app.map.relationships }),
+    [rules, model, week, viewArtefacts, app.boundary, app.map.stakeholders, app.map.relationships],
   )
   const worst = useMemo(() => worstByElement(problems), [problems])
 
-  const ctx = useMemo(() => ({ model, signals, artefacts, boundary: app.boundary, quiz: app.quiz }), [model, signals, artefacts, app.boundary, app.quiz])
+  const ctx = useMemo(() => ({ model, signals, artefacts: viewArtefacts, boundary: app.boundary, quiz: app.quiz }), [model, signals, viewArtefacts, app.boundary, app.quiz])
   const evals = useMemo(() => def.missions.map((m) => evaluateMission(m, ctx, progressOf(progress, m.id))), [def.missions, ctx, progress])
 
   const updateProgress = useCallback(
@@ -126,17 +140,18 @@ export function WorkbenchProvider({ def, ui, children }: { def: WorkbenchWeek; u
       e.steps.forEach((s) => {
         const k = `${e.mission.id}/${s.step.id}`
         steps[k] = s.ok
-        stepLabels[k] = `Mission ${mi + 1} step ${s.index + 1}`
+        // a single mission (the Week 1 lab tool shows the Team Record alone, sign-off Mo3) is named, not numbered
+        stepLabels[k] = evals.length === 1 ? `${e.mission.short ?? e.mission.title}, part ${s.index + 1}` : `Mission ${mi + 1} step ${s.index + 1}`
       }),
     )
     return {
-      entities: { ...elementSignatures(model), ...(ui.entities?.(state) ?? {}) },
+      entities: { ...elementSignatures(model), ...(ui.entities?.(projectedTeam ? { ...state, artefacts: Object.fromEntries(Object.entries(state.artefacts).filter(([k]) => k !== TEAM_KEY)) } : state) ?? {}) },
       problems,
       metrics: { ...modelMetrics(model), ...(ui.metrics?.(state) ?? {}) },
       steps,
       stepLabels,
     }
-  }, [model, ui, state, problems, evals])
+  }, [model, ui, state, problems, evals, projectedTeam])
 
   // ---------------------------------------------------------------- undo / redo over the change log
   const doc: Doc = useMemo(

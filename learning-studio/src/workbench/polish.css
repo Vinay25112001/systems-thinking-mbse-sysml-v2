@@ -442,3 +442,115 @@
 .wb-embed [data-testid='stakeholder-canvas'] {
   height: 520px;
 }
+
+/* Faculty feedback 2026-10-18: a labeled mission list (item 14), per-mission and overall completion (item 13), and
+   step statements with "You enter" / "Done when" (item 12). */
+@layer components {
+  .wb-mission-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--wb-line);
+    background: var(--wb-panel);
+    color: var(--wb-fg);
+    cursor: pointer;
+  }
+  .wb-mission-row:hover {
+    border-color: var(--wb-line-strong);
+  }
+  .wb-mission-row.is-active {
+    border-color: var(--wb-accent);
+    box-shadow: inset 3px 0 0 var(--wb-accent);
+  }
+  .wb-mission-no {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    font: 600 11.5px/1 var(--wb-mono);
+    border: 1px solid var(--wb-line-strong);
+    color: var(--wb-muted);
+  }
+  .wb-mission-row.is-active .wb-mission-no {
+    border-color: var(--wb-accent);
+    color: var(--wb-accent);
+  }
+  .wb-mission-row.is-complete .wb-mission-no {
+    background: var(--wb-ok-soft);
+    border-color: var(--wb-ok);
+    color: var(--wb-ok);
+  }
+  .wb-mission-bar {
+    flex: none;
+    width: 38px;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--wb-sunk);
+  }
+  .wb-mission-bar span {
+    display: block;
+    height: 100%;
+    background: var(--wb-accent);
+  }
+  .wb-mission-row.is-complete .wb-mission-bar span {
+    background: var(--wb-ok);
+  }
+  .wb-step-brief {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 2px 8px;
+    margin: 6px 0 0;
+    font-size: 13px;
+  }
+  .wb-step-brief dt {
+    font-weight: 600;
+    color: var(--wb-muted);
+  }
+  .wb-step-brief dd {
+    margin: 0;
+  }
+  .wb-step-full {
+    font-size: 12.5px;
+    color: var(--wb-muted);
+  }
+  .wb-step-full summary {
+    cursor: pointer;
+  }
+  .wb-practice-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    padding: 5px 12px;
+    border-bottom: 1px solid var(--wb-line);
+    background: var(--wb-panel);
+    font-size: 12.5px;
+    flex: none;
+  }
+  .wb-practice-bar.is-complete {
+    background: var(--wb-ok-soft);
+  }
+  .wb-practice-bar progress {
+    width: 120px;
+    height: 8px;
+    accent-color: var(--wb-ok);
+  }
+}
+@layer components {
+  .wb-mission-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  .wb-mission-name {
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+    white-space: normal;
+  }
+}

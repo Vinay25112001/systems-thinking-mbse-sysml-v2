@@ -260,9 +260,9 @@ export const SCENARIOS: Scenario[] = [
     id: 'underinvestment',
     name: 'Fleet grows, charging does not',
     archetype: 'Limits to Growth: the charging limit (R05 p.283)',
-    setup: 'Management orders aircraft when utilisation is above 70 % (6-month delivery); the 6 turnaround chargers stay fixed.',
+    setup: 'Management orders aircraft when utilization is above 70 % (6-month delivery); the 6 turnaround chargers stay fixed.',
     description:
-      'Aircraft are ordered when utilisation is high, but the 6 turnaround chargers stay fixed. Served trips level off at about 90 % of the 8,640-trip charging ceiling: as utilisation approaches the ceiling, waits pass riders’ 15-minute tolerance and churn balances word of mouth. Aircraft beyond the 15th add no capacity.',
+      'Aircraft are ordered when utilization is high, but the 6 turnaround chargers stay fixed. Served trips level off at about 90 % of the 8,640-trip charging ceiling: as utilization approaches the ceiling, waits pass riders’ 15-minute tolerance and churn balances word of mouth. Aircraft beyond the 15th add no capacity.',
     params: { expandFleet: true, investInCharging: false, countSupplyLine: false, procurementDelayMonths: 6 },
   },
   {

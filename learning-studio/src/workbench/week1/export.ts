@@ -19,7 +19,7 @@ export function l1Markdown(wb: Workbench, model: EngineeringModel): string {
     const a = analyseLoop(l)
     L.push(`### ${l.id} ${l.name} — declared ${l.declared || '(not declared)'} (owner ${l.owner || '—'}, ${l.provenance})`, ...a.links.map((k) => `- ${k.from} → ${k.to}: ${k.polarity || '(no polarity)'}`), `- variables: ${l.vars.map(varLabel).join(', ')}`, '')
   }
-  L.push('## 4. Emergent behaviour', rec.behaviour ? `Behaviour: ${BEHAVIOUR_SCENARIO[rec.behaviour].label}` : '_Not chosen._', '', rec.explanation || '_No explanation yet._', '')
+  L.push('## 4. Emergent behavior', rec.behaviour ? `Behavior: ${BEHAVIOUR_SCENARIO[rec.behaviour].label}` : '_Not chosen._', '', rec.explanation || '_No explanation yet._', '')
   L.push('## 5. Team charter', ...COURSE_ROLES.map((r) => `- ${r}: ${rec.threePersonTeam && r === MERGED_ROLE ? 'merged with Architecture' : rec.roles[r] || '—'}`), '', `Decision rules: ${rec.decisionRules}`, '', `Communication norms: ${rec.norms}`, '', `Owned prefixes: ${rec.prefixes}`, '')
   return L.join('\n')
 }

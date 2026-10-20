@@ -12,6 +12,15 @@ type Row = { id: string; level: 1 | 2; group: TreeGroup; label: string; sub?: st
 
 const DEFAULT_COLLAPSED = ['g-vars', 'g-loops', 'g-stk']
 
+/** True when an item's subtitle says it is not finished, so its dot is not green (review F15): "incomplete", "not
+ *  recorded", "unclassified", or a count still short of its total ("3/14 marked"). */
+function unfinished(sub: string | undefined): boolean {
+  if (!sub) return false
+  if (/^(incomplete|not recorded|not exported|unclassified|to do)\b/i.test(sub.trim())) return true
+  const m = /^(\d+)\s*\/\s*(\d+)/.exec(sub.trim())
+  return !!m && Number(m[1]) < Number(m[2])
+}
+
 /** `headerExtra`: controls the host adds to the panel header (the medium-width drawer's close button). */
 export function ModelBrowser({ headerExtra }: { headerExtra?: ReactNode } = {}) {
   const wb = useWorkbench()
@@ -182,7 +191,7 @@ export function ModelBrowser({ headerExtra }: { headerExtra?: ReactNode } = {}) 
                             onFocus={() => setFocusId(it.id)}
                           >
                             <div className="wb-tree-row item" onClick={() => (select(it.id), setFocusId(it.id))}>
-                              <span className={`wb-dot ${sev ?? (it.kind === 'boundary' && it.sub === 'unclassified' ? '' : 'ok')}`} aria-hidden />
+                              <span className={`wb-dot ${sev ?? (unfinished(it.sub) ? '' : 'ok')}`} aria-hidden />
                               <span className="wb-tree-label">
                                 {it.label}
                                 {it.sub && <span className="sub">{it.sub}</span>}

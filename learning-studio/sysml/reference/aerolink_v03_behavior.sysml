@@ -5,8 +5,10 @@
 // Conventions (LABORATORY_AND_CAPSTONE_PLAN.md C.2): course IDs are short names written as quoted unrestricted
 // names in the form <'ID'> (S06 p.49-50, p.165); references use the short name. Course relationships that are
 // not SysML keywords are dependencies named '<source> <link type> <target>' and tagged with semantic metadata
-// (#derivesFrom, #affects, ...), the library Derivation connection (#derivation) or the library Refinement
-// (#refinement). See sysml/reference/README.md for the full mapping.
+// (#derivesFrom, #affectedBy, ...), the library Derivation connection (#derivation) or the library Refinement
+// (#refinement). Every dependency runs from the dependent element (client) to the element it depends on (supplier),
+// S06 pp.50-51; the tag names the client's relation to the supplier (#affectedBy and #receivesFrom therefore run from
+// the link's target to its source). See sysml/reference/README.md for the full mapping.
 // FICTIONAL VALUES (teaching values, not real-world data): every number in this file comes from the AeroLink Data
 // Sheet or the instructor baseline: 6 vertiports (3 hubs, 3 spokes), 12 aircraft (16 planned by DEC-001), 4 seats,
 // 150 km/h cruise, 25 km design trip, 16 min block time, 20 min charge, 25 min hub turnaround, 16 h operating day,
@@ -29,12 +31,12 @@ package 'AeroLink Reference Model' {
 		doc /* derives-from: the client is derived from the supplier (used where both ends are not requirements; requirement-to-requirement derivation uses the library #derivation connection). */
 		:> annotatedElement : SysML::Dependency;
 	}
-	metadata def <affects> AffectsLink {
-		doc /* affects: the client (technology, decision or external system) affects the supplier. AROU items record affects through the elements their metadata is about. */
+	metadata def <affectedBy> AffectedByLink {
+		doc /* affects, written from the dependent: for the course link X affects Y the dependency runs from Y (client) to X (supplier), because a change to X may require a change to Y (SysML v2.1 Beta 2, Part 1, 7.3: a change to a supplier may result in a change to a client). The dependency keeps the name 'X affects Y'. AROU items record affects through the elements their metadata is about. */
 		:> annotatedElement : SysML::Dependency;
 	}
-	metadata def <flowsTo> FlowsToLink {
-		doc /* flows-to: information produced by the client is consumed by the supplier, where no item flow between ports exists (AI capabilities, decisions, logical sources). */
+	metadata def <receivesFrom> ReceivesFromLink {
+		doc /* flows-to, written from the dependent: for the course link X flows-to Y the dependency runs from the consumer Y (client) to the producer X (supplier), where no item flow between ports exists (AI capabilities, decisions, logical sources). The dependency keeps the name 'X flows-to Y'. */
 		:> annotatedElement : SysML::Dependency;
 	}
 	metadata def <satisfies> SatisfiesLink {
@@ -44,7 +46,7 @@ package 'AeroLink Reference Model' {
 	package Context {
 		doc /* ENT and EXT elements: the system of interest and its context (L9 package Context). */
 		part def <'ENT-001'> AeroLinkEnterprise {
-			doc /* AeroLink Urban Mobility service enterprise. Fleet, vertiports and chargers, operations centre and passenger demand, bounded for the question of passenger waiting time. */
+			doc /* AeroLink Urban Mobility. The enterprise: the company and its partners (the vertiport operators, the electric utility, the aircraft manufacturer and the investors) that share one mission: on-demand electric air trips in one metropolitan region. Insurers, public transport, emergency response and the approving authorities sit in the extended enterprise. */
 			attribute operatingDay : DurationValue = 16 [h];
 			attribute vertiportCount : Natural = 6;
 			// Quantities constrained by the stakeholder requirements (REQ-STK).
@@ -65,29 +67,29 @@ package 'AeroLink Reference Model' {
 			attribute capitalForYear2Capacity : Real;
 			attribute capacityRetainedAfterHubLoss : Real;
 		}
-		part def AirNavigationServiceProvider {
+		part def ControlledAirspace {
 			port intentIn : ~Physical::FlightIntentPort;
 		}
-		part def ElectricUtilityGrid {
+		part def ElectricGrid {
 			port supply : Physical::GridPowerPort;
 		}
 		part def WeatherSystem {
 			port weatherOut : Physical::WeatherDataPort;
 		}
-		part def AircraftManufacturer;
+		part def AircraftAndSparesSupply;
 		part def PublicTransportNetwork;
-		part def EmergencyServices {
+		part def EmergencyResponseService {
 			port alarmIn : ~Physical::FireAlarmPort;
 		}
 		part aeroLinkContext {
 			doc /* Operating context: the AeroLink system of interest (Physical::aeroLink) and the six external systems. */
 			ref part systemOfInterest :> Physical::aeroLink;
-			part <'EXT-001'> ansp : AirNavigationServiceProvider { doc /* Air navigation service provider. Provides airspace access and traffic integration. */ }
-			part <'EXT-002'> utilityGrid : ElectricUtilityGrid { doc /* Electric utility grid. Supplies power to vertiport chargers. */ }
+			part <'EXT-001'> controlledAirspace : ControlledAirspace { doc /* Controlled airspace (air traffic service). Provides airspace access and traffic integration. */ }
+			part <'EXT-002'> electricGrid : ElectricGrid { doc /* Electric grid. Supplies power to vertiport chargers. */ }
 			part <'EXT-003'> weather : WeatherSystem { doc /* Weather. Natural system constraining operations. */ }
-			part <'EXT-004'> oem : AircraftManufacturer { doc /* Aircraft manufacturer (OEM). Supplies aircraft and parts; sets delivery lead time. */ }
+			part <'EXT-004'> aircraftSupply : AircraftAndSparesSupply { doc /* Aircraft and spares supply. Supplies aircraft and parts; sets delivery lead time. */ }
 			part <'EXT-005'> publicTransport : PublicTransportNetwork { doc /* Public transport network. Connects passengers to and from vertiports. */ }
-			part <'EXT-006'> emergencyServices : EmergencyServices { doc /* Emergency services. Respond to incidents at vertiports and in flight. */ }
+			part <'EXT-006'> emergencyResponse : EmergencyResponseService { doc /* Emergency response service. Responds to incidents at vertiports and in flight. */ }
 			// External interfaces (IF to EXT).
 			interface <'IF-003'> operationsCentreANSP : Physical::FlightIntentExchange connect systemOfInterest.'PHY-004'.intentOut to 'EXT-001'.intentIn { doc /* Operations centre <-> ANSP (information): Flight intent submission and acceptance before take-off. Carries: route, departure time, acceptance. */ }
 			interface <'IF-006'> chargerUtilityGrid : Physical::GridConnection connect 'EXT-002'.supply to systemOfInterest.'PHY-003'.gridInlet { doc /* Charger <-> utility grid (physical): Grid connection at each vertiport with an agreed power limit (TBD-02). Carries: electrical power. */ }
@@ -183,8 +185,8 @@ package 'AeroLink Reference Model' {
 			subject enterprise : Context::AeroLinkEnterprise;
 			stakeholder insurers : 'STK-012';
 		}
-		concern <'CON-015'> 'Fleet delivery and certification progress' {
-			doc /* The aircraft manufacturer is concerned that AeroLink's orders, operating data and certification milestones arrive as planned, because delivery slots and certification progress set its own production plan. */
+		concern <'CON-015'> 'Fleet orders and delivery milestones' {
+			doc /* The aircraft manufacturer is concerned that AeroLink's aircraft orders, delivery slots and payment milestones are kept as agreed in the purchase agreement, because they set its own production plan. */
 			subject enterprise : Context::AeroLinkEnterprise;
 			stakeholder aircraftManufacturer : 'STK-011';
 		}
@@ -868,7 +870,7 @@ package 'AeroLink Reference Model' {
 		use case <'SCN-005'> 'Weather Disruption' {
 			doc /* Forecast weather approaches the aircraft limits at a vertiport; flights are held or diverted and the backlog is recovered. Kind: weather (official S04 Lab 7 SCN-005). Trigger: The forecast for a vertiport crosses a weather limit within the next 30 min (limits TBD-01, U-001). Actors: Operations centre duty manager (primary); STK-001; STK-008; EXT-001; EXT-003 (environment). Preconditions: Flights are scheduled and some are airborne; weather data are received for all six vertiports; alternates and the 20 % energy reserve policy are in force. Main flow: 1. AeroLink (system of interest): Flags vertiport V3 as approaching its weather limits and lists the affected departures, arrivals and airborne flights. 2. Operations centre duty manager: Declares a weather hold for V3: no departures to or from V3. 3. STK-008: Diverts each airborne flight bound for V3 to its planned alternate within the energy reserve. 4. EXT-001: Accepts the revised flight intents for the diverted flights. 5. AeroLink (system of interest): Notifies affected passengers of a new boarding time, an alternate vertiport or a refund. 6. STK-001: Each affected passenger accepts a new time or vertiport, or takes the refund. 7. Operations centre duty manager: Lifts the hold when the forecast has been back inside limits for 30 min; the backlog is re-timed. Alternate flows: A1 (step 3): conditions at the alternate also approach limits while the aircraft is airborne - Divert to the nearest open vertiport within the reserve; if none is reachable within the reserve, declare a priority landing with the ANSP. Rejoin at step 5. A2 (step 2): two or more vertiports reach limits (region-wide event) - Suspend all departures network-wide; land airborne flights at the nearest open vertiport; offer passengers public transport (EXT-005). Scenario ends. A3 (step 7): the hold lasts longer than 2 h - Cancel the remaining bookings to V3 for the day and refund; reposition aircraft for the next morning. Scenario ends. */
 			subject enterprise : Context::AeroLinkEnterprise;
-			actor airNavigationServiceProvider : Context::AirNavigationServiceProvider; // EXT-001 performs SCN-005
+			actor controlledAirspace : Context::ControlledAirspace; // EXT-001 performs SCN-005
 			objective { doc /* End state: Success: All aircraft on the ground or safely diverted; no flight dispatched outside limits; the backlog flown within the day. Failure/degraded: Service at V3 suspended for the day with every affected passenger re-accommodated or refunded and no flight outside limits. */ }
 		}
 		// Aircraft operating states (v0.3), exhibited by Physical::aeroLink.'PHY-001'.
@@ -908,7 +910,7 @@ package 'AeroLink Reference Model' {
 		// Populated in v0.4 (AROU v2, CP2 content carried into the model at CP5).
 	}
 	package Traceability {
-		doc /* Course relationships that are realised as separate SysML relationships, each named <source> <link type> <target>: #derivation connections, #derivesFrom / #refinement / #affects / #mitigates / #measures / #flowsTo / #satisfies dependencies, satisfy and allocate. Relationships realised inside element bodies (stakeholder, frame, actor, perform, verify, item flows, AROU metadata about) are listed in README.md. */
+		doc /* Course relationships that are realised as separate SysML relationships, each named <source> <link type> <target>: #derivation connections, #derivesFrom / #refinement / #affectedBy / #mitigates / #measures / #receivesFrom / #satisfies dependencies (each from the dependent element), satisfy and allocate. Relationships realised inside element bodies (stakeholder, frame, actor, perform, verify, item flows, AROU metadata about) are listed in README.md. */
 		// derives-from (90)
 		#derivation connection 'MGO-002 derives-from MGO-001' {
 			end #original ::> Needs::'MGO-001';
@@ -1144,12 +1146,12 @@ package 'AeroLink Reference Model' {
 		allocation 'AI-001 allocated-to PHY-005' allocate Logical::logicalArchitecture.'AI-001' to Physical::aeroLink.'PHY-005';
 		allocation 'AI-002 allocated-to PHY-004' allocate Logical::logicalArchitecture.'AI-002' to Physical::aeroLink.'PHY-004';
 		// flows-to (5)
-		#flowsTo dependency 'INFO-001 flows-to AI-002' from Physical::'INFO-001' to Logical::logicalArchitecture::'AI-002';
-		#flowsTo dependency 'INFO-003 flows-to AI-001' from Physical::'INFO-003' to Logical::logicalArchitecture::'AI-001';
-		#flowsTo dependency 'PHY-007 flows-to INFO-005' from Physical::aeroLink::'PHY-007' to Physical::'INFO-005';
-		#flowsTo dependency 'LOG-002 flows-to INFO-005' from Logical::logicalArchitecture::'LOG-002' to Physical::'INFO-005';
-		#flowsTo dependency 'AI-001 flows-to PHY-005' from Logical::logicalArchitecture::'AI-001' to Physical::aeroLink::'PHY-005';
+		#receivesFrom dependency 'INFO-001 flows-to AI-002' from Logical::logicalArchitecture::'AI-002' to Physical::'INFO-001';
+		#receivesFrom dependency 'INFO-003 flows-to AI-001' from Logical::logicalArchitecture::'AI-001' to Physical::'INFO-003';
+		#receivesFrom dependency 'PHY-007 flows-to INFO-005' from Physical::'INFO-005' to Physical::aeroLink::'PHY-007';
+		#receivesFrom dependency 'LOG-002 flows-to INFO-005' from Physical::'INFO-005' to Logical::logicalArchitecture::'LOG-002';
+		#receivesFrom dependency 'AI-001 flows-to PHY-005' from Physical::aeroLink::'PHY-005' to Logical::logicalArchitecture::'AI-001';
 		// affects (1)
-		#affects dependency 'EXT-003 affects SCN-005' from Context::aeroLinkContext::'EXT-003' to Behavior::'SCN-005';
+		#affectedBy dependency 'EXT-003 affects SCN-005' from Behavior::'SCN-005' to Context::aeroLinkContext::'EXT-003';
 	}
 }

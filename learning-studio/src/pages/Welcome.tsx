@@ -1,5 +1,9 @@
 // Course welcome: where this subject starts (WEEK1_LEARNING_DESIGN §3). Shown from the dashboard's "Start here" card
-// and from Week 1's Overview; visiting it marks it seen for this viewer.
+// and from Week 1's Overview; visiting it marks it seen for this viewer. Faculty feedback 2026-10-18: one readable
+// column, read top to bottom (sections 1–5 in order); section 3 names AeroLink as the instructor's reference case and
+// each team's own enterprise; section 5 is "How to use this site" with a mini-figure per stage. Section 4 (the 14-week
+// map) shows the authoritative schedule (COURSE_SCHEDULE.md, DECISION_LOG A19): Phase I and Phase II, the whiteboard
+// subjects and the Week 7 and Week 14 team outputs.
 import { ArrowRight } from 'lucide-react'
 import { useEffect } from 'react'
 import { PARTS } from '../content/course'
@@ -7,20 +11,22 @@ import { WEEK1_BLOCKS } from '../content/week1'
 import { TIMELINE_FIGURE, WEEK_STAGES, WELCOME, WELCOME_LEDE } from '../content/learn/welcome'
 import { CourseTimeline } from '../components/figures/EngineeringFigures'
 import { FigureFrame } from '../components/figures/Frame'
+import { StageMiniFigure } from '../components/figures/SiteGuide'
 import { Cite } from '../flow/Cite'
 import { TopBar } from '../flow/Chrome'
 import { WELCOME_KEY } from '../flow/storage'
 import { saveJSON } from '../lib/storage'
 import { Link } from '../lib/router'
-import { DATA_SHEET } from '../model/airtaxi'
 import { WEEKS } from '../content/course'
 
 const SE_QUOTE = WEEK1_BLOCKS.find((b) => b.id === 'w1-se')!.quote!
-const SHEET = DATA_SHEET.filter((d) => ['fleet', 'vertiports', 'chargersPerVertiport', 'seats', 'opHours'].includes(d.key))
 
 const TIMELINE_SPEC = {
   ...TIMELINE_FIGURE,
-  textEquivalent: WEEKS.map((w) => `Week ${w.number}: ${w.title}${w.due ? ` (${w.due.split(' ')[0]})` : ''}${/Exam/.test(w.assessment) ? ` (${w.assessment.split(' (')[0]})` : ''}`).join('; ') + '.',
+  textEquivalent:
+    (['ST', 'MBSE'] as const)
+      .map((p) => `${PARTS[p].title.replace(' — ', ': ')}, ${PARTS[p].weeks}: ` + WEEKS.filter((w) => w.part === p).map((w) => `Week ${w.number}, ${w.title}${w.due ? ` (team output: ${w.due})` : ''}`).join('; '))
+      .join('. ') + '.',
 }
 
 export default function Welcome() {
@@ -48,56 +54,38 @@ export default function Welcome() {
       </a>
       <TopBar title="Course welcome" />
       <main id="lf-main" tabIndex={-1} className="lf-main">
-        <div className="lf-page">
+        <div className="lf-page lf-onecol" data-testid="welcome-column">
           <p className="lf-kicker">Start here · Course welcome</p>
           <h1 className="lf-h1">Systems Thinking and MBSE with SysML v2</h1>
           <p className="lf-lede">{WELCOME_LEDE.text}</p>
 
-          <div className="lf-grid2" style={{ alignItems: 'start' }}>
-            <section aria-labelledby="w-what" className="lf-prose">
-              <h2 id="w-what" className="lf-h2" style={{ marginTop: 8 }}>
-                1. {block('what').title}
-              </h2>
-              {para(block('what').paras[0], 0)}
-              {para(block('what').paras[1], 1)}
-              <blockquote className="lf-quote">
-                “{SE_QUOTE.text}” <Cite c={SE_QUOTE.cite} />
-              </blockquote>
-              {para(block('what').paras[2], 2)}
-              <h3 className="lf-h3">{block('start').title}</h3>
-              {block('start').paras.map(para)}
-            </section>
-            <div>
-              <section aria-labelledby="w-why" className="lf-prose">
-                <h2 id="w-why" className="lf-h2" style={{ marginTop: 8 }}>
-                  2. {block('why').title}
-                </h2>
-                {block('why').paras.map(para)}
-              </section>
-              <section aria-labelledby="w-case" className="lf-prose">
-                <h2 id="w-case" className="lf-h2">
-                  3. {block('case').title}
-                </h2>
-                {block('case').paras.map(para)}
-              </section>
-              <div className="lf-card" aria-label="AeroLink Data Sheet extract (FICTIONAL)">
-                <p className="lf-label">AeroLink Data Sheet · extract · FICTIONAL</p>
-                <dl className="lf-terms" style={{ gridTemplateColumns: 'minmax(0,1fr) auto' }}>
-                  {SHEET.map((d) => (
-                    <div key={d.key} className="contents">
-                      <dt style={{ fontWeight: 400 }}>{d.label}</dt>
-                      <dd className="wb-mono" style={{ margin: 0 }}>
-                        {d.value} {d.unit}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="m-0 mt-2 text-[14.5px]">
-                  <Link to="/workspace/aerolink">Case brief and full Data Sheet</Link>
-                </p>
-              </div>
-            </div>
-          </div>
+          <section aria-labelledby="w-what" className="lf-prose">
+            <h2 id="w-what" className="lf-h2">
+              1. {block('what').title}
+            </h2>
+            {para(block('what').paras[0], 0)}
+            {para(block('what').paras[1], 1)}
+            <blockquote className="lf-quote">
+              “{SE_QUOTE.text}” <Cite c={SE_QUOTE.cite} />
+            </blockquote>
+            {para(block('what').paras[2], 2)}
+            <h3 className="lf-h3">{block('start').title}</h3>
+            {block('start').paras.map(para)}
+          </section>
+
+          <section aria-labelledby="w-why" className="lf-prose">
+            <h2 id="w-why" className="lf-h2">
+              2. {block('why').title}
+            </h2>
+            {block('why').paras.map(para)}
+          </section>
+
+          <section aria-labelledby="w-case" className="lf-prose" data-testid="welcome-case">
+            <h2 id="w-case" className="lf-h2">
+              3. {block('case').title}
+            </h2>
+            {block('case').paras.map(para)}
+          </section>
 
           <section aria-labelledby="w-map">
             <h2 id="w-map" className="lf-h2">
@@ -112,16 +100,21 @@ export default function Welcome() {
             </p>
           </section>
 
-          <section aria-labelledby="w-week">
+          <section aria-labelledby="w-week" data-testid="welcome-howto">
             <h2 id="w-week" className="lf-h2">
               5. {block('week').title}
             </h2>
             <div className="lf-prose">{block('week').paras.map(para)}</div>
-            <ol className="lf-strip">
-              {WEEK_STAGES.map((s) => (
+            <ol className="lf-howto">
+              {WEEK_STAGES.map((s, i) => (
                 <li key={s.id}>
-                  <strong>{s.label}</strong>
-                  {s.line}
+                  <StageMiniFigure id={s.figure} label={`Illustration of the ${s.label} page`} />
+                  <div>
+                    <h3 className="lf-h3">
+                      {i + 1}. {s.label}
+                    </h3>
+                    <p>{s.line}</p>
+                  </div>
                 </li>
               ))}
             </ol>

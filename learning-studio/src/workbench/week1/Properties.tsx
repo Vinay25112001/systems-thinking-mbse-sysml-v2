@@ -1,5 +1,6 @@
-// Week 1 properties for the systems-thinking artefacts (boundary candidates, explorer variables and loops, the student's
-// loops). Engineering elements (ENT, EXT, STK, …) use the shell's generic form.
+// Week 1 properties: boundary candidates, the AeroLink stakeholder and needs exercises, and the parts and rows of the
+// team's Week 1 Team Record (rebuilt 2026-10-18). The explorer-variable and loop forms are kept for later weeks.
+// Engineering elements (ENT, EXT, …) use the shell's generic form.
 import { ALL_LOOPS, LOOP_LINKS, LOOP_NODES } from '../../content/causalLoops'
 import { BOUNDARY_ITEMS, type BoundaryClass } from '../../content/week1'
 import { ProvenanceOwnerFields } from '../../components/ProvenanceOwnerFields'
@@ -7,6 +8,8 @@ import { useApp } from '../../state/AppState'
 import { useWorkbench } from '../context'
 import { SIG_BOUNDARY, analyseLoop, type LoopType } from './logic'
 import { useLoops } from './useLoops'
+import { TEAM_PARTS, teamPartCheck } from './tree'
+import { teamArtefact } from './team'
 
 const nodeLabel = (id: string) => LOOP_NODES.find((n) => n.id === id)?.label ?? id
 const CLASS_LABEL: Record<BoundaryClass, string> = { inside: 'Inside the boundary', environment: 'Environment', irrelevant: 'Irrelevant to this question' }
@@ -148,7 +151,61 @@ function StudentLoopProps({ id }: { id: string }) {
   )
 }
 
+const EXERCISE_TITLE: Record<string, string> = {
+  'stk:identify': 'AeroLink stakeholders, part 1: who has a stake?',
+  'stk:classify': 'AeroLink stakeholders, part 2: classification',
+  'stk:row': 'AeroLink stakeholders, part 3: one register row',
+  'needs:diagnose': 'AeroLink needs, part 1: diagnose drafts',
+  'needs:write': 'AeroLink needs, part 2: write needs',
+}
+
+/** A Team Record field as text: concerns as "CON-001: …", a self-check as the confirmed criteria. */
+function showValue(v: unknown): string {
+  if (Array.isArray(v)) return v.map((x) => (x && typeof x === 'object' ? `${(x as { id?: string }).id ?? ''}: ${(x as { text?: string }).text ?? ''}` : String(x))).join('; ')
+  if (v && typeof v === 'object') return Object.entries(v).filter(([, x]) => x === true).map(([k]) => k).join(', ')
+  return String(v ?? '')
+}
+
+function TeamProps({ id }: { id: string }) {
+  const wb = useWorkbench()
+  const part = TEAM_PARTS.find((p) => p.id === id)
+  if (part) {
+    const c = teamPartCheck(id, wb.state)!
+    return (
+      <div className="space-y-2 text-[12.5px]">
+        <Head id={id} title={`Team Record, part ${part.label}`} kind="Your enterprise" />
+        <p className={`wb-note ${c.ok ? 'ok' : 'warn'} m-0`}>{c.ok ? c.detail : c.issues.slice(0, 4).join(' ')}</p>
+      </div>
+    )
+  }
+  const r = teamArtefact(wb.state.artefacts)
+  const key = id.slice(5)
+  const row = [...r.context, ...r.stakeholders, ...r.needs].find((x) => x.id === key)
+  if (!row) return <p className="text-wb-muted">{key} is no longer in the Team Record.</p>
+  return (
+    <div className="space-y-2 text-[12.5px]">
+      <Head id={row.id} title={row.name || '(unnamed)'} kind="Team Record row" />
+      <dl className="wb-kv">
+        {Object.entries(row).map(([k, v]) => [k, showValue(v)] as const).filter(([k, v]) => k !== 'id' && k !== 'name' && v.trim()).map(([k, v]) => (
+          <div key={k} className="contents">
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="m-0 text-wb-muted">Edit it in the Team enterprise view.</p>
+    </div>
+  )
+}
+
 export function Week1Properties({ id }: { id: string }) {
+  if (id.startsWith('team:')) return <TeamProps id={id} />
+  if (EXERCISE_TITLE[id]) return (
+    <div className="space-y-2 text-[12.5px]">
+      <Head id={id} title={EXERCISE_TITLE[id]} kind="AeroLink rehearsal" />
+      <p className="m-0 text-wb-muted">Work on it in the {id.startsWith('stk:') ? 'Stakeholders' : 'Needs'} view; the mission step shows what is still needed.</p>
+    </div>
+  )
   if (id.startsWith('boundary:')) return <BoundaryProps id={id} />
   if (id.startsWith('var:')) return <VarProps id={id} />
   if (id.startsWith('loop:')) return <ExplorerLoopProps id={id} />

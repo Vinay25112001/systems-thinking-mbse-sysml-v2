@@ -6,6 +6,14 @@
 **Last updated:** 2026-10-11 (night)
 
 ## Current phase
+**2026-10-18 — schedule realigned (DECISION_LOG A19).** The faculty whiteboard schedule in `COURSE_SCHEDULE.md` is now
+authoritative: Phase I — Systems Thinking (Weeks 1–7, ending with the Systems Thinking Engineering Package) and Phase II —
+MBSE with SysML v2 (Weeks 8–14, ending with the SysML v2 enterprise model). The app's course data, roadmap, dashboard,
+welcome map, course-map dialog and curriculum export follow it. Week 1 is the design template and keeps its module; Weeks
+2–14 show a provisional outline ("being rebuilt from the Week 1 template") and link the earlier reviewed draft modules,
+which are preserved unedited under the labeled archive route `#/draft/<oldWeek>`. Open faculty decisions: exam placement,
+quizzes in Weeks 7 and 14 (default none), Phase II tooling in Week 8. The milestone text below predates this change.
+
 **Milestone M2 met on 2026-10-11 (due Oct 23): Weeks 1–7 (Part I, Systems Thinking) are complete drafts** — every definition-of-done check passes, including an independent review and sign-off for each week (`_source_cache/review/weekNN_signoff.md`). Part II is under way: Week 8 authored, reviewed and fixed (sign-off pending); Week 9 being authored; Weeks 10–14 next. Faculty review remains separate (DECISION_LOG A4).
 
 ## Week status

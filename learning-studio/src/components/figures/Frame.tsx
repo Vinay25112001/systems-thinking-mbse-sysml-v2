@@ -3,12 +3,17 @@
 import type { ReactNode } from 'react'
 import type { FigureSpec } from '../../content/learn/types'
 
-export type FigureMeta = Pick<FigureSpec, 'id' | 'title' | 'alt' | 'textEquivalent'> & { caption: { text: string } }
+export type FigureMeta = Pick<FigureSpec, 'id' | 'title' | 'alt' | 'textEquivalent'> & { caption: { text: string }; question?: { text: string } }
 
 export function FigureFrame({ spec, number, children, wide = true, below, ownTextAlt = false, full = false }: { spec: FigureMeta; number?: string; children: ReactNode; wide?: boolean; below?: ReactNode; ownTextAlt?: boolean; full?: boolean }) {
   const label = `${number ? `Figure ${number}: ` : ''}${spec.title}`
   return (
     <figure className={`lf-figure${full ? ' is-full' : ''}`} data-testid={`figure-${spec.id}`} aria-label={label}>
+      {spec.question && (
+        <p className="lf-figure-question" data-testid={`figure-question-${spec.id}`}>
+          {spec.question.text}
+        </p>
+      )}
       <div className="lf-figure-title">
         {number && <span className="lf-figure-no">Figure {number}</span>}
         <span>{spec.title}</span>

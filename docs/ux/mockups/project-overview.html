@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Project · SkyMed (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* SysML Learning Studio — proposed design system ("Studio DS"), mockup edition.
+   Source of truth for the static mockups in docs/ux/mockups/*.html (each mockup inlines a copy of this file so it
+   stays self-contained). Tokens extend, not replace, learning-studio/src/workbench/theme.css (--wb-*) and the
+   brand ramp in learning-studio/src/index.css; see UI_UX_REDESIGN_PROPOSAL.md §6 for the mapping.
+   Proposal only: nothing here is wired into the app. */
+
+:root {
+  color-scheme: light;
+  /* Neutrals (from --wb-*, unchanged values where they exist) */
+  --bg: #f3f5f8;            /* = --wb-bg */
+  --panel: #ffffff;         /* = --wb-panel */
+  --sunk: #eceff3;          /* = --wb-sunk */
+  --line: #d3d9e1;          /* = --wb-line */
+  --line-strong: #b4bdc9;   /* = --wb-line-strong */
+  --ink: #18202d;           /* = --wb-fg */
+  --ink-2: #3a4456;         /* new: secondary text, 9.6:1 on panel */
+  --muted: #566071;         /* = --wb-muted, 6.3:1 on panel */
+
+  /* Role colours. Each role = solid (text/icons, >= 4.5:1 on panel) + soft (fills) + edge (borders/bands). */
+  --course: #0f6e8c;        /* = --wb-accent / brand-600: course, lecture, navigation */
+  --course-strong: #0b5a73;
+  --course-soft: #e1eff4;
+  --project: #3d4ac4;       /* NEW: "Your enterprise" (My Project). 6.9:1 on white */
+  --project-strong: #2f3aa3;
+  --project-soft: #e8eafb;
+  --project-edge: #8f98e6;
+  --example: #8a3a78;       /* NEW: "Instructor example" (AeroLink, Practice). 7.1:1 on white */
+  --example-soft: #f6e8f2;
+  --example-edge: #d39cc5;
+  --mbse: #155e52;          /* NEW: MBSE Studio (Weeks 8–14) model surfaces */
+  --mbse-soft: #e0f0ec;
+
+  /* Status (from --wb-ok/warn/bad) — never used as role colour */
+  --ok: #23683b;   --ok-soft: #e2f1e7;
+  --warn: #8a5200; --warn-soft: #fbefd9;
+  --bad: #b3261e;  --bad-soft: #fbe4e2;
+  --info: var(--course); --info-soft: var(--course-soft);
+
+  /* Type */
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --t-caption: 0.8125rem;  /* 13 — floor for any text */
+  --t-small: 0.875rem;     /* 14 — UI secondary */
+  --t-ui: 1rem;            /* 16 — UI base */
+  --t-read: 1.125rem;      /* 18 — reader body */
+  --t-h4: 1.25rem;         /* 20 */
+  --t-h3: 1.5rem;          /* 24 */
+  --t-h2: 1.875rem;        /* 30 */
+  --t-h1: 2.375rem;        /* 38 */
+  --t-display: 3rem;       /* 48 */
+
+  /* Space (4-pt) */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+  /* Radii: hierarchy, not one radius for everything */
+  --r-chip: 999px; --r-control: 6px; --r-card: 10px; --r-surface: 14px;
+  /* Elevation: two levels only */
+  --e1: 0 1px 2px rgba(24, 32, 45, 0.06), 0 0 0 1px var(--line);
+  --e2: 0 8px 24px rgba(24, 32, 45, 0.12), 0 0 0 1px var(--line);
+  /* Motion */
+  --m-fast: 120ms; --m-base: 180ms; --ease: cubic-bezier(0.2, 0, 0, 1);
+  --focus: 0 0 0 2px var(--panel), 0 0 0 4px var(--course);
+  --rail-w: 248px;
+}
+
+/* Dark: designed, not inverted (values from --wb-* dark where they exist) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #11151c; --panel: #181e27; --sunk: #141920; --line: #2b3340; --line-strong: #3d4757;
+    --ink: #e3e8ef; --ink-2: #c3cbd7; --muted: #9ba5b4;
+    --course: #4fb3d4; --course-strong: #7cc9e2; --course-soft: #15313b;
+    --project: #9aa4ff; --project-strong: #b8bfff; --project-soft: #1f2347; --project-edge: #4b54a8;
+    --example: #e391cf; --example-soft: #3a1d33; --example-edge: #7d3f6d;
+    --mbse: #6fcfb9; --mbse-soft: #12302a;
+    --ok: #5cc27e; --ok-soft: #15301f; --warn: #e8a33c; --warn-soft: #382a12; --bad: #f07a70; --bad-soft: #3a1b19;
+    --e1: 0 0 0 1px var(--line); --e2: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line-strong);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #11151c; --panel: #181e27; --sunk: #141920; --line: #2b3340; --line-strong: #3d4757;
+  --ink: #e3e8ef; --ink-2: #c3cbd7; --muted: #9ba5b4;
+  --course: #4fb3d4; --course-strong: #7cc9e2; --course-soft: #15313b;
+  --project: #9aa4ff; --project-strong: #b8bfff; --project-soft: #1f2347; --project-edge: #4b54a8;
+  --example: #e391cf; --example-soft: #3a1d33; --example-edge: #7d3f6d;
+  --mbse: #6fcfb9; --mbse-soft: #12302a;
+  --ok: #5cc27e; --ok-soft: #15301f; --warn: #e8a33c; --warn-soft: #382a12; --bad: #f07a70; --bad-soft: #3a1b19;
+  --e1: 0 0 0 1px var(--line); --e2: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--line-strong);
+}
+
+/* Projector density: instructor toggle scales the whole type ramp (and figure labels with it) */
+:root[data-density='projector'] { font-size: 125%; }
+:root[data-density='compact'] { --t-ui: 0.9375rem; --t-read: 1rem; }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 var(--t-ui)/1.5 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.005em; margin: 0; line-height: 1.2; }
+h1 { font-size: var(--t-h1); }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); }
+h4 { font-size: var(--t-h4); }
+p { margin: 0; }
+a { color: var(--course); text-underline-offset: 2px; }
+.id { font-family: var(--font-mono); font-size: 0.95em; letter-spacing: 0; }
+.muted { color: var(--muted); }
+.small { font-size: var(--t-small); }
+.caption { font-size: var(--t-caption); color: var(--muted); }
+:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- App shell ---------- */
+.app { display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr); min-height: 100dvh;
+  background: linear-gradient(to right, var(--panel) calc(var(--rail-w) - 1px), var(--line) calc(var(--rail-w) - 1px) var(--rail-w), transparent var(--rail-w)); }
+@media (max-width: 1023px) { .app { background: none; } }
+.rail {
+  position: sticky; top: 0; height: 100dvh; overflow: auto;
+  background: var(--panel); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; padding: var(--s4) var(--s3);
+}
+.brand { display: flex; gap: 10px; align-items: center; padding: 4px 8px 16px; color: var(--ink); text-decoration: none; }
+.brand-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--course); display: grid; place-items: center; flex: none; }
+.brand-mark svg { width: 18px; height: 18px; }
+.brand b { font: 600 1.0625rem/1.1 var(--font-display); display: block; }
+.brand span { font-size: var(--t-caption); color: var(--muted); }
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.nav a {
+  display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 8px 10px; border-radius: var(--r-control);
+  color: var(--ink-2); text-decoration: none; font-weight: 500;
+}
+.nav a svg { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; }
+.nav a:hover { background: var(--sunk); color: var(--ink); }
+.nav a[aria-current='page'] { background: var(--course-soft); color: var(--course-strong); }
+.nav .lock { margin-left: auto; font-size: var(--t-caption); color: var(--muted); font-weight: 400; }
+.nav-sep { height: 1px; background: var(--line); margin: 10px 6px; }
+.nav-project {
+  margin: 6px 0; padding: 12px; border-radius: var(--r-card); text-decoration: none; color: var(--ink);
+  background: var(--project-soft); border: 1px solid var(--project-edge); display: block;
+}
+.nav-project[aria-current='page'] { box-shadow: inset 4px 0 0 var(--project); }
+.nav-project .np-head { display: flex; align-items: center; gap: 8px; color: var(--project-strong); font-weight: 600; }
+.nav-project .np-head svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+.nav-project .caption { display: block; margin-top: 2px; }
+.nav-project .np-name { display: block; margin-top: 6px; font-size: var(--t-small); font-weight: 500; }
+.nav-project .np-bar { margin-top: 8px; }
+.rail-foot { margin-top: auto; padding-top: var(--s4); display: grid; gap: 8px; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: var(--t-small); color: var(--ink-2); padding: 4px 8px; }
+
+.main { min-width: 0; }
+.topbar {
+  position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: var(--s4);
+  min-height: 56px; padding: 8px var(--s6); background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.crumbs { display: flex; gap: 8px; align-items: center; font-size: var(--t-small); color: var(--muted); min-width: 0; flex-wrap: wrap; }
+.crumbs a { color: var(--muted); text-decoration: none; }
+.crumbs a:hover { color: var(--ink); text-decoration: underline; }
+.crumbs .sep { color: var(--line-strong); }
+.crumbs [aria-current] { color: var(--ink); font-weight: 500; }
+.topbar .spacer { flex: 1; }
+.topbar > * { white-space: nowrap; }
+.topbar .crumbs { white-space: normal; }
+.save-state { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-small); color: var(--muted); white-space: nowrap; }
+.save-state i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.topbar .menu-btn { display: none; }
+.content { padding: var(--s6); max-width: 1320px; margin: 0 auto; }
+.bottom-nav { display: none; }
+
+/* Compact rail: Lecture Studio and MBSE Studio give the canvas the width */
+.app.is-compact { --rail-w: 76px; }
+.app.is-compact .rail { padding: var(--s4) 12px; }
+.app.is-compact .brand { justify-content: center; padding: 4px 0 16px; }
+.app.is-compact .brand > span:last-child, .app.is-compact .nav-project .np-name, .app.is-compact .nav-project .caption,
+.app.is-compact .nav-project .np-bar, .app.is-compact .rail-foot, .app.is-compact .nav .lock { display: none; }
+.app.is-compact .nav a, .app.is-compact .nav-project .np-head { font-size: 0; justify-content: center; gap: 0; }
+.app.is-compact .nav-project { padding: 10px 0; display: grid; place-items: center; }
+
+/* ---------- Buttons, chips, fields ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px;
+  border-radius: var(--r-control); border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink);
+  font: 500 var(--t-small)/1.2 var(--font-body); cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background var(--m-fast) var(--ease), border-color var(--m-fast) var(--ease);
+}
+.btn:hover { background: var(--sunk); }
+.btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.9; flex: none; }
+.btn-primary { background: var(--course); border-color: var(--course); color: #fff; }
+.btn-primary:hover { background: var(--course-strong); }
+.btn-project { background: var(--project); border-color: var(--project); color: #fff; }
+.btn-project:hover { background: var(--project-strong); }
+:root[data-theme='dark'] .btn-primary, :root[data-theme='dark'] .btn-project { color: #0d1218; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .btn-primary, :root:not([data-theme='light']) .btn-project { color: #0d1218; } }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--course); }
+.btn-lg { min-height: 48px; padding: 12px 20px; font-size: var(--t-ui); }
+.btn-icon { width: 40px; padding: 0; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: var(--r-chip);
+  font-size: var(--t-caption); font-weight: 600; line-height: 1; white-space: nowrap; border: 1px solid transparent;
+}
+.chip svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+.chip-ok { background: var(--ok-soft); color: var(--ok); }
+.chip-warn { background: var(--warn-soft); color: var(--warn); }
+.chip-bad { background: var(--bad-soft); color: var(--bad); }
+.chip-info { background: var(--course-soft); color: var(--course-strong); }
+.chip-neutral { background: var(--sunk); color: var(--ink-2); border-color: var(--line); }
+.chip-draft { background: transparent; color: var(--ink-2); border: 1px dashed var(--line-strong); }
+.chip-project { background: var(--project-soft); color: var(--project-strong); }
+.chip-example { background: var(--example-soft); color: var(--example); }
+
+.field { display: grid; gap: 6px; }
+.field label, .label { font-size: var(--t-small); font-weight: 600; color: var(--ink-2); }
+.field .hint { font-size: var(--t-caption); color: var(--muted); }
+.input, .select, .textarea {
+  width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: var(--r-control);
+  background: var(--panel); color: var(--ink); font: 400 var(--t-ui)/1.4 var(--font-body);
+}
+.textarea { min-height: 84px; resize: vertical; }
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--course); box-shadow: 0 0 0 3px var(--course-soft); }
+.input.is-error { border-color: var(--bad); }
+
+/* ---------- Surfaces ---------- */
+.card { background: var(--panel); border-radius: var(--r-card); box-shadow: var(--e1); padding: var(--s5); }
+.surface { background: var(--panel); border-radius: var(--r-surface); box-shadow: var(--e1); }
+.section-title { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); margin: 0 0 var(--s4); flex-wrap: wrap; }
+.section-title h2 { font-size: var(--t-h3); }
+.stack > * + * { margin-top: var(--s4); }
+.grid { display: grid; gap: var(--s5); }
+
+.bar { display: block; height: 6px; background: var(--sunk); border-radius: 99px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
+.bar > i { display: block; height: 100%; background: var(--course); border-radius: 99px; }
+.bar.project > i { background: var(--project); }
+
+/* ---------- Identity banners: who owns this content ---------- */
+.banner {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: var(--r-card);
+  font-size: var(--t-small); border: 1px solid;
+}
+.banner svg { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; }
+.banner strong { font-weight: 600; }
+.banner .banner-act { margin-left: auto; }
+.banner-project { background: var(--project-soft); border-color: var(--project-edge); color: var(--ink); }
+.banner-project svg, .banner-project strong { color: var(--project-strong); }
+.banner-example {
+  background: repeating-linear-gradient(135deg, var(--example-soft) 0 12px, color-mix(in srgb, var(--example-soft) 70%, var(--panel)) 12px 24px);
+  border-color: var(--example-edge); color: var(--ink);
+}
+.banner-example svg, .banner-example strong { color: var(--example); }
+.edge-project { box-shadow: inset 4px 0 0 var(--project), var(--e1); }
+.edge-example { box-shadow: inset 4px 0 0 var(--example), var(--e1); }
+
+/* ---------- Stage stepper (per week) ---------- */
+.stepper { display: flex; gap: 0; list-style: none; margin: 0; padding: 0; counter-reset: st; overflow-x: auto; scrollbar-width: thin; }
+.stepper li { flex: 1 1 0; min-width: 104px; }
+.stepper a { padding-right: 10px; }
+.stepper a {
+  position: relative; display: grid; grid-template-columns: 28px 1fr; gap: 2px 10px; align-items: center;
+  padding: 12px 12px 12px 0; text-decoration: none; color: var(--ink-2); min-height: 56px;
+}
+.stepper a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line); }
+.stepper .dot {
+  grid-row: span 2; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  font: 600 var(--t-caption)/1 var(--font-body); border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink-2);
+}
+.stepper .dot svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.6; }
+.stepper .st-label { font-weight: 600; font-size: var(--t-small); color: var(--ink); line-height: 1.2; }
+.stepper .st-sub { font-size: var(--t-caption); color: var(--muted); line-height: 1.2; }
+.stepper .done .dot { background: var(--course); border-color: var(--course); color: #fff; }
+.stepper .done a::after { background: var(--course); }
+.stepper [aria-current='step'] .dot { border: 2px solid var(--course); color: var(--course); box-shadow: 0 0 0 4px var(--course-soft); }
+.stepper [aria-current='step']::after { background: linear-gradient(90deg, var(--course) 50%, var(--line) 50%); }
+.stepper .is-example .dot { border-color: var(--example-edge); }
+.stepper .is-project .dot { border-color: var(--project-edge); }
+.stepper .is-example .st-sub { color: var(--example); }
+.stepper .is-project .st-sub { color: var(--project); }
+
+/* ---------- Tables ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: var(--t-small); }
+.table th { text-align: left; font-weight: 600; color: var(--muted); font-size: var(--t-caption); padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--sunk); position: sticky; top: 0; }
+.table td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.table tr:hover td { background: color-mix(in srgb, var(--sunk) 60%, transparent); }
+.table tr[aria-selected='true'] td { background: var(--project-soft); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .app { grid-template-columns: 1fr; }
+  .rail { display: none; }
+  .topbar .menu-btn { display: inline-flex; }
+  .topbar { padding: 8px var(--s4); }
+  .content { padding: var(--s5) var(--s4) 96px; }
+  .bottom-nav {
+    display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+    background: var(--panel); border-top: 1px solid var(--line); padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav a { display: grid; justify-items: center; gap: 2px; padding: 6px 2px; min-height: 52px; color: var(--muted); text-decoration: none; font-size: var(--t-caption); font-weight: 500; border-radius: 8px; }
+  .bottom-nav a svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+  .bottom-nav a[aria-current='page'] { color: var(--course-strong); background: var(--course-soft); }
+  .bottom-nav a.bn-project { color: var(--project-strong); }
+  .bottom-nav a.bn-project[aria-current='page'] { background: var(--project-soft); }
+  h1 { font-size: 1.875rem; }
+}
+@media (max-width: 599px) {
+  .hide-sm { display: none !important; }
+  .save-state span { display: none; }
+}
+
+</style>
+<style>
+  .ptabs { display: flex; gap: 4px; padding: 0 var(--s6); background: var(--panel); border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .ptabs a { padding: 14px 14px 12px; font-weight: 500; font-size: var(--t-small); color: var(--ink-2); text-decoration: none; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .ptabs a[aria-current] { color: var(--project-strong); border-bottom-color: var(--project); font-weight: 600; }
+
+  /* The title block: the project's identity, set like an engineering drawing title block */
+  .titleblock { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); border-radius: var(--r-surface); overflow: hidden; background: var(--panel); box-shadow: inset 0 0 0 1.5px var(--project-edge); }
+  .titleblock > div { padding: 14px 18px; border-left: 1px solid var(--project-edge); }
+  .titleblock > div:first-child { border-left: 0; grid-row: span 2; padding: 22px 24px; background: var(--project-soft); }
+  .titleblock .row2 { border-top: 1px solid var(--project-edge); }
+  .tb-k { display: block; font-size: var(--t-caption); color: var(--muted); margin-bottom: 4px; }
+  .tb-v { font-weight: 600; }
+  .titleblock h1 { font-size: 2.25rem; line-height: 1.08; }
+  .titleblock .own { display: inline-flex; align-items: center; gap: 8px; color: var(--project-strong); font-weight: 600; font-size: var(--t-small); margin-bottom: 10px; }
+  .titleblock .own svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .titleblock p.mission { margin-top: 10px; color: var(--ink-2); max-width: 54ch; }
+
+  .over { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: var(--s5); margin-top: var(--s5); align-items: start; }
+
+  /* Milestone tracker */
+  .ms { padding: var(--s5); }
+  .ms-track { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 4px; margin-top: var(--s4); }
+  .ms-track .ph-label { grid-column: span 7; font-size: var(--t-caption); color: var(--muted); font-weight: 600; padding-bottom: 4px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+  .ms-cell { display: grid; align-content: start; grid-template-rows: 30px auto auto; gap: 6px; justify-items: center; text-align: center; text-decoration: none; color: var(--ink); padding: 8px 2px; border-radius: 8px; }
+  .ms-cell:hover { background: var(--sunk); }
+  .ms-cell b { font-size: var(--t-small); font-weight: 600; }
+  .ms-node { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line-strong); background: var(--panel); color: var(--muted); }
+  .ms-node svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.6; }
+  .ms-cell.sub .ms-node { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .ms-cell.now .ms-node { border-color: var(--project); color: var(--project); box-shadow: 0 0 0 4px var(--project-soft); }
+  .ms-cell.now { background: var(--project-soft); }
+  .ms-cell.key .ms-node { border-style: dashed; border-color: var(--mbse); color: var(--mbse); }
+  .ms-cell span { font-size: var(--t-caption); color: var(--muted); line-height: 1.2; }
+  .ms-detail { margin-top: var(--s4); display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--s4); align-items: center; padding: var(--s4); border-radius: var(--r-card); background: var(--sunk); }
+  .ms-detail h3 { font-size: var(--t-h4); }
+  .ms-detail p { font-size: var(--t-small); color: var(--ink-2); margin-top: 4px; }
+
+  /* Artifact library */
+  .lib { margin-top: var(--s5); }
+  .lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: var(--s3); }
+  .art { display: grid; gap: 10px; padding: var(--s4); border-radius: var(--r-card); background: var(--panel); box-shadow: var(--e1); text-decoration: none; color: var(--ink); align-content: start; min-height: 150px; }
+  .art:hover { box-shadow: 0 0 0 1px var(--project-edge), var(--e1); }
+  .art-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .art-top .wk { font-size: var(--t-caption); color: var(--muted); }
+  .art h3 { font: 600 var(--t-ui)/1.3 var(--font-body); }
+  .art .count { font: 600 1.75rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+  .art .count small { font: 400 var(--t-small) var(--font-body); color: var(--muted); margin-left: 4px; }
+  .art .foot { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+  .art.empty { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); box-shadow: none; border: 1.5px dashed var(--line-strong); }
+  .art.empty p { font-size: var(--t-small); color: var(--ink-2); }
+  .art.future { opacity: .62; background: transparent; box-shadow: none; border: 1px solid var(--line); }
+  .lib-filter { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Right column */
+  .side h2 { font-size: var(--t-h4); margin-bottom: 12px; }
+  .ctx svg { width: 100%; height: auto; display: block; }
+  .ctx .c-soi { fill: var(--project-soft); stroke: var(--project); stroke-width: 2; }
+  .ctx .c-ext { fill: var(--panel); stroke: var(--line-strong); stroke-width: 1.5; }
+  .ctx .c-ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .ctx text { font: 500 13px var(--font-body); fill: var(--ink); }
+  .ctx .c-soi-t { font: 600 14px var(--font-body); fill: var(--project-strong); }
+  .team { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .team li { display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: center; font-size: var(--t-small); }
+  .av { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; font-size: var(--t-small); background: var(--project-soft); color: var(--project-strong); }
+  .team b { display: block; font-weight: 600; font-size: var(--t-ui); }
+  .trace-h { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: var(--t-small); }
+  .trace-h li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; }
+  .trace-h svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; margin-top: 1px; }
+  .trace-h .w { color: var(--warn); } .trace-h .o { color: var(--ok); }
+  .save { display: grid; gap: 10px; }
+  .save .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .hist { list-style: none; margin: 0; padding: 0; font-size: var(--t-small); }
+  .hist li { padding: 8px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .hist li:first-child { border-top: 0; }
+
+  @media (max-width: 1240px) { .over { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 900px) {
+    .titleblock { grid-template-columns: 1fr 1fr; }
+    .titleblock > div:first-child { grid-column: 1 / -1; grid-row: auto; }
+    .titleblock > div { border-left: 0; border-top: 1px solid var(--project-edge); }
+    .titleblock > div:nth-child(odd):not(:first-child) { border-left: 1px solid var(--project-edge); }
+    .ptabs { padding: 0 var(--s4); }
+    .ms-track { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    .ms-cell span { display: none; }
+    .ms-detail { grid-template-columns: minmax(0,1fr); }
+    .titleblock h1 { font-size: 1.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="rail" aria-label="Main">
+  <a class="brand" href="dashboard.html"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#fff;fill:none;stroke-width:1.9"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12 20 7.4M12 12 4 7.4M12 12v9.2"/></svg></span><span><b>SysML Learning Studio</b><span>Systems Thinking and MBSE</span></span></a>
+  <div class="nav">
+    <a href="dashboard.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>Dashboard</a>
+    <a href="week-page.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8M8 11h6"/></svg>Course</a>
+    <a href="lecture-viewer.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/><path d="M7 8h6M7 11h9"/></svg>Lecture Studio</a>
+    <a href="practice-handoff.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M9 3h6"/><path d="M10 3v6L4.5 18.5A1.6 1.6 0 0 0 5.9 21h12.2a1.6 1.6 0 0 0 1.4-2.5L14 9V3"/><path d="M7.5 15h9"/></svg>Practice</a>
+  </div>
+  <a class="nav-project" href="project-overview.html" aria-current="page">
+    <span class="np-head"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M8 14h8"/></svg>My Project</span>
+    <span class="np-name">SkyMed Regional Delivery Network</span>
+    <span class="caption">Team 4 · Week 2 milestone in progress</span>
+    <span class="bar project np-bar"><i style="width:18%"></i></span>
+  </a>
+  <div class="nav">
+    <a href="week8-transformation.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12 20 7.4M12 12 4 7.4M12 12v9.2"/></svg>MBSE Studio<span class="lock" title="Opens in Week 8"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><rect x="5" y="11" width="14" height="10" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> W8</span></a>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="nav">
+    <a href="#"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>Sources and readings</a>
+  </div>
+  <div class="rail-foot">
+    <div class="toggle-row"><span>Instructor mode</span><span class="chip chip-neutral">Off</span></div>
+    <div class="toggle-row"><span>Theme</span><span class="chip chip-neutral">System</span></div>
+  </div>
+</nav>
+<div class="main">
+  <header class="topbar">
+    <button class="btn btn-icon btn-ghost menu-btn" aria-label="Open navigation"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="#">My Project</a><span class="sep">/</span><span aria-current="page">Overview</span></nav>
+    <span class="spacer"></span>
+    <span class="save-state" role="status"><i></i><span>Saved 2 min ago</span></span>
+    <a class="btn hide-sm" href="#"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 4v11M7 10.5l5 5 5-5"/><path d="M4 19.5h16"/></svg>Export project</a>
+  </header>
+  <nav class="ptabs" aria-label="My Project sections">
+    <a href="#" aria-current="page">Overview</a>
+    <a href="#">Milestones</a>
+    <a href="#">Artifacts</a>
+    <a href="#">Traceability</a>
+    <a href="#">History</a>
+    <a href="#">Export and import</a>
+  </nav>
+  <main class="content" id="main">
+    <section class="titleblock" aria-labelledby="h1">
+      <div>
+        <span class="own"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M8 14h8"/></svg>Your team's enterprise</span>
+        <h1 id="h1">SkyMed Regional Delivery Network</h1>
+        <p class="mission">Move lab samples, blood products and urgent medicines between four hospitals and nine rural clinics in under an hour, day and night, without adding road traffic.</p>
+      </div>
+      <div><span class="tb-k">Enterprise ID</span><span class="tb-v id">ENT-001</span></div>
+      <div><span class="tb-k">Team</span><span class="tb-v">Team 4 · 4 members</span></div>
+      <div><span class="tb-k">Proposal</span><span class="chip chip-ok"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg>Approved 14 Oct</span></div>
+      <div><span class="tb-k">Baseline</span><span class="tb-v">Week 1 record, rev 3</span></div>
+      <div class="row2"><span class="tb-k">System of interest</span><span class="tb-v id">SOI-001</span> <span class="small">delivery service</span></div>
+      <div class="row2"><span class="tb-k">Artifacts</span><span class="tb-v">31 · 4 need review</span></div>
+      <div class="row2"><span class="tb-k">Current milestone</span><span class="tb-v">Week 2, due 28 Oct</span></div>
+      <div class="row2"><span class="tb-k">Last export</span><span class="tb-v" style="color:var(--warn)">3 days ago</span></div>
+    </section>
+
+    <div class="over">
+      <div>
+        <section class="card ms" aria-labelledby="ms">
+          <div class="section-title" style="margin:0"><h2 id="ms">Milestones</h2><span class="small muted">1 of 14 submitted</span></div>
+          <div class="ms-track">
+            <span class="ph-label">Phase I · Systems Thinking Engineering Package</span>
+            <span class="ph-label">Phase II · SysML v2 model of the same enterprise</span>
+            <a class="ms-cell sub" href="#"><span class="ms-node"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span><b>W1</b><span>Done</span></a>
+            <a class="ms-cell now" href="#" aria-current="step"><span class="ms-node">2</span><b>W2</b><span>2 of 5</span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">3</span><b>W3</b><span>Opens 28 Oct</span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">4</span><b>W4</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">5</span><b>W5</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">6</span><b>W6</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">7</span><b>W7</b><span>Review</span></a>
+            <a class="ms-cell key" href="week8-transformation.html"><span class="ms-node">8</span><b>W8</b><span>Import</span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">9</span><b>W9</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">10</span><b>W10</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">11</span><b>W11</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">12</span><b>W12</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">13</span><b>W13</b><span></span></a>
+            <a class="ms-cell" href="#"><span class="ms-node">14</span><b>W14</b><span>Defense</span></a>
+          </div>
+          <div class="ms-detail">
+            <div>
+              <h3>Week 2 · ConOps / Requirements</h3>
+              <p>Done: ConOps narrative, 3 scenarios. Still to do: capabilities (draft), stakeholder requirements, measures of effectiveness. Submission readiness: not ready, 3 items open.</p>
+            </div>
+            <a class="btn btn-project" href="#">Continue Week 2 work</a>
+          </div>
+        </section>
+
+        <section class="lib" aria-labelledby="lib">
+          <div class="section-title"><h2 id="lib">Artifact library</h2>
+            <div class="lib-filter" role="group" aria-label="Filter">
+              <button class="chip chip-project" aria-pressed="true">All</button>
+              <button class="chip chip-neutral" aria-pressed="false">Needs review (4)</button>
+              <button class="chip chip-neutral" aria-pressed="false">Week 2</button>
+            </div>
+          </div>
+          <div class="lib-grid">
+            <a class="art" href="stakeholder-editor.html">
+              <div class="art-top"><span class="wk">Week 1</span><span class="chip chip-warn"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/></svg>2 to review</span></div>
+              <h3>Stakeholders</h3>
+              <span class="count">14<small>in register</small></span>
+              <div class="foot"><span class="chip chip-neutral id">STK-001…014</span></div>
+            </a>
+            <a class="art" href="#">
+              <div class="art-top"><span class="wk">Week 1</span><span class="chip chip-ok"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg>Checked</span></div>
+              <h3>Needs</h3>
+              <span class="count">12<small>3 have no requirement yet</small></span>
+              <div class="foot"><span class="chip chip-neutral id">NEED-001…012</span></div>
+            </a>
+            <a class="art" href="#">
+              <div class="art-top"><span class="wk">Week 1</span><span class="chip chip-ok"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg>Approved</span></div>
+              <h3>Context and boundary</h3>
+              <span class="count">7<small>external systems</small></span>
+              <div class="foot"><span class="chip chip-neutral id">EXT-001…007</span></div>
+            </a>
+            <a class="art" href="#">
+              <div class="art-top"><span class="wk">Week 2</span><span class="chip chip-ok"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg>Complete</span></div>
+              <h3>ConOps and scenarios</h3>
+              <span class="count">3<small>scenarios, 1 off-nominal</small></span>
+              <div class="foot"><span class="chip chip-neutral id">SCN-001…003</span></div>
+            </a>
+            <a class="art" href="#">
+              <div class="art-top"><span class="wk">Week 2</span><span class="chip chip-draft">Draft</span></div>
+              <h3>Capabilities</h3>
+              <span class="count">5<small>2 not linked to a need</small></span>
+              <div class="foot"><span class="chip chip-neutral id">CAP-001…005</span></div>
+            </a>
+            <a class="art empty" href="#">
+              <div class="art-top"><span class="wk">Week 2</span><span class="chip chip-neutral">Not started</span></div>
+              <h3>Requirements</h3>
+              <p>Write one stakeholder requirement per need, starting from your 12 needs. Session 2 teaches the method.</p>
+              <div class="foot"><span class="btn btn-project" style="min-height:36px"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 5v14M5 12h14"/></svg>Start from needs</span></div>
+            </a>
+            <div class="art future" aria-disabled="true">
+              <div class="art-top"><span class="wk">Week 3</span><span class="chip chip-neutral"><svg viewBox="0 0 24 24" aria-hidden="true" ><rect x="5" y="11" width="14" height="10" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Opens 28 Oct</span></div>
+              <h3>Risk register and trade study</h3>
+              <p class="small muted">Uses your requirements and capabilities.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="stack side" aria-label="Project context">
+        <section class="card ctx" aria-labelledby="cx">
+          <h2 id="cx">System boundary</h2>
+          <svg viewBox="0 0 340 210" role="img" aria-label="Context: SkyMed delivery service with seven external systems">
+            <rect x="110" y="72" width="120" height="66" rx="10" class="c-soi"/>
+            <text x="170" y="100" text-anchor="middle" class="c-soi-t">SOI-001</text>
+            <text x="170" y="120" text-anchor="middle">Delivery service</text>
+            <g><rect x="6" y="10" width="92" height="36" rx="6" class="c-ext"/><text x="52" y="33" text-anchor="middle">Hospitals</text></g>
+            <g><rect x="6" y="88" width="92" height="36" rx="6" class="c-ext"/><text x="52" y="111" text-anchor="middle">Clinics</text></g>
+            <g><rect x="6" y="166" width="92" height="36" rx="6" class="c-ext"/><text x="52" y="189" text-anchor="middle">Blood center</text></g>
+            <g><rect x="242" y="10" width="92" height="36" rx="6" class="c-ext"/><text x="288" y="33" text-anchor="middle">Airspace</text></g>
+            <g><rect x="242" y="88" width="92" height="36" rx="6" class="c-ext"/><text x="288" y="111" text-anchor="middle">Weather</text></g>
+            <g><rect x="242" y="166" width="92" height="36" rx="6" class="c-ext"/><text x="288" y="189" text-anchor="middle">Grid power</text></g>
+            <path class="c-ln" d="M98 28 L110 80 M98 106 H110 M98 184 L110 130 M242 28 L230 80 M242 106 H230 M242 184 L230 130"/>
+          </svg>
+          <p class="caption" style="margin-top:8px">6 of 7 external systems shown · <a href="#">open the context editor</a></p>
+        </section>
+        <section class="card" aria-labelledby="tm">
+          <h2 id="tm">Team and roles</h2>
+          <ul class="team">
+            <li><span class="av">PR</span><span><b>Priya Raman</b>Requirements and compliance</span></li>
+            <li><span class="av">MB</span><span><b>Marcus Bell</b>Architecture</span></li>
+            <li><span class="av">EO</span><span><b>Elena Ortiz</b>AI and data management</span></li>
+            <li><span class="av">JP</span><span><b>Jun Park</b>Verification and validation</span></li>
+          </ul>
+        </section>
+        <section class="card" aria-labelledby="th">
+          <h2 id="th">Traceability health</h2>
+          <ul class="trace-h">
+            <li><span class="o"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></svg></span><span>Every stakeholder has at least one concern.</span></li>
+            <li><span class="w"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/></svg></span><span>3 needs have no requirement yet: <span class="id">NEED-004</span>, <span class="id">NEED-009</span>, <span class="id">NEED-011</span>.</span></li>
+            <li><span class="w"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/></svg></span><span>2 capabilities are not linked to a need.</span></li>
+          </ul>
+          <a class="btn" style="margin-top:14px" href="#"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Open traceability view</a>
+        </section>
+        <section class="card save" aria-labelledby="sv">
+          <h2 id="sv">Save, export and history</h2>
+          <p class="small muted">Your project is stored in this browser only. Export a project file to keep a copy, hand in, or move to another computer. Imports are checked and never overwrite silently.</p>
+          <div class="btns"><a class="btn btn-project" href="#"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 4v11M7 10.5l5 5 5-5"/><path d="M4 19.5h16"/></svg>Export</a><a class="btn" href="#"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 20V9M7 13.5l5-5 5 5"/><path d="M4 4.5h16"/></svg>Import</a></div>
+          <ul class="hist" aria-label="Recent changes">
+            <li><span>Edited <span class="id">STK-009</span> concerns</span><span class="muted">2 min ago</span></li>
+            <li><span>Added scenario <span class="id">SCN-003</span></span><span class="muted">Yesterday</span></li>
+            <li><span>Week 1 record submitted (rev 3)</span><span class="muted">20 Oct</span></li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</div>
+<nav class="bottom-nav" aria-label="Main">
+  <a href="dashboard.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>Home</a>
+  <a href="week-page.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/><path d="M8 7h8M8 11h6"/></svg>Course</a>
+  <a href="practice-handoff.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M9 3h6"/><path d="M10 3v6L4.5 18.5A1.6 1.6 0 0 0 5.9 21h12.2a1.6 1.6 0 0 0 1.4-2.5L14 9V3"/><path d="M7.5 15h9"/></svg>Practice</a>
+  <a class="bn-project" href="project-overview.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M8 14h8"/></svg>My Project</a>
+  <a href="week8-transformation.html"><svg viewBox="0 0 24 24" aria-hidden="true" ><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12 20 7.4M12 12 4 7.4M12 12v9.2"/></svg>MBSE</a>
+</nav>
+</body>
+</html>

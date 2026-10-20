@@ -33,7 +33,9 @@ const mgo: Element[] = [
     { level: 'objective', measure: '90th-percentile wait', target: 15, unit: 'min', horizon: 'month 6 onward' }, 'instructor-fictional'),
   el('MGO-006', 'Objective: no pad-edge noise exceedance',
     'Zero take-off or landing events above 65 dBA at any vertiport pad edge in each quarter.',
-    { level: 'objective', measure: 'take-off or landing events above 65 dBA LAmax at any pad edge', target: 0, unit: 'events per quarter', limit: 65, limitUnit: 'dBA', horizon: 'each quarter from the start of service' }, 'instructor-fictional'),
+    { level: 'objective', measure: 'take-off or landing events above 65 dBA LAmax at any pad edge', target: 0, unit: 'events per quarter', limit: 65, limitUnit: 'dBA', horizon: 'each quarter from the start of service',
+      // Event-cap dimension of the corrected NEED-003, added by Week 3 (src/content/lectures/week03/aerolinkCase.ts EVENT_CAP).
+      eventCap: 'Week 3: the objective also counts pad-hours before 07:00 and after 20:00 above the agreed evening and early-morning event cap (TBD-03); the target is zero such pad-hours per quarter, alongside zero events above 65 dBA.' }, 'instructor-fictional'),
   el('MGO-007', 'Objective: Year-2 capacity with headroom',
     'By month 24, serve the planning demand of 240 trips/day at a fleet utilisation of no more than 80 %, i.e. provide at least 300 trips/day of capacity.',
     { level: 'objective', measure: 'trips/day capacity', target: 300, unit: 'trips/day', demand: 240, maxUtilisation: 0.8, horizon: 'month 24' }, 'instructor-fictional'),

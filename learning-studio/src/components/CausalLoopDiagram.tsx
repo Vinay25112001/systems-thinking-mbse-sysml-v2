@@ -77,7 +77,7 @@ export function CausalLoopDiagram({ selectedId, onSelectNode, height = 460, coll
       </p>
     )}
     <p className={wb ? 'mb-2 mt-0 max-w-[100ch] text-[12.5px] text-wb-muted' : 'mb-2 text-xs text-slate-600 dark:text-slate-400'}>
-      Each arrow shows the local effect of a change in the cause with everything else held constant (+ same direction, − opposite direction). Dashed arrows have a delay; dotted arrows exist only under the stated policy or operating range. With waiting time held constant, the net effect of riders on adoption (R1 and B4 together) is positive only while riders are below half the potential market; through waiting (B1) more riders can reduce adoption earlier. Utilisation only gates aircraft orders; demand sets their size.
+      Each arrow shows the local effect of a change in the cause with everything else held constant (+ same direction, − opposite direction). Dashed arrows have a delay; dotted arrows exist only under the stated policy or operating range. With waiting time held constant, the net effect of riders on adoption (R1 and B4 together) is positive only while riders are below half the potential market; through waiting (B1) more riders can reduce adoption earlier. Utilization only gates aircraft orders; demand sets their size.
     </p>
     </>
   )

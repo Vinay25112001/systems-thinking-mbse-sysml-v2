@@ -3,7 +3,7 @@
 // and the week's reviewed workload total is unchanged.
 import { describe, expect, it } from 'vitest'
 import { weekByNumber } from '../course'
-import { WORKLOAD_TARGET } from '../schema'
+import { WORKLOAD_TARGET, workloadTotal } from '../schema'
 import { WEEK_CONTENT } from '../weeks'
 import { VIEW_IDS } from '../../workbench/views'
 import { WORKBENCH_WEEKS } from '.'
@@ -73,9 +73,13 @@ describe('converted weeks', () => {
       })
 
       it('the reviewed workload total is unchanged by the conversion', () => {
-        const total = content.workload.reduce((a, w) => a + w.hours, 0)
-        expect(Math.abs(total - WORKLOAD_TARGET[wk.week])).toBeLessThan(0.01)
-        expect(wk.missions.reduce((a, m) => a + m.minutes, 0)).toBeLessThanOrEqual(total * 60)
+        const total = workloadTotal(content.workload)
+        const all = content.workload.reduce((a, w) => a + w.hours, 0)
+        // Week 1 (lecture-first path, 2026-10-19) states its realistic total honestly, inside the syllabus estimate; its
+        // optional AeroLink practice is shown but not counted, and learn/week01.test.ts asserts each row
+        if (wk.week === 1) expect(total).toBeLessThanOrEqual(WORKLOAD_TARGET[1])
+        else expect(Math.abs(total - WORKLOAD_TARGET[wk.week])).toBeLessThan(0.01)
+        expect(wk.missions.reduce((a, m) => a + m.minutes, 0)).toBeLessThanOrEqual(all * 60)
       })
 
       it('every mission has a goal, and a worked mission explains every step', () => {

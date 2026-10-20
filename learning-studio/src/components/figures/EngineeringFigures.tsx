@@ -2,7 +2,8 @@
 // (FICTIONAL); life-cycle and ring labels come from the reviewed w1-lifecycle and w1-emergence text.
 import { useId, useState } from 'react'
 import { PARTS, WEEKS } from '../../content/course'
-import { CONCEPT_CHAIN, CROSSOVER_6, FIGURE6_FLEETS, PLATEAU, SERVED_FROZEN, TRIPS_PER_AIRCRAFT_MONTH, learnSection } from '../../content/learn/week01'
+import { CONCEPT_CHAIN, learnSection } from '../../content/learn/week01'
+import { CROSSOVER_6, FIGURE6_FLEETS, PLATEAU, SERVED_FROZEN, TRIPS_PER_AIRCRAFT_MONTH } from '../../content/learn/dynamicsNumbers'
 import { Link } from '../../lib/router'
 import { DEFAULT_PARAMS, chargingCapacityOf, fleetCapacityOf } from '../../sim/aerolink'
 import { Box, Markers } from './Frame'
@@ -187,7 +188,7 @@ export function ControlRings({ alt }: { alt: string }) {
       {/* key on the right */}
       <g transform="translate(450, 70)">
         {[
-          ['Inner ring: what do I control?', 'dispatch (the operations centre controls it)'],
+          ['Inner ring: what do I control?', 'dispatch (the operations center controls it)'],
           ['Middle ring: what do I influence?', 'left empty: your argument (memo §5)'],
           ['Outer ring: what influences me', 'that I neither control nor influence?', 'left empty: your argument (memo §5)'],
         ].map((r, i) => (
@@ -230,21 +231,13 @@ export function ConceptMap({ onOpen }: { onOpen?: (section: string) => void }) {
           </li>
         ))}
       </ol>
-      <div className="lf-side-nodes" aria-label="Side nodes attached to system of interest and boundary">
-        <Link to="/week/1/learn/l3" className="lf-node side">
-          <span className="lf-node-code">L3</span>holism ⇄ separation of concerns
-        </Link>
-        <Link to="/week/1/learn/l3" className="lf-node side">
-          <span className="lf-node-code">L3</span>analysis ⇄ synthesis
-        </Link>
-      </div>
     </div>
   )
 }
 
 // ------------------------------------------------------------------------------------------- welcome: course timeline
-const checkpointOf = (n: number) => WEEKS.find((w) => w.number === n)?.due?.match(/CP\d/)?.[0]
-const examOf = (n: number) => WEEKS.find((w) => w.number === n)?.assessment.match(/Exam \d/)?.[0]
+// The authoritative schedule (COURSE_SCHEDULE.md, DECISION_LOG A19): Phase I and Phase II, the whiteboard subjects, and the
+// two team outputs (Week 7 package, Week 14 model). Exam placement is an open faculty decision, so no exam is drawn.
 
 export function CourseTimeline({ current = 1 }: { current?: number }) {
   return (
@@ -256,15 +249,12 @@ export function CourseTimeline({ current = 1 }: { current?: number }) {
           </h4>
           <ol className="lf-tl-weeks">
             {WEEKS.filter((w) => w.part === part).map((w) => {
-              const cp = checkpointOf(w.number) ?? (w.number === 14 ? 'CP5' : undefined)
-              const ex = examOf(w.number)
               return (
                 <li key={w.number} className={w.number === current ? 'is-current' : ''} aria-current={w.number === current ? 'step' : undefined}>
                   <span className="lf-tl-no">W{w.number}</span>
                   <span className="lf-tl-name">{w.title}</span>
                   <span className="lf-tl-marks">
-                    {cp && <span className="lf-chip">{cp}</span>}
-                    {ex && <span className="lf-chip warn">{ex}</span>}
+                    {w.due && <span className="lf-chip" style={{ borderRadius: 6 }}>{w.due}</span>}
                     {w.number === current && <span className="lf-chip accent">You start here</span>}
                   </span>
                 </li>

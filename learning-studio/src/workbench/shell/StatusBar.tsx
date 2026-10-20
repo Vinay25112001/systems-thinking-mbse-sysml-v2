@@ -47,13 +47,22 @@ export function StatusBar() {
           </b>
         </span>
       ))}
-      <button type="button" className="wb-status-btn" title="Go to the mission brief" onClick={() => focusRegion('brief')}>
-        Mission {idx + 1} · step {Math.min(e.current + 1, e.total)} of {e.total}
-        {e.complete ? ' · complete' : ''}
-      </button>
-      <span>
-        Missions: <b>{done}</b>/{wb.evals.length}
-      </span>
+      {wb.evals.length === 1 ? (
+        // a single mission (the Week 1 lab tool shows the Team Record alone, sign-off Mo3): name it, count its parts
+        <button type="button" className="wb-status-btn" title="Go to the steps list" onClick={() => focusRegion('brief')}>
+          {e.mission.short ?? e.mission.title}: <b>{e.done}</b> of {e.total} steps{e.complete ? ' · complete' : ''}
+        </button>
+      ) : (
+        <>
+          <button type="button" className="wb-status-btn" title="Go to the mission brief" onClick={() => focusRegion('brief')}>
+            Mission {idx + 1} · step {Math.min(e.current + 1, e.total)} of {e.total}
+            {e.complete ? ' · complete' : ''}
+          </button>
+          <span>
+            Missions: <b>{done}</b>/{wb.evals.length}
+          </span>
+        </>
+      )}
       <span className="ml-auto">{wb.storageOk ? 'Saved in this browser' : 'Storage unavailable: work is not saved'}</span>
     </footer>
   )

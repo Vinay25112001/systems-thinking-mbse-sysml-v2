@@ -29,10 +29,10 @@ Relationship counts in v0.4:
 | `#derivesFrom` dependencies | 70 |
 | `#refinement` dependencies | 3 |
 | `#satisfies` dependencies | 5 |
-| `#flowsTo` dependencies | 7 |
+| `#receivesFrom` dependencies (flows-to) | 7 |
 | `#measures` dependencies | 41 |
 | `#mitigates` dependencies | 12 |
-| `#affects` dependencies | 13 |
+| `#affectedBy` dependencies (affects) | 13 |
 | `stakeholder` declarations | 27 |
 | `frame` | 20 |
 | actors | 5 |
@@ -124,7 +124,9 @@ Where the ID sits:
 
 ### 3.3 Course relationship types (C.2 rules 2 and 4)
 
-Only `satisfy`, `verify`, `allocate` and `dependency` are SysML keywords. The other course link types use the library where it has a matching concept. Where it does not, they use a `dependency` tagged with a local semantic metadata def. Every tag is declared at the root: `#derivesFrom`, `#affects`, `#mitigates`, `#measures`, `#flowsTo` and `#satisfies`. Each one restricts `annotatedElement` to `SysML::Dependency`. Every such relationship is named `'<source> <link type> <target>'`, so an audit can find any link by text search.
+Only `satisfy`, `verify`, `allocate` and `dependency` are SysML keywords. The other course link types use the library where it has a matching concept. Where it does not, they use a `dependency` tagged with a local semantic metadata def. Every tag is declared at the root: `#derivesFrom`, `#affectedBy`, `#mitigates`, `#measures`, `#receivesFrom` and `#satisfies`. Each one restricts `annotatedElement` to `SysML::Dependency`. Every such relationship is named `'<source> <link type> <target>'`, so an audit can find any link by text search.
+
+**Direction rule (one convention for the whole course, 2026-10-19).** `dependency … from A to B` makes A the client and B the supplier, and "a change to a supplier element may result in a change to a client element" (S06 7.3, pp.50-51). Every course dependency therefore runs **from the dependent element to the element it depends on**, and its tag names the client's relation to the supplier. For derives-from, refines, satisfies, measures and mitigates the dependent is the link's source. For **affects** and **flows-to** it is the link's target: the link `X affects Y` is `#affectedBy dependency 'X affects Y' from Y to X`, and `X flows-to Y` is `#receivesFrom dependency 'X flows-to Y' from Y to X` (the name keeps the baseline link). Until 2026-10-19 these two were written `#affects`/`#flowsTo` from X to Y, which inverted the client and supplier (Week 8 independent review, M1). The Week 8 stakeholder relationships follow the same rule (`#regulatedBy`, `#fundedBy`, `#suppliedBy`, `#affectedBy`; conflicts, coordination and partnership are symmetric). `src/model/reference/sysmlMapping.test.ts` asserts the direction for every link type and that an inverted dependency is rejected.
 
 | Course link (n in baseline) | Realisation |
 |---|---|
@@ -133,11 +135,11 @@ Only `satisfy`, `verify`, `allocate` and `dependency` are SysML keywords. The ot
 | satisfies (15) | <ul><li>`satisfy Requirements::'REQ-SYS-n' by <conforming design element>;`: 10, one per REQ-SYS, by the PHY or LOG element typed by the requirement's subject definition.</li><li>The 5 links whose satisfier does not conform to the subject (IF-005, IF-006, IF-007, IF-003; PHY-002 for REQ-STK-007) use `#satisfies dependency`. See §4.</li></ul> |
 | allocated-to (41) | `allocation '…' allocate <source> to <target>;` (FN→PHY, LOG→PHY, REQ→FN, AI→PHY) |
 | performs (21) | <ul><li>LOG/AI→FN (16): `perform Logical::'FN-n';` in the performer.</li><li>STK/EXT→SCN (5): `actor` in the use case.</li></ul> |
-| flows-to (18) | <ul><li>Item flows `flow 'PHY-a flows-to INFO-n flows-to PHY-b' of 'INFO-n' from a.port.item to b.port.item;`. There are 7 flows; each realises the producer and consumer links, 11 links in all.</li><li>Links without a port-to-port flow (to or from AI, DEC, or LOG-002; PHY-007→INFO-005; 7) use `#flowsTo dependency`.</li></ul> |
+| flows-to (18) | <ul><li>Item flows `flow 'PHY-a flows-to INFO-n flows-to PHY-b' of 'INFO-n' from a.port.item to b.port.item;`. There are 7 flows; each realises the producer and consumer links, 11 links in all.</li><li>Links without a port-to-port flow (to or from AI, DEC, or LOG-002; PHY-007→INFO-005; 7) use `#receivesFrom dependency` from the consumer to the producer.</li></ul> |
 | verifies (11) | `verify Requirements::'…';` in the verification-case objective |
 | measures (41) | `#measures dependency` from the `#moe`/`#mop` attribute (or TPM) to the measured element |
 | mitigates (12) | `#mitigates dependency` from the mitigating element to the AROU risk metadata (`AROU::'R-n'`) |
-| affects (75) | <ul><li>From an AROU item (62): the item's metadata is **about** the affected elements.</li><li>From TECH, DEC or EXT (13): `#affects dependency`.</li></ul> |
+| affects (75) | <ul><li>From an AROU item (62): the item's metadata is **about** the affected elements.</li><li>From TECH, DEC or EXT (13): `#affectedBy dependency` from the affected element to the TECH, DEC or EXT.</li></ul> |
 
 **`satisfy` semantics.** A `satisfy` *asserts* that the design satisfies the requirement (S06 p.168). The 10 `satisfy` usages record the baseline's design claim. For REQ-SYS-001, -002 and -003 the bound values are the TPM current estimates: 18 min, 63.5 dB, 0.23. The other satisfiers leave the measured value unbound until verification.
 
@@ -496,4 +498,13 @@ No diagnostics (no warnings) on any of the four files. A full `npm run content:s
 e802203e19d226cc62d997d8ae7255ebd651e1cabfa7728b4a7304d8aa84b589 *aerolink_v02_req_structure.sysml
 a0e371b1fe11ff16753e1971176a3b388ebece9b74377ef00395ae251ec87248 *aerolink_v03_behavior.sysml
 c3f78cdc9fe3f8c445946fb782cb9b61e2ac7319c3e21de5007872dddb56c2bb *aerolink_v04_full.sysml
+```
+
+**Third batch, 2026-10-19 (Week 8 independent review, M1: one dependency direction).** The 13 `#affects` and 7 `#flowsTo` dependencies of v0.1–v0.4 were rewritten from the dependent element (`#affectedBy … from Y to X`, `#receivesFrom … from Y to X`, names unchanged) and their metadata definitions renamed and re-documented; the header comment states the rule (§3.3). No element, value or other link changed. Run from `learning-studio/` with the Week 8 files, one checker run, report `sysml/lectures/week08/week08-report.json` (2026-10-19T18:24:44Z): the four reference files PASS with no message. `sysmlMapping.test.ts` (direction per link type, inverted dependency rejected) and `sysmlDrift.test.ts` pass. The canonical `sysml/validation-report.json` was not regenerated (only a full run may write it) and still records the 2026-10-11 hashes for these files; no test reads the reference files from it.
+
+```
+d9dc6aac65eca5d32fd28007d9e640975e4059839547a0aa781e7ad5bbda6e0c *aerolink_v01_skeleton.sysml
+db870281c4bae59f754e661520306640cc91bb264a27ea7e0ae78d7e67739985 *aerolink_v02_req_structure.sysml
+0f0cc7e3f17be6060f19c54a9b8d40482eb3d389711b2b2d50e4cf6f02be2d67 *aerolink_v03_behavior.sysml
+13490c057f3d5152aa93b1cc08e5faed2cd7f73c27da2a444d58df596bf6fb17 *aerolink_v04_full.sysml
 ```

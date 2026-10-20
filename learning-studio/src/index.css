@@ -2,6 +2,7 @@
 @import './workbench/theme.css';
 @import './workbench/polish.css';
 @import './flow/flow.css';
+@import './week1/week1.css';
 
 /* Class-based dark mode (theme toggle sets .dark on <html>). */
 @custom-variant dark (&:where(.dark, .dark *));

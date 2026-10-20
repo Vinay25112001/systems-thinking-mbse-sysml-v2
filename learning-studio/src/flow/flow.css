@@ -274,6 +274,16 @@
   .lf-callout p {
     margin: 0;
   }
+  /* "Now apply it to your team's enterprise" (Week 1 rebuild): the step from the AeroLink example to the team's own work */
+  .lf-apply {
+    border-left: 4px solid var(--wb-accent);
+    background: var(--wb-accent-soft);
+    margin-top: 18px;
+  }
+  .lf-apply h2 {
+    font: 600 15px/1.3 var(--wb-display);
+    margin: 0 0 6px;
+  }
   .lf-card {
     background: var(--wb-panel);
     border: 1px solid var(--wb-line);
@@ -530,6 +540,9 @@
     min-width: 0;
   }
   .lf-svg.lf-svg-jam {
+    min-width: 0;
+  }
+  .lf-fit .lf-svg {
     min-width: 0;
   }
   .lf-svg-narrow {
@@ -1279,6 +1292,22 @@
   }
 }
 
+/* the workbench-regions drawing: a stacked variant replaces the wide one on narrow screens, so its labels stay readable
+   (review F15 of the rebuild) */
+@layer components {
+  .lf-svg.lf-regions-narrow {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .lf-svg.lf-regions-wide {
+      display: none;
+    }
+    .lf-svg.lf-regions-narrow {
+      display: block;
+    }
+  }
+}
+
 /* narrow screens: wide figures scroll inside their frame; say so, so a cut-off drawing is not mistaken for the whole
    (review W1F-F22) */
 @layer components {
@@ -1292,5 +1321,292 @@
     .lf-scroll-hint {
       display: block;
     }
+  }
+}
+
+/* ------------------------------------------------------------ faculty feedback 2026-10-18 */
+@layer components {
+  /* the course welcome reads as one column, top to bottom (item 1) */
+  .lf-page.lf-onecol {
+    max-width: 72ch;
+    box-sizing: content-box;
+  }
+  .lf-onecol .lf-prose p {
+    max-width: none;
+  }
+  /* "How to use this site": one row per stage, mini-figure then sentence (item 3) */
+  .lf-howto {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .lf-howto li {
+    display: grid;
+    grid-template-columns: minmax(0, 150px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    background: var(--wb-panel);
+    border: 1px solid var(--wb-line);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .lf-howto h3 {
+    margin: 0 0 4px;
+  }
+  .lf-howto p {
+    margin: 0;
+    font-size: 15.5px;
+  }
+  @media (max-width: 480px) {
+    .lf-howto li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .lf-howto .lf-mini {
+      max-width: 200px;
+    }
+  }
+  .lf-svg.lf-mini {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    display: block;
+  }
+  .lf-svg .f-mini-line {
+    fill: var(--wb-line-strong);
+  }
+  .lf-svg .f-mini-strong {
+    fill: var(--wb-fg);
+    opacity: 0.75;
+  }
+  .lf-svg .f-mini-accent {
+    fill: var(--wb-accent);
+  }
+  .lf-svg .f-mini-side {
+    fill: var(--wb-bg);
+    stroke: var(--wb-line);
+  }
+  .lf-svg .f-mini-check {
+    fill: var(--wb-accent-soft);
+    stroke: var(--wb-accent);
+  }
+  .lf-svg .f-mini-dot {
+    fill: var(--wb-panel);
+    stroke: var(--wb-line-strong);
+    stroke-width: 1.4;
+  }
+  .lf-svg .f-mini-dot-on {
+    fill: var(--wb-accent);
+    stroke: var(--wb-accent);
+  }
+  .lf-svg .f-mini-badge {
+    fill: var(--wb-accent);
+  }
+  .lf-svg text.f-mini-badge-text {
+    fill: var(--wb-bg);
+  }
+  /* the question a figure asks, shown above it (item 9) */
+  .lf-figure-question {
+    margin: 0 0 10px;
+    padding: 8px 12px;
+    border-left: 4px solid var(--wb-accent);
+    background: var(--wb-accent-soft);
+    border-radius: 0 6px 6px 0;
+    font-size: 15.5px;
+  }
+  /* every key term names its source (item 7) */
+  .lf-term-src {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--wb-muted);
+  }
+  .lf-term-src.course {
+    font-style: italic;
+  }
+  /* Meet AeroLink (item 5) */
+  .lf-meet {
+    margin-top: 26px;
+  }
+  .lf-meet ol {
+    list-style: decimal;
+    margin: 0 0 14px;
+    padding-left: 1.4em;
+    max-width: 68ch;
+  }
+  .lf-meet li {
+    margin: 0 0 6px;
+  }
+  /* Practice bar above the workbench (items 11, 13) */
+  .lf-practice-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    padding: 6px 14px;
+    border-bottom: 1px solid var(--wb-line);
+    background: var(--wb-panel);
+    font-size: 13.5px;
+  }
+  .lf-practice-bar.is-complete {
+    background: var(--wb-accent-soft);
+  }
+  .lf-practice-meter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lf-practice-meter progress {
+    width: 140px;
+    height: 8px;
+    accent-color: var(--wb-ok);
+  }
+  /* orientation page (item 11) */
+  .lf-regions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .lf-regions li {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+  .lf-region-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--wb-accent);
+    color: var(--wb-bg);
+    font: 700 13px/1 var(--wb-mono);
+  }
+  /* structured model-inputs form (item 16) */
+  .lf-seed {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--wb-muted);
+  }
+  .lf-seed code {
+    font: 600 12.5px/1.3 var(--wb-mono);
+    color: var(--wb-fg);
+  }
+  .lf-field {
+    margin-top: 16px;
+  }
+  .lf-field input[type='text'],
+  .lf-field textarea {
+    width: 100%;
+  }
+  .lf-input-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+  }
+  .lf-input-table th,
+  .lf-input-table td {
+    border: 1px solid var(--wb-line);
+    padding: 4px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .lf-input-table input,
+  .lf-input-table select {
+    width: 100%;
+    min-width: 0;
+  }
+  .lf-loop-verdict {
+    font-size: 13.5px;
+    margin: 4px 0 0;
+  }
+}
+@layer components {
+  .lf-memo input[type='text'],
+  .lf-memo select {
+    font: 15px/1.4 var(--wb-body);
+    color: var(--wb-fg);
+    background: var(--wb-panel);
+    border: 1px solid var(--wb-line-strong);
+    border-radius: 6px;
+    padding: 6px 8px;
+  }
+}
+/* Review F13 of the rebuild: the Check & submit tables (objective status, hand-in checklist, rubric rows, model-inputs
+   map) become a stack of cards at narrow widths, like the practice plan, so no column is clipped or scrolls unseen */
+@media (max-width: 640px) {
+  .lf-cards thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .lf-cards,
+  .lf-cards tbody,
+  .lf-cards tr,
+  .lf-cards td,
+  .lf-cards tbody th {
+    display: block;
+    width: 100%;
+  }
+  .lf-cards tr {
+    border-bottom: 1px solid var(--wb-line);
+    padding: 8px 12px;
+  }
+  .lf-cards td,
+  .lf-cards tbody th {
+    border: 0;
+    padding: 2px 0;
+  }
+  .lf-cards td[data-label]::before {
+    content: attr(data-label) ': ';
+    font: 600 12px/1.4 var(--wb-mono);
+    color: var(--wb-muted);
+  }
+  .lf-cards td[data-label='Objective']::before {
+    content: none;
+  }
+}
+/* Review F14: at narrow widths the practice plan is a stack of cards, so no column is clipped */
+@media (max-width: 640px) {
+  .lf-practice-plan thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .lf-practice-plan,
+  .lf-practice-plan tbody,
+  .lf-practice-plan tr,
+  .lf-practice-plan td {
+    display: block;
+    width: 100%;
+  }
+  .lf-practice-plan tr {
+    border-bottom: 1px solid var(--wb-line);
+    padding: 8px 12px;
+  }
+  .lf-practice-plan td {
+    border: 0;
+    padding: 2px 0;
+  }
+  .lf-practice-plan td[data-label]::before {
+    content: attr(data-label) ': ';
+    font: 600 12px/1.4 var(--wb-mono);
+    color: var(--wb-muted);
+  }
+  .lf-practice-plan td[data-label='Mission']::before,
+  .lf-practice-plan td[data-label='#']::before {
+    content: none;
   }
 }

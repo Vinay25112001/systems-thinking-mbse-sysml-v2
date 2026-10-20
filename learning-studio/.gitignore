@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 test-results
 playwright-report
+
+# generated lecture decks (npm run lectures:pptx)
+public/lectures/*.pptx

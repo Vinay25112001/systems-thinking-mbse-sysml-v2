@@ -6,9 +6,8 @@ import type { MissionStep } from '../../content/missions/types'
 import { useWorkbench } from '../context'
 import { KIND_LABEL, progressOf, recordAnswer, visibleSteps, type MissionEval, type StepEval } from '../missions'
 import { useSelection } from '../selection'
-import { Tip } from '../ui'
 import { VIEW_REGISTRY } from '../views'
-import { useLearnLink } from '../learnLink'
+import { useLearnLink, usePracticeLinks } from '../learnLink'
 
 function StepInput({ missionId, step }: { missionId: string; step: MissionStep }) {
   const wb = useWorkbench()
@@ -104,8 +103,16 @@ function Step({ e, s }: { e: MissionEval; s: StepEval }) {
             <span className="sr-only">
               Step {s.index + 1}, {s.ok ? 'done' : s.status === 'current' ? 'current' : 'not done'}:{' '}
             </span>
-            {st.instruction}
+            {st.brief ? <strong className="font-semibold">{st.brief.task}</strong> : st.instruction}
           </p>
+          {st.brief && expanded && (
+            <dl className="wb-step-brief" data-testid="step-brief">
+              <dt>You enter</dt>
+              <dd>{st.brief.input}</dd>
+              <dt>Done when</dt>
+              <dd>{st.brief.done}</dd>
+            </dl>
+          )}
           {!expanded && (
             <>
               {s.ok && s.detail && <p className="m-0 mt-0.5 text-[12.5px] text-wb-ok">✓ {s.detail}</p>}
@@ -158,6 +165,12 @@ function Step({ e, s }: { e: MissionEval; s: StepEval }) {
                   </button>
                 )}
               </div>
+              {st.brief && (
+                <details className="wb-step-full">
+                  <summary>Full instruction</summary>
+                  <p className="m-0 mt-1">{st.instruction}</p>
+                </details>
+              )}
               {showHint && st.hint && <p className="wb-note m-0">{st.hint}</p>}
               {showWorked && st.worked && <p className="wb-note accent m-0">{st.worked}</p>}
               {st.rubric && <p className="m-0 text-[12px] text-wb-muted">Assessed against {st.rubric}.</p>}
@@ -169,41 +182,53 @@ function Step({ e, s }: { e: MissionEval; s: StepEval }) {
   )
 }
 
-/** The week's missions as a compact numbered strip: number, state and progress; the title is in the name. */
+/** The week's missions as a labeled list (faculty feedback 2026-10-18, item 14): number, title, kind and progress on
+ *  every row, so the other missions are easy to find; a check and "complete" mark finished ones (item 13). */
 export function MissionList() {
   const wb = useWorkbench()
+  const done = wb.evals.filter((e) => e.complete).length
   return (
-    <ol className="m-0 grid list-none grid-cols-6 gap-1 p-0" aria-label="Week missions" data-testid="mission-list">
-      {wb.evals.map((e, i) => {
-        const active = e.mission.id === wb.missionId
-        return (
-          <li key={e.mission.id} className="min-w-0">
-            <Tip label={`${i + 1}. ${e.mission.title} — ${e.complete ? 'complete' : `${e.done} of ${e.total} steps`}`}>
+    <nav aria-labelledby="wb-missions-h">
+      <h3 id="wb-missions-h" className="wb-label m-0 mb-1 flex items-center justify-between">
+        <span>Missions · choose one</span>
+        <span className="wb-mono" data-testid="missions-complete">
+          {done} of {wb.evals.length} complete
+        </span>
+      </h3>
+      <ol className="wb-mission-grid m-0 grid list-none gap-1 p-0" aria-label="Week missions" data-testid="mission-list">
+        {wb.evals.map((e, i) => {
+          const active = e.mission.id === wb.missionId
+          return (
+            <li key={e.mission.id} className="min-w-0">
               <button
                 type="button"
                 aria-current={active ? 'step' : undefined}
                 aria-label={`Mission ${i + 1}: ${e.mission.title}, ${KIND_LABEL[e.mission.kind]}, ${e.complete ? 'complete' : `${e.done} of ${e.total} steps done`}`}
+                data-testid={`mission-${i + 1}`}
                 onClick={() => {
                   wb.setMissionId(e.mission.id)
                   const first = e.steps[e.current]?.step ?? e.mission.steps[0]
                   if (first.view) wb.setView(first.view)
                 }}
-                className={`flex w-full flex-col items-stretch gap-1 rounded border px-1.5 py-1 text-left ${active ? 'border-wb-accent bg-wb-panel' : 'border-wb-line bg-wb-panel hover:border-wb-line-strong'}`}
+                className={`wb-mission-row ${active ? 'is-active' : ''} ${e.complete ? 'is-complete' : ''}`}
               >
-                <span className="flex items-center justify-between">
-                  <span className={`wb-mono text-[12px] font-semibold ${active ? 'text-wb-accent' : ''}`}>{i + 1}</span>
-                  {e.complete && <Check size={12} className="text-wb-ok" aria-hidden />}
+                <span className="wb-mission-no" aria-hidden>
+                  {e.complete ? <Check size={12} strokeWidth={3} /> : i + 1}
                 </span>
-                <span className="truncate text-[11px] text-wb-muted">{KIND_LABEL[e.mission.kind]}</span>
-                <span className="block h-[3px] overflow-hidden rounded bg-wb-sunk" aria-hidden>
-                  <span className={`block h-full ${e.complete ? 'bg-wb-ok' : 'bg-wb-accent'}`} style={{ width: `${(100 * e.done) / e.total}%` }} />
+                {/* review F13: a short title that wraps, so every tile can be told apart at 1440 px and at 400 px */}
+                <span className="wb-mission-name min-w-0 flex-1 text-[12.5px] font-semibold leading-tight" title={e.mission.title}>
+                  <span className="block">{e.mission.short ?? e.mission.title}</span>
+                  {/* the progress sits under the title, so the title has the tile's full width and breaks only between words */}
+                  <span className="wb-mono block text-[11px] font-normal text-wb-muted" aria-hidden>
+                    {e.complete ? 'done' : `${e.done}/${e.total} steps`}
+                  </span>
                 </span>
               </button>
-            </Tip>
-          </li>
-        )
-      })}
-    </ol>
+            </li>
+          )
+        })}
+      </ol>
+    </nav>
   )
 }
 
@@ -215,10 +240,14 @@ export function MissionBrief() {
   const hidden = e.steps.length - shown.length
   const idx = wb.evals.indexOf(e)
   const before = wb.evals.slice(0, idx).filter((x) => !x.complete).length
+  // the Week 1 lab tool shows the Team Record alone, as its parts (sign-off Mo3): no mission list, no mission number
+  const partsLabel = usePracticeLinks()?.partsLabel
+  const parts = wb.evals.length === 1 ? partsLabel : undefined
+  // the "Practice complete" banner lives in the Practice bar only (review F15: it appeared twice at 1440 px)
   return (
     <div className="wb-brief space-y-3 p-4" data-testid="mission-brief">
-      <MissionList />
-      <div className="border-t border-wb-line pt-3">
+      {!parts && <MissionList />}
+      <div className={parts ? '' : 'border-t border-wb-line pt-3'}>
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="wb-chip accent">{KIND_LABEL[m.kind]}</span>
           <span className="wb-chip">≈ {m.minutes} min</span>
@@ -229,9 +258,11 @@ export function MissionBrief() {
           ))}
         </div>
         <h3 className="wb-section-title mt-2" id="wb-mission-title">
-          {idx + 1}. {m.title}
+          {parts ? m.short ?? m.title : `${idx + 1}. ${m.title}`}
         </h3>
-        <p className="wb-goal mt-1 mb-0 text-wb-muted">{m.goal}</p>
+        <p className="wb-goal mt-1 mb-0 text-wb-muted">
+          {m.goal}
+        </p>
         {m.kind === 'recall' && before > 0 && <p className="wb-note warn mt-2 mb-0">Recommended after the other missions ({before} not finished yet).</p>}
         {m.kind === 'recall' && (
           <button type="button" className="wb-btn primary mt-2" onClick={() => wb.openAssessments('recall')}>
@@ -244,13 +275,13 @@ export function MissionBrief() {
           <Step key={`${m.id}-${s.step.id}`} e={e} s={s} />
         ))}
       </ol>
-      {hidden > 0 && <p className="m-0 text-[12px] text-wb-muted">{hidden} more step{hidden > 1 ? 's' : ''} appear as you go (guided mission).</p>}
+      {hidden > 0 && <p className="m-0 text-[12px] text-wb-muted">{hidden} more step{hidden > 1 ? 's appear' : ' appears'} as you go (guided mission).</p>}
       {e.complete && (
-        <div className="wb-note ok" role="status">
-          <strong>Mission complete.</strong> {m.debrief ?? ''}
+        <div className="wb-note ok" role="status" data-testid="mission-complete">
+          <strong>{parts ? `${m.short ?? m.title}: every part complete.` : 'Mission complete.'}</strong> {m.debrief ?? ''}
           {idx + 1 < wb.evals.length && (
-            <button type="button" className="wb-link ml-1" onClick={() => wb.setMissionId(wb.evals[idx + 1].mission.id)}>
-              Next: {wb.evals[idx + 1].mission.title}
+            <button type="button" className="wb-btn primary mt-2" onClick={() => wb.setMissionId(wb.evals[idx + 1].mission.id)}>
+              Next mission: {wb.evals[idx + 1].mission.title}
             </button>
           )}
         </div>

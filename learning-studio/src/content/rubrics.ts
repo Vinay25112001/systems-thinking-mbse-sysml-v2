@@ -1,4 +1,4 @@
-import data from './rubrics.generated.json'
+import data from './rubrics.generated.json' with { type: 'json' }
 
 export type RubricPart = { type: 'text'; text: string } | { type: 'table'; header: string[]; rows: string[][] }
 export type Rubric = { id: string; title: string; parts: RubricPart[] }

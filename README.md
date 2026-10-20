@@ -1,10 +1,14 @@
 # Systems Thinking and MBSE with SysML v2
 
-A 14-week graduate course (Wright State University) and its interactive learning studio, built around one continuous
-engineering case: **AeroLink Urban Mobility**, a FICTIONAL urban air-taxi operator.
+A 14-week graduate course (Wright State University) and its interactive learning studio. Each student team develops and
+models its own instructor-approved enterprise; **AeroLink Urban Mobility**, a FICTIONAL urban air-taxi operator, is the
+instructor's reference case, worked in every week before teams apply the method to their own enterprise. The schedule is
+`COURSE_SCHEDULE.md` (faculty direction of 2026-10-18; DECISION_LOG A19).
 
-- **Part I (Weeks 1–7):** systems thinking and systems engineering.
-- **Part II (Weeks 8–14):** model-based systems engineering with SysML v2.
+- **Phase I — Systems Thinking (Weeks 1–7):** from team formation, stakeholders and needs to the team's
+  **Systems Thinking Engineering Package**, presented in Week 7.
+- **Phase II — MBSE with SysML v2 (Weeks 8–14):** the package imported and modeled week by week, ending in a coherent
+  **SysML v2 enterprise model**, presented in Week 14.
 
 ## The learning studio
 
