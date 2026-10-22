@@ -1,0 +1,196 @@
+{
+  "tool": {
+    "name": "OMG SysML v2 Pilot Implementation (SysMLInteractive, Jupyter kernel jar)",
+    "release": "2026-08",
+    "kernelVersion": "0.62.0",
+    "kernelJar": "jupyter-sysml-kernel-0.62.0-all.jar",
+    "standardLibrary": "sysml.library bundled in jupyter-sysml-kernel-0.62.0.zip"
+  },
+  "java": {
+    "version": "21.0.12.1+1-LTS",
+    "vendor": "Eclipse Adoptium"
+  },
+  "timestamp": "2026-10-22T04:56:12+00:00",
+  "checks": "parse + name resolution against the standard library + pilot implementation validation rules (errors fail; warnings reported)",
+  "summary": {
+    "files": 16,
+    "PASS": 13,
+    "FAIL": 3,
+    "ERROR": 0
+  },
+  "files": [
+    {
+      "file": "sysml/lectures/week09/aerolink_needs_requirements_v02.sysml",
+      "sha256": "6a860a35e40c24e73f332df19365bb5ceeb8e48f0afcd53dd9a58b6632c9f3a8",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/assume_still_air_two_readings.sysml",
+      "sha256": "ba461301b93e4a048859a8dad6d6062e6a8eab1abc22c579c41a245052068f63",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/driving_question_two_teams.sysml",
+      "sha256": "81ab7aee7f20668671dff9782ac42eb237e71f56abe4e7f5cd2058cc5fb44ef7",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/invalid_predict_unquoted_id.sysml",
+      "sha256": "5b5cdd262f764fc766e00ff8fa5542d88dda093c08e23c9f91f9cedc3cf1d692",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 3,
+          "column": 18,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input '-' expecting '>'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 3,
+          "column": 19,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'SYS'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 3,
+          "column": 22,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input '-'"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week09/invalid_subject_not_first.sysml",
+      "sha256": "3dfb90d51fda9fe1d54667931869ff4c878e3268e9c811562f87406f6a39dbc5",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 7,
+          "column": 3,
+          "code": "validateRequirementUsageSubjectParameterPosition",
+          "message": "Subject must be first parameter."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week09/invalid_two_definitions.sysml",
+      "sha256": "b8ad49fbb2437a7730a439b182c2a9b0100aa535975c37c8f467613020efac67",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 5,
+          "column": 2,
+          "code": "validateRequirementUsageType_",
+          "message": "A requirement must be typed by one requirement definition."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week09/labtool_collision_model_v02.sysml",
+      "sha256": "8795925c06868a96adef29d2b9d6e32f9e206a13bbddf4c35659bfb8a69768cc",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/labtool_stress_model_v02.sysml",
+      "sha256": "7a47e2051c9a55a46567f0d541eb4ff3e021cdfa7ae20902c144786f8dd34819",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 87,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 94,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/labtool_team07_model_v02.sysml",
+      "sha256": "ef810a1a33fdcde12516365c1e31cae056ea5692c28364853a5a999382b3d42c",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/predict_derivation_reversed.sysml",
+      "sha256": "e49020bb808deee641903421c3233c2294c486ca4e25274722c9c52153799e86",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/predict_satisfy_between_requirements.sysml",
+      "sha256": "f271937ff2aaee9079f048c6272a0b4b3b64749801c8f5508602813630d9863a",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 20,
+          "column": 27,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/requirement_anatomy.sysml",
+      "sha256": "81fd417ad9b8e0ffda0b8b1a4a2dff6e326906d70e3ce1b69f71fb983cdb7c27",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/review_seeded_requirements.sysml",
+      "sha256": "c85a57c76812416f7b16718e4ce570e0d2a977bd81403ce877b4728345444e7c",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/tbd_unbound_vs_bound.sysml",
+      "sha256": "19a270b6d3ede681f664456da13a1dab61e7fb14db5d3e94042c0020f6033eec",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week09/warmup_book_return_kiosk.sysml",
+      "sha256": "2851a748ed9c2e25a208365cbdec2189d59e88ff0954acc9f837cdce9890e01a",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/instructor/week09/exercise_flood_warning_key.sysml",
+      "sha256": "7c1aabf8273a211c241b3063251ffa5d8616dd437c3375a9421f5ee834adfef5",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    }
+  ]
+}

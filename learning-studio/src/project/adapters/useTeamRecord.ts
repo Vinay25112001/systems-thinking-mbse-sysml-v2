@@ -28,9 +28,11 @@ export function useTeamRecord(): readonly [TeamRecord, (patch: Partial<TeamRecor
       if (stampOnly) {
         const rec = toTeamRecord(store.getState().doc!)
         const files = [patch.exportedMdAt ? { name: `team-${rec.team || 'NN'}-week1-record.md`, format: EXPORT_FORMATS.md, version: 1 } : null, patch.exportedJsonAt ? { name: `team-${rec.team || 'NN'}-week1-model-inputs.json`, format: EXPORT_FORMATS.json, version: 3 } : null].filter((x): x is NonNullable<typeof x> => !!x)
-        if (files.length) void store.recordExport(1, files, contentState(rec))
+        if (files.length) void store.recordExport(1, files, contentState(rec)).then((r) => !r.ok && store.reportRefused(`The export was not recorded in My Project: ${r.error}`))
         return
       }
+      // a refused edit (read-only tab, integrity rule) is recorded on the store as `refused` and shown by the banner
+      // (EditAccess); it is never dropped silently (P0 save defect)
       store.apply((latest, stamp) => diffTeamRecord(latest, normalizeTeam({ ...toTeamRecord(latest), ...patch }), stamp), { source: 'editor' })
     },
     [store, wb],

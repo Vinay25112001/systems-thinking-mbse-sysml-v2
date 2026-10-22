@@ -150,6 +150,9 @@ export type Milestone = {
   exports: SubmissionExport[]
   markedSubmittedAt?: string
   contentUpdatedAt?: string
+  /** M6 (spec §g.1, additive): the team's own review state. Absent = DRAFT; 'ready-for-review' = a teammate should look
+   *  before the package is submitted (who marked it, when). SUBMITTED / APPROVED / RETURNED live on the course server. */
+  teamReview?: { state: 'ready-for-review'; by: string; at: string }
 }
 
 export type ModelElement = {
@@ -185,6 +188,12 @@ export type ModelMapping = {
   confirmedBy?: Stamp
   sourceRevision: number
   week: number
+  /** M7 (additive): the package the team chose for this ID in the Week 8 lab tool (`rule` is the prefix when it is the
+   *  course working mapping's package, 'custom' otherwise). */
+  pkg?: string
+  /** M7 (additive): what the Week 1 item was when the team confirmed the mapping (its course ID, its name, and the
+   *  project revision read), so a later rename, change or removal is shown, never silently dropped. */
+  source?: { id: string; title: string; projectRev: number }
 }
 export type Finding = {
   key: string
@@ -237,9 +246,13 @@ export type ChangeSet = {
   rationale?: string
   ops: Operation[]
   rev: number
+  /** Server mode (M2, additive): the authenticated account that made the change; absent offline, where `by` is
+   *  self-declared initials. */
+  actor?: { userId: string; name: string }
 }
 
-export type SnapshotKind = 'manual' | 'milestone' | 'pre-import' | 'pre-restore' | 'pre-migration' | 'auto'
+/** 'proposal' (frozen when approval is requested) and 'submission' are written by the course server only (M2, additive). */
+export type SnapshotKind = 'manual' | 'milestone' | 'pre-import' | 'pre-restore' | 'pre-migration' | 'auto' | 'proposal' | 'submission'
 export type Snapshot = { id: string; at: string; kind: SnapshotKind; label: string; rev: number; doc: ProjectDoc }
 export type SnapshotMeta = Omit<Snapshot, 'doc'>
 

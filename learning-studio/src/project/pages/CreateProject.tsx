@@ -11,7 +11,8 @@ import { useProjectState, useProjectStore } from '../store/ProjectProvider'
 import { analyzeImport, type Analysis } from '../transfer/importProject'
 import { ProjectBanner } from './ui'
 
-export function CreateProject() {
+/** `after`: where to go once the project exists (M6: the Week 1 canvas stays on the canvas). */
+export function CreateProject({ after = '/project' }: { after?: string } = {}) {
   const store = useProjectStore()
   const st = useProjectState()
   const uid = useId()
@@ -30,7 +31,7 @@ export function CreateProject() {
     if (!store) return
     setBusy(true)
     await store.create({ teamLabel: team, initials, enterpriseName: name })
-    navigate('/project')
+    navigate(after)
   }
   const createFromRecord = async () => {
     if (!store || !legacy) return
@@ -38,7 +39,7 @@ export function CreateProject() {
     await store.setEditor(initials)
     const { doc } = fromTeamRecord(legacy.record, { teamLabel: team || legacy.record.team, initials, provenance: { kind: 'imported', from: { format: 'week1-team-record (this browser)', version: 'stored' }, at: new Date().toISOString() } })
     await store.create({ doc })
-    navigate('/project')
+    navigate(after)
   }
   const importFile = async (file?: File) => {
     if (!store || !file) return
@@ -60,7 +61,7 @@ export function CreateProject() {
     const doc = a.kind === 'week1' && team.trim() ? { ...a.incoming, team: { ...a.incoming.team, label: a.incoming.team.label || team } } : a.incoming
     await store.create({ doc, changes: a.changes })
     setMsg('')
-    navigate('/project')
+    navigate(after)
   }
 
   return (
@@ -70,7 +71,7 @@ export function CreateProject() {
         <h1 className="pj-h1">Start your team’s project</h1>
         <p className="pj-lede">My Project holds your team’s own enterprise from Week 1 to Week 14: the stakeholders, needs and everything after them, with stable IDs, history and the Week 8 transformation into a model. It starts empty: nothing from the AeroLink example is in it.</p>
       </div>
-      <ProjectBanner name="">Your project is saved in this browser only. Export it after every working session; the export is the copy you keep and submit.</ProjectBanner>
+      <ProjectBanner name="">{st.storage === 'http' ? `Your team's project is created on the course server and shared with your teammates. The team label and members come from your course account.` : 'Your project is saved in this browser only. Export it after every working session; the export is the copy you keep and submit.'}</ProjectBanner>
       <section className="pj-card" aria-labelledby={`${uid}-h`}>
         <h2 id={`${uid}-h`} className="pj-h2">About your team</h2>
         <div className="pj-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
@@ -87,7 +88,7 @@ export function CreateProject() {
           <label className="pj-field" htmlFor={`${uid}-name`}>
             <span>Enterprise working name (optional)</span>
             <input id={`${uid}-name`} className="pj-input" value={name} onChange={(e) => setName(e.target.value)} data-testid="create-name" />
-            <small>You can change it in the Week 1 lab tool, Part 2.</small>
+            <small>You can change it in My Project (Week 1: Enterprise &amp; mission).</small>
           </label>
         </div>
         <div className="pj-row" style={{ marginTop: 16 }}>

@@ -1,167 +1,184 @@
-// Week 1 on the lecture-first path (DECISION_LOG A20, 2026-10-19): routes and redirects, the week navigation, the week
-// page (entries in path order, workload), the worked examples (slides and lesson sections resolve), the laboratory
-// (single source with WEEK1_LAB_INSTRUCTIONS.md), the assessment (record readiness) and the lesson self-checks.
+// Week 1 student path after M4 part A (DECISION_LOG A23–A25; spec §b.2, §c): routes and redirects, the five-stage bar,
+// the Overview (approved objectives only, computed time, no internal codes), My Project / Lab (single source with
+// WEEK1_LAB_INSTRUCTIONS.md) and Review & Submit (record readiness), plus the interim lecture gate.
 import { render, screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 import labMdFile from '../../docs/lectures/week01/WEEK1_LAB_INSTRUCTIONS.md?raw'
 import { labMarkdown, LAB_PROCEDURE, LAB_RUBRIC_ROWS, rubricRow } from '../content/lab/week01Lab'
-import { getLecture, weekLesson } from '../content/lectures'
-import { allSlides } from '../content/lectures/text'
-import { LEARN_SECTIONS } from '../content/learn/week01'
+import { WEEKS } from '../content/course'
 import { WEEK1_QUIZ } from '../content/quizWeek1'
-import { WORKLOAD } from '../content/week1Path'
-import week01 from '../content/weeks/week01'
-import LessonReader from '../lectures/LessonReader'
-import { loadJSON, saveJSON } from '../lib/storage'
+import { saveJSON } from '../lib/storage'
 import { Providers } from '../state/Providers'
-import { TEAM_KEY } from '../workbench/week1/team'
-import { TEAM_FIXTURE } from '../workbench/week1/teamFixture'
-import { TRY_CONCERN, TRY_NEED } from './Examples'
-import { EXAMPLE_PARTS } from './exampleParts'
-import { LEARN_TO_LESSON, WEEK1_NAV, WEEK1_PATHS, week1Route } from './route'
+import { WORKLOAD, WORKLOAD_ROWS } from '../content/week1Path'
+import week01 from '../content/weeks/week01'
+import { overviewTime, WEEK1_WORKLOAD_ACCEPTED } from './Overview'
+import { LEARN_TO_LESSON, WEEK1_NAV, WEEK1_PATHS, week1LectureGate, week1Route, type Week1Route } from './route'
 import Week1App from './Week1App'
 
 beforeEach(() => window.localStorage.clear())
 
-const page = (p: Parameters<typeof Week1App>[0]['page']) =>
-  render(
+const page = (path: string) => {
+  const r = week1Route(path) as Exclude<Week1Route, { redirect: string }>
+  return render(
     <Providers>
-      <Week1App page={p} path={WEEK1_PATHS[p]} />
+      <Week1App route={r} path={path} />
     </Providers>,
   )
+}
 
-describe('Week 1 routes', () => {
-  it('maps the lecture-first pages and leaves the viewer and reader to the lecture router', () => {
-    expect(week1Route('/week/1')).toEqual({ page: 'home' })
-    expect(week1Route('/week/1/')).toEqual({ page: 'home' })
-    expect(week1Route('/week/1/examples')).toEqual({ page: 'examples' })
-    expect(week1Route('/week/1/examples/practice')).toEqual({ page: 'practice' })
-    expect(week1Route('/week/1/lab')).toEqual({ page: 'lab' })
-    expect(week1Route('/week/1/lab/tool')).toEqual({ page: 'lab-tool' })
-    expect(week1Route('/week/1/assessment')).toEqual({ page: 'assessment' })
+describe('Week 1 routes (NAV-10, NAV-12)', () => {
+  it('maps the five stages and the lab tool', () => {
+    expect(week1Route('/week/1')).toEqual({ page: 'overview' })
+    expect(week1Route('/week/1/')).toEqual({ page: 'overview' })
+    expect(week1Route('/week/1/learn')).toEqual({ page: 'learn' })
+    expect(week1Route('/week/1/learn/ch06#ch06-03')).toEqual({ page: 'learn', chapter: 'ch06', section: 'ch06-03' })
+    expect(week1Route('/week/1/learn/glossary')).toEqual({ page: 'learn', chapter: 'glossary' })
+    expect(week1Route('/week/1/practice')).toEqual({ page: 'practice' })
+    expect(week1Route('/week/1/project')).toEqual({ page: 'project' })
+    expect(week1Route('/week/1/project/tool')).toEqual({ page: 'project-tool' })
+    expect(week1Route('/week/1/review')).toEqual({ page: 'review' })
     expect(week1Route('/week/1/lecture/1')).toBeNull()
-    expect(week1Route('/week/1/lesson')).toBeNull()
     expect(week1Route('/week/2')).toBeNull()
   })
 
-  it('redirects every self-study route to its new equivalent', () => {
+  it('redirects every earlier route to its new stage (no 404)', () => {
     expect(week1Route('/week/1/overview')).toEqual({ redirect: '/week/1' })
     expect(week1Route('/week/1/classic')).toEqual({ redirect: '/week/1' })
-    expect(week1Route('/week/1/learn')).toEqual({ redirect: '/week/1/lesson' })
-    expect(week1Route('/week/1/learn/summary')).toEqual({ redirect: '/week/1/lesson' })
-    expect(week1Route('/week/1/learn/l3')).toEqual({ redirect: `/week/1/lesson/${LEARN_TO_LESSON.l3}` })
-    expect(week1Route('/week/1/practice')).toEqual({ redirect: '/week/1/lab' })
-    expect(week1Route('/week/1/check')).toEqual({ redirect: '/week/1/assessment' })
+    expect(week1Route('/week/1/lesson')).toEqual({ redirect: '/week/1/learn' })
+    expect(week1Route('/week/1/lesson/s1-lesson-stakeholders')).toEqual({ redirect: '/week/1/learn/ch06#ch06-01' })
+    expect(week1Route('/week/1/lesson/w01.lesson.s2-l-case-needs')).toEqual({ redirect: '/week/1/learn/ch09#ch09-07' })
+    expect(week1Route('/week/1/examples')).toEqual({ redirect: '/week/1/learn/ch06#ch06-07' })
+    expect(week1Route('/week/1/examples/practice')).toEqual({ redirect: '/week/1/practice' })
+    expect(week1Route('/week/1/lab')).toEqual({ redirect: '/week/1/project' })
+    expect(week1Route('/week/1/lab/tool')).toEqual({ redirect: '/week/1/project/tool' })
+    expect(week1Route('/week/1/assessment')).toEqual({ redirect: '/week/1/review' })
+    expect(week1Route('/week/1/check')).toEqual({ redirect: '/week/1/review' })
+    expect(week1Route('/week/1/learn/l3')).toEqual({ redirect: `/week/1/learn/ch04#ch04-01` })
+    expect(LEARN_TO_LESSON.l3).toBe('s1-lesson-boundary')
+    expect(week1Route('/week/1/learn/w1-ch06-03')).toEqual({ redirect: '/week/1/learn/ch06#ch06-03' })
+    expect(week1Route('/week/1/learn/w1-ch02')).toEqual({ redirect: '/week/1/learn/ch02' })
+    expect(week1Route('/week/1/learn/nonsense')).toEqual({ redirect: '/week/1/learn' })
   })
 
-  it('every Learn section maps to a lesson section that exists, so its check has a home in the reader', () => {
-    const ids = new Set(weekLesson(1).map((p) => p.section.id))
-    for (const s of LEARN_SECTIONS) expect(ids.has(LEARN_TO_LESSON[s.id]), `${s.id} → ${LEARN_TO_LESSON[s.id]}`).toBe(true)
+  it('the lecture viewer, handout and slides open only for the instructor edition with instructor view on (interim gate)', () => {
+    expect(week1LectureGate('/week/1/lecture/1/5', false)).toBe('/week/1/learn/from-slide/1/5')
+    expect(week1LectureGate('/week/1/lecture/2', false)).toBe('/week/1/learn/from-slide/2')
+    expect(week1LectureGate('/week/1/lecture/2/handout', false)).toBe('/week/1/learn/from-slide/2')
+    expect(week1LectureGate('/week/1/lecture/1/5', true)).toBeNull()
+    expect(week1LectureGate('/week/2/lecture/1', false)).toBeNull()
   })
 
-  it('the week navigation has the six sections in path order and marks exactly one current', () => {
-    expect(WEEK1_NAV.map((n) => n.label)).toEqual(['Overview', 'Lecture', 'Lesson', 'Worked examples', 'Laboratory', 'Assessment'])
-    for (const [p, id] of [['/week/1', 'overview'], ['/week/1/lecture/2/5', 'lecture'], ['/week/1/lesson/s1-lesson-why', 'lesson'], ['/week/1/examples/practice', 'examples'], ['/week/1/lab/tool', 'lab'], ['/week/1/assessment', 'assessment']])
+  it('the stage bar has the five stages in path order and marks exactly one current', () => {
+    expect(WEEK1_NAV.map((n) => n.label)).toEqual(['Overview', 'Learn', 'Guided Practice', 'My Project / Lab', 'Review & Submit'])
+    for (const [p, id] of [['/week/1', 'overview'], ['/week/1/learn/ch04', 'learn'], ['/week/1/practice', 'practice'], ['/week/1/project/tool', 'project'], ['/week/1/review', 'review']])
       expect(WEEK1_NAV.filter((n) => n.match(p)).map((n) => n.id), p).toEqual([id])
+    expect(WEEK1_NAV.some((n) => /lecture|lesson|example/i.test(n.label + n.to))).toBe(false)
   })
 })
 
-describe('Week 1 week page', () => {
-  it('shows title, subject, objectives, timeline, readings, deliverables and workload, with the entry cards in path order', () => {
-    page('home')
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Week 1 — Team Formation / Needs / Identifying Stakeholders')
-    expect(screen.getByTestId('week1-subject')).toHaveTextContent('Team formation and the team charter')
-    const entries = within(screen.getByTestId('week1-entries')).getAllByRole('heading', { level: 3 }).map((h) => h.textContent)
-    expect(entries).toEqual(['Lecture slides', 'Detailed lesson', 'Worked examples', 'Engineering laboratory', 'Assessment and submission'])
-    const lecture = screen.getByTestId('entry-lecture')
-    expect(within(lecture).getByRole('link', { name: 'Session 1 slides' })).toHaveAttribute('href', '#/week/1/lecture/1')
-    expect(within(lecture).getByRole('link', { name: 'Session 2 slides' })).toHaveAttribute('href', '#/week/1/lecture/2')
-    expect(within(lecture).getByRole('link', { name: /Session 1 deck/ })).toHaveAttribute('href', './lectures/week01-session1.pptx')
-    expect(screen.getAllByTestId(/^timeline-/).map((x) => x.dataset.testid)).toEqual(['timeline-session1', 'timeline-session2', 'timeline-lab', 'timeline-assessment'])
-    expect(screen.getByTestId('week1-readings')).toHaveTextContent('R11')
-    expect(screen.getByTestId('week1-deliverables')).toHaveTextContent('Week 1 Team Record')
-    expect(screen.getByTestId('workload-total')).toHaveTextContent(WORKLOAD.total.toFixed(1))
-    const table = screen.getByTestId('workload-table')
-    for (const w of week01.workload) expect(table).toHaveTextContent(w.activity)
-    expect(within(table).getByText(/Optional practice.*\(not counted\)/)).toBeInTheDocument()
-    expect(screen.getByTestId('week-nav-overview')).toHaveAttribute('aria-current', 'page')
+describe('Week 1 Overview (spec §c, OV-01, OV-02)', () => {
+  it('shows the title, approved objectives only, what the team creates, later use, computed time and the reading plan', () => {
+    page('/week/1')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Week 1 · Team formation, needs and identifying stakeholders')
+    const obj = within(screen.getByTestId('ov-objectives')).getAllByRole('listitem')
+    expect(obj).toHaveLength(WEEKS[0].objectives.length)
+    const ov = screen.getByTestId('week1-overview')
+    // OV-02: no internal codes, slide numbers or pending decisions
+    expect(ov.textContent).not.toMatch(/\bB1\.\d|\bL\d\b|\bRB-|slide \d|proposed|pending faculty|\bR\d{2}[a-z]? p/i)
+    // OV-01: no lecture cards or decks
+    expect(ov.querySelector('a[href$=".pptx"]')).toBeNull()
+    expect(within(ov).queryByText(/Lecture slides/)).toBeNull()
+    expect(screen.getByTestId('ov-create')).toHaveTextContent('at least 8 stakeholders')
+    expect(screen.getByTestId('ov-later')).toHaveTextContent('Week 8 imports your stakeholders')
+    expect(screen.getByTestId('ov-reading-plan')).toHaveTextContent('chapters 1–6 and 11')
+    expect(screen.getByTestId('ov-time-total')).toHaveTextContent(overviewTime().total.toFixed(1))
+    expect(screen.getByTestId('ov-start')).toHaveAttribute('href', '#/week/1/learn/ch01')
+    expect(screen.getByTestId('week-nav-overview')).toHaveAttribute('aria-current', 'step')
+  })
+
+  it('computes the time from the content (Learn words at 150 wpm), never a hard-coded number', () => {
+    const t = overviewTime()
+    expect(t.words).toBeGreaterThan(9000)
+    expect(t.rows.find((r) => r.what.startsWith('Learn'))!.hours).toBeCloseTo(t.words / 150 / 60, 5)
+  })
+
+  it('counts every required activity of the stated workload, lists optional practice apart (review F2)', () => {
+    const t = overviewTime()
+    // one row per required stated row (weeks/week01.ts workload, the canonical model), and none of the optional ones
+    const stated = week01.workload.filter((w) => !w.optional)
+    expect(t.rows.map((r) => r.id)).toEqual(['class', 'learn', 'readings', 'candidate', 'team', 'quiz', 'grad', 'log'])
+    expect(t.rows).toHaveLength(stated.length)
+    // every row other than Learn equals its stated (and content-checked) value; Learn is the textbook as shown
+    const byId = Object.fromEntries(t.rows.map((r) => [r.id, r.hours]))
+    expect(byId.class).toBe(WORKLOAD_ROWS.class.hours)
+    expect(byId.readings).toBeCloseTo(WORKLOAD_ROWS.readings.hours, 5)
+    expect(byId.candidate).toBe(WORKLOAD_ROWS.candidate.hours)
+    expect(byId.team).toBe(WORKLOAD_ROWS.team.hours)
+    expect(byId.quiz).toBe(WORKLOAD_ROWS.quiz.hours)
+    expect(byId.grad).toBe(WORKLOAD_ROWS.grad.hours)
+    expect(byId.log).toBe(WORKLOAD_ROWS.log.hours)
+    // the total is the stated model with the Learn row in place of the old lesson row: practice is never added
+    expect(t.total).toBeCloseTo(WORKLOAD.total - WORKLOAD_ROWS.lesson.hours + t.words / 150 / 60, 5)
+    expect(t.optional.map((r) => r.id)).toEqual(['practice'])
+    // week1-m5: the optional row is the six Guided Practice tasks (spec §e.2: 96 min), not the retired missions 1–4
+    expect(t.optional[0].hours).toBeCloseTo(96 / 60, 5)
+    expect(t.budget).toBe(8)
+    // student view: the honest total and the optional row, no budget talk
+    page(WEEK1_PATHS.overview)
+    expect(screen.getByTestId('ov-time-total')).toHaveTextContent(`${(Math.round(t.total * 10) / 10).toFixed(1)} h`)
+    expect(screen.getByTestId('ov-time-optional')).toHaveTextContent('optional, not counted in the total')
+  })
+
+  // week1-m4b: A26 accepted 8.1 h (Learn 13,311 words). M4 part B filled the seventeen textbook gaps; faculty then decided
+  // (2026-10-21, "mark some sections optional") to label the M4b review's packages A–C as extension reading, optional and
+  // not counted. Learn's required words now exclude them, and the COMPUTED total is 8.5 h. It is pinned so that further
+  // growth fails again; it remains above A26's 8.1 h and is reported to faculty (M4B_REPORT.md §5). Nothing was deleted.
+  // WEEK1_WORKLOAD_ACCEPTED keeps the A26 decision as recorded.
+  it('states the computed total honestly (8.5 h after M4b with extension reading not counted; A26 accepted 8.1 h, reopened) and no budget flag renders in any mode', () => {
+    const t = overviewTime()
+    expect(Math.round(t.total * 10) / 10).toBe(8.5)
+    expect(WEEK1_WORKLOAD_ACCEPTED.hours).toBe(8.1)
+    expect(WEEK1_WORKLOAD_ACCEPTED.decision).toBe('DECISION_LOG A26')
+    saveJSON('instructor', true)
+    page(WEEK1_PATHS.overview)
+    expect(screen.getByTestId('ov-time-total')).toHaveTextContent('8.5 h')
+    expect(screen.getByTestId('week1-overview').textContent).not.toMatch(/over the .*budget|Faculty note|A26/)
   })
 })
 
-describe('Worked examples', () => {
-  it('every part’s slides and lesson section exist in Session 2, and the try-it-yourself data resolve', () => {
-    const s2 = getLecture(1, 2)!
-    const slides = new Set(allSlides(s2).map((s) => s.id))
-    const lessons = new Set(s2.studentLesson.map((s) => s.id))
-    for (const p of EXAMPLE_PARTS) {
-      for (const id of p.slides) expect(slides.has(id), id).toBe(true)
-      expect(lessons.has(p.lesson), p.lesson).toBe(true)
-    }
-    page('examples')
-    for (const p of EXAMPLE_PARTS) {
-      expect(screen.getByTestId(`example-${p.id}`)).toBeInTheDocument()
-      for (const id of p.slides) expect(screen.getByTestId(`example-slide-${id}`)).toBeInTheDocument()
-      expect(screen.getByTestId(`example-lesson-${p.lesson}`)).toBeInTheDocument()
-    }
-    expect(screen.getByTestId('try-paper')).toHaveTextContent(TRY_CONCERN)
-    expect(screen.getByTestId('try-paper-solution')).toHaveTextContent(TRY_NEED)
-    expect(screen.getByTestId('example-try')).toHaveTextContent('optional, not counted')
-    expect(screen.getByTestId('open-practice')).toHaveAttribute('href', '#/week/1/examples/practice')
-    // student page: no faculty notes on the worked-example slides
-    expect(screen.queryByTestId('faculty-notes')).toBeNull()
-  })
-})
-
-describe('Laboratory', () => {
+describe('Lab instructions (M6: their own page; My Project / Lab is the canvas)', () => {
   it('the page and WEEK1_LAB_INSTRUCTIONS.md come from one source (run `npm run lab:md` after changing week01Lab.ts)', () => {
     expect(labMdFile.replace(/\r\n/g, '\n')).toBe(labMarkdown())
   })
 
   it('shows purpose, inputs, objectives, method, every procedure step, outputs, the rubric rows, submission and workload', () => {
-    page('lab')
+    page(`${WEEK1_PATHS.project}/instructions`)
+    expect(screen.getByText('Week 1 · My Project / Lab')).toBeInTheDocument()
     for (const id of ['lab-inputs', 'lab-objectives', 'lab-method', 'lab-procedure', 'lab-outputs', 'lab-rubric', 'lab-submission', 'lab-tool', 'lab-workload']) expect(screen.getByTestId(id)).toBeInTheDocument()
     for (const p of LAB_PROCEDURE) expect(screen.getByTestId('lab-procedure')).toHaveTextContent(p.step)
     const rubric = screen.getByTestId('record-rubric')
     for (const [rb, c] of LAB_RUBRIC_ROWS) expect(rubric).toHaveTextContent(`${rb}.${c.split('.')[1]} ${rubricRow(rb, c)[1]}`)
-    expect(screen.getByTestId('open-lab-tool')).toHaveAttribute('href', '#/week/1/lab/tool')
+    expect(screen.getByTestId('open-lab-tool')).toHaveAttribute('href', '#/week/1/project')
     expect(screen.getByTestId('model-inputs-map')).toHaveTextContent('concern')
     expect(screen.getByTestId('record-readiness')).toHaveAttribute('data-state', 'not-ready')
+    expect(screen.getByTestId('week-nav-project')).toHaveAttribute('aria-current', 'step')
   })
 })
 
-describe('Assessment and submission', () => {
-  it('holds the readiness quiz and the record readiness: not ready when empty, ready for a complete, exported, approved record', () => {
-    const { unmount } = page('assessment')
-    expect(screen.getByTestId('assessment-quiz')).toHaveTextContent(`${WEEK1_QUIZ.length} questions`)
-    expect(screen.getByTestId(`quiz-${WEEK1_QUIZ[0].id}`)).toBeInTheDocument()
-    expect(screen.getByTestId('record-readiness')).toHaveTextContent('not ready yet')
-    unmount()
-    saveJSON('wb-artefacts', { [TEAM_KEY]: { ...TEAM_FIXTURE, exportedMdAt: 20, exportedJsonAt: 21, updatedAt: 10 } })
-    page('assessment')
-    expect(screen.getByTestId('record-readiness')).toHaveTextContent('ready to submit: Riverside Food Bank Network')
-    // the objective table links back to the lesson, not to the retired Learn sections
-    for (const a of within(screen.getByTestId('objective-status')).queryAllByRole('link')) expect(a.getAttribute('href')).toMatch(/^#\/week\/1\/lesson\//)
+describe('Review & Submit (M6: the package review of the team project)', () => {
+  it('without a project it asks for the project first; the package review itself is tested in src/project/canvas/canvas.test.tsx', async () => {
+    page(WEEK1_PATHS.review)
+    expect(await screen.findByTestId('review-no-project')).toHaveTextContent('Create your team’s project in My Project first')
+    expect(screen.getAllByRole('heading', { level: 1 })[0]).toHaveTextContent('Review & Submit')
+    expect(WEEK1_QUIZ.length).toBeGreaterThan(0)
   })
 })
 
-describe('Lesson self-checks (the earlier Learn checks, optional and ungraded)', () => {
-  it('each sits at the end of its lesson section, closed by default, and records the answer without gating anything', async () => {
-    const user = userEvent.setup()
-    render(
-      <Providers>
-        <LessonReader week={1} />
-      </Providers>,
-    )
-    for (const s of LEARN_SECTIONS) expect(screen.getByTestId(`selfcheck-${LEARN_TO_LESSON[s.id]}`)).toBeInTheDocument()
-    const box = screen.getByTestId(`selfcheck-${LEARN_TO_LESSON.l1}`)
-    expect(box).not.toHaveAttribute('open')
-    await user.click(within(box).getByText(/Check your understanding/))
-    const c1 = LEARN_SECTIONS[0].check
-    await user.click(within(box).getByLabelText(c1.options.find((o) => o.correct)!.text))
-    await user.click(within(box).getByRole('button', { name: 'Check my answer' }))
-    expect(within(box).getByRole('status')).toHaveTextContent('Correct.')
-    expect(loadJSON<{ checks: Record<string, { correct: boolean }> }>('w1-flow-v2', { checks: {} }).checks.l1.correct).toBe(true)
-    expect(screen.getByTestId('week-nav-lesson')).toHaveAttribute('aria-current', 'page')
+describe('Student chrome (NAV-02, X14)', () => {
+  it('shows no instructor checkbox to students and carries the five stages', () => {
+    page('/week/1')
+    expect(screen.queryByText(/Instructor mode/)).toBeNull()
+    expect(screen.getByTestId('week-nav')).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'App menu' })).toBeInTheDocument()
   })
 })

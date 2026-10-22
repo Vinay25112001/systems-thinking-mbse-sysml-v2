@@ -73,3 +73,65 @@ All results below are from actual runs in this session. Logs: `learning-studio/t
 | End-to-end + axe | `npx playwright test` | **10 / 10 passed**; axe 0 violations on 12 pages × light/dark (after restarting a stale dev server whose module cache predated the changes) |
 | SysML v2 reference validator | `python -I scripts/check_sysml.py --selftest` | **SELF-TEST PASSED** (OMG Pilot Implementation 2026-08, kernel 0.62.0, Java 21.0.12): valid file PASS; syntax error, undefined type and wrong keyword each FAIL with line:column diagnostics. Expected-fail handling checked: a deliberately invalid listing named `invalid_*` is accepted as an expected FAIL; a broken listing without that name makes the run exit 1 |
 | Verification scripts | `_source_cache/verification/*.py` | readings 89/90 (R30 declared exception); consistency NO PROBLEMS; CLO sums checked; 57 objectives |
+
+## 2026-10-22 regression (pre-commit of M3, M6, Week 9)
+
+QA pass on the uncommitted tree (M3 publishing, M6 My Project canvas / Review & Submit / Excel import, Week 9 package, Week 7 App.tsx route block) on top of `16490ae`. Nothing committed. All results below come from runs made in this pass. Playwright lock `_source_cache/.playwright.lock` ("regression") was held for every e2e run and then deleted. The screenshot `git status` was recorded before the first run. After each run, only the tracked screenshots that run had rewritten were restored (`git checkout --`), and files the run created were removed. The 11 screenshots that were already modified (`screenshots/week1-workbench/*` x6, `screenshots/workbench/*` x5) were put back byte for byte from a copy taken before the first run, because the retargeted `workbench.spec.ts` writes 5 of those names. The final screenshot status matches the baseline.
+
+### Environment fix (task 1)
+
+- `playwright.config.ts`: the default suite now starts its **own** dev server on port **5176** (`e2e/vite.offline-e2e.config.ts`: its own optimizer cache `node_modules/.vite-e2e-offline`, no `/api` proxy), with `VITE_BACKEND=none` and `reuseExistingServer: false`. It no longer reuses the shared 5173 server or its optimizer cache, and never depends on a course server. Offline mode is a real product mode: `.env.student` sets `VITE_BACKEND=none` for the static student build. `src/services/backend.ts` then compiles the server paths out (state `offline`, no `/api` probe), `src/publishing/client.ts` sets `OFF`, and `App.tsx` drops the authoring route. Server mode keeps its own suite (`playwright.server.config.ts`).
+- Added `e2e/warmup.global-setup.ts`, which visits each lazily loaded route once on the fresh server before the tests run. It asserts nothing.
+- Set `workers: 4` and `expect.timeout: 10 s`. Run 2 still had 13 first-render timeouts under 7 workers, and every one of them passed on its own. No assertion was changed.
+- `playwright.lectures.config.ts`: same own server on 5198, plus `VITE_BACKEND=none`. Before this, Weeks 2-5, 8 and 9 failed on "502 Bad Gateway" console errors from the `/api` probe.
+- `e2e/project.spec.ts`: the second browser context took a hard-coded `http://127.0.0.1:5173`. It now uses the suite's `baseURL`.
+
+### E2E runs
+
+| Run | Command | Result | Duration |
+|---|---|---|---|
+| Default, run 1 (new server, before spec fixes) | `npx playwright test` | 88 passed, 53 failed, 1 skipped | 23.5 min |
+| Lectures, run 1 (before fixes) | `npx playwright test -c playwright.lectures.config.ts` | 27 passed, 14 failed | 24.4 min |
+| Default, run 2 (warm-up and spec fixes, 7 workers) | `npx playwright test` | 123 passed, 15 failed, 1 skipped | 14.1 min |
+| **Default, final** (4 workers, 10 s expect) | `npx playwright test` | **136 passed, 2 failed, 1 skipped** (`zz-visual-loop`, a deliberate `test.skip`) | 14.6 min |
+| **Lectures, final** | `npx playwright test -c playwright.lectures.config.ts` | **41 passed** | 17.7 min |
+| **Server** (two-session, Demo A publishing, Demo C/D canvas) | `npx playwright test -c playwright.server.config.ts` | **4 passed** | 1.3 min |
+
+Run 1 had no console-error failures: offline mode removed the `/api` 502 cause from the default suite.
+
+### Classification of the run-1 failures (default 53 + lectures 14)
+
+| Class | Count | Tests | Disposition |
+|---|---|---|---|
+| Environment: cold server or load (first render past 5 s; "Execution context destroyed" while axe ran during an optimizer reload) | 21 | `lectures-week2…7:19`, `lectures-week4:65`, `week3/6/7-flow` archive, `week1-flow:63,208`, `app.spec:140`, `week8/9-flow` lab tool, `week6/8-flow` axe dark, `week9-flow:50` | Fixed by warm-up, 4 workers and 10 s expect. All pass in the final run. |
+| Environment: `/api` 502 in the lectures config | 6 | `lectures-week2,3,4,5,8,9:19` | Fixed by `VITE_BACKEND=none` |
+| Stale: dashboard moved to `#/dashboard` (M4a) | 5 | `week2,3,4,5,8-flow` dashboard tests | `fresh(page, '/dashboard')`. Same assertions. |
+| Stale: Weeks 7 and 9 are lecture-first weeks | 1 | `app.spec:180` | Added `week7-home`/`week7-workload` and `week9-home`/`week9-workload` branches, like Weeks 2–8 |
+| Stale: Week 1 lectures instructor-only (M4a), Learn replaces the reader (M4b), homepage at `#/` | 16 (8 per config) | `lectures.spec.ts` | Tests run as the instructor (instructor mode stored before load). The viewer checks the five-stage nav. The retired Week 1 reader test now checks that the lesson and every legacy section redirect to the Learn section that absorbed it (`LEGACY_TO_SECTION`), plus a textbook citation reaching the sources route. Dashboard card: Learn link and `#/dashboard`. Axe and 400 px scan Learn. |
+| Stale: practice workbench retired (M5) | 17 | `workbench.spec.ts` | Retargeted to `#/week/1/project/tool`, the only route that still mounts the Week 1 workbench. Problems → selection → impact and undo/redo now run on the team proposal. Regions, keyboard, assessments, theme, axe, layout, medium and narrow are kept. Axe now waits for the drawer's fade-in to finish. Removed with the retired surface (its views are not routed): the try-first and guided-boundary missions and the AeroLink needs writer (3 tests). |
+| **Real regression** | 2 | `week9-flow:138` light and dark | **Not fixed** (Week 9 is under review). See below. |
+
+### Real regression (open)
+
+**Week 9 lab tool scrolls sideways at 400 px.** Repro: offline dev server, viewport 400×860, `#/week/9/lab/tool`, import the three fixture files (`importAll` in `e2e/week9-flow.spec.ts`). `table.w8-table[data-testid="w9-needs"]` is 860 px wide, `document.documentElement.scrollWidth` = 749 > 400. The table's inputs (`input.w8-input`, 167 px) are not inside a horizontally scrolling wrapper. Before the import the page fits (scrollWidth 400). This sits in Week 9 content and styles (`src/week9/**`), so it is left to the Week 9 stream.
+
+### Static and unit gates (final tree)
+
+| Check | Command | Result | Duration |
+|---|---|---|---|
+| Type check | `npx tsc -b` | exit 0 | 141 s |
+| Config and setup typecheck (not covered by `tsc -b`) | `tsc --ignoreConfig --noEmit --strict …` on the two Playwright configs, `e2e/warmup.global-setup.ts`, `e2e/vite.offline-e2e.config.ts` | exit 0 | — |
+| Unit / interaction | `npx vitest run` | **146 files, 3331 passed** (no timeouts, so the Week 7/11 reruns were not needed) | 76 s |
+| Server | `npx vitest run --config vitest.server.config.ts` | **15 files, 380 passed** | 8 s |
+| Student build + checks | `npm run build:student` (runs `tsc -b`, `vite build --mode student`, `scripts/check-student-build.mjs`) | **PASS**. Week 9 decks already present (`public/lectures/week09-session1/2.pptx`), so `lectures:pptx` was not run. 64 student deck links all resolve, none to Week 1. No course-server or publishing marker in the student build. Note: the instructor-build checks read the existing `dist/`, which was not rebuilt in this pass. | 91 s |
+| Lint | `npm run lint` (oxlint) | **0 errors, 110 warnings** (`only-export-components`, `react(refs)`, `set-state-in-effect`, `purity`; none in the files changed here) | 7 s |
+
+### Files changed in this pass (tests and config only, no app code)
+
+`learning-studio/playwright.config.ts`, `learning-studio/playwright.lectures.config.ts`, new `learning-studio/e2e/vite.offline-e2e.config.ts`, new `learning-studio/e2e/warmup.global-setup.ts`, `learning-studio/e2e/{app,lectures,workbench,project,week2-flow,week3-flow,week4-flow,week5-flow,week8-flow}.spec.ts`. Each edited file keeps its committed line endings (CRLF for `app`, `lectures`, `workbench` and the lectures config; LF for the rest), and `git diff --stat` equals `--ignore-cr-at-eol` for every file except `e2e/project.spec.ts`. That file was already LF in the working tree against a CRLF index before this pass (348 vs 21 changed lines), and the same holds for `src/activities/week11/{FlowCoverage.tsx,StateWalker.tsx,logic.test.ts}` and `_source_cache/verification/readings.py`.
+
+### What remains
+
+1. The Week 9 lab-tool 400 px overflow (above), for the Week 9 stream.
+2. If the reviewers want the three retired practice-workbench tests (missions 1–2, AeroLink needs writer) covered again, that coverage belongs to Guided Practice's own specs.
+3. The default suite takes about 15 min with 4 workers on this laptop. The lectures suite takes about 18 min (1 worker, every slide scanned with axe).

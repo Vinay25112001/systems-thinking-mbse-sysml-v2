@@ -1,179 +1,123 @@
-# Week 7 independent review: Trade studies and decision analysis, and the Exam 1 bank
+# Week 7 independent review: Final Presentation (Phase I package and design review)
 
-Reviewer: independent adversarial review (not the author). Date: 2026-10-11.
+Reviewer: independent adversarial review (senior SE professor, instructional designer, QA). Not the author.
+Date: 2026-10-21. Read-only: this file is the only file written. No git operations, generators or installs. Probes were
+run from the session scratchpad, which imports the real modules read-only.
 
-**Scope**
-- `learning-studio/src/content/weeks/week07.ts`
-- `src/activities/week07.activity.tsx`, `src/activities/week07/*`
-- `docs/authoring/week07_notes.md`
-- `src/instructor/exams/exam1.ts`: the item bank and key, plus the student-build exclusion
+Scope: the uncommitted Week 7 set: `src/week7/*`, `src/content/lectures/week07/*`, `src/content/lab/week07Lab*.ts`,
+`src/content/week7Path.ts`, `src/workbench/week7/*`, the Week 7 figures, `docs/lectures/week07/*`, and the `week07` blocks
+in shared files. Paths are relative to `learning-studio/` unless they start with `_source_cache/`.
 
-**Checked against**
-- `course.ts`; `AUTHORING_GUIDE.md` §7; `schema.ts`
-- `ASSESSMENT_RUBRICS.md` RB-6, RB-12, RB-16 and the Exam 1 (Pathway B) blueprint
-- Lab plan L7; syllabus §11–12
-- `WEEKLY_INSTRUCTIONAL_PLAN.md` Week 7
-- Reference `src/model/reference/week05–07.ts`
-- What Weeks 1–6 now teach, from the week05/06 modules and the prior reviews
+## Verdict: **REVISE**
 
-**Sources read**
-- Week 7 sources: R18 p.463–474; R43 p.109–110; R34 p.608–614; R35 p.1396–1399
-- For the exam key: R16 p.766–770; R46 p.125–126; R40 p.69–72; R13 p.559, 565–566; R09 p.868–869; R63 p.235–237
+The package is well built. Every number in the AeroLink case is computed, not typed. The citations I checked hold. Tests,
+`tsc` and the student build are green. The design review content (prepare, conduct, complete; entry and exit criteria;
+roles and independence; RIDs and dispositions labeled as course conventions) is sound at graduate level. Three defects
+block sign-off, and each one sits in a defect class Week 7 itself exists to teach:
 
-No course or app file was edited. Recomputations and the Monte Carlo cross-check ran in a scratch directory.
+1. **M1. The worked package drops recorded open items while saying every gap has a disposition.** Week 2 recorded three
+   partial-coverage open items. Two of them, NEED-006 and NEED-008, were due in Week 5 and never done. Week 6 silently
+   dropped all three. The Week 7 audit carries none of them. RID-001 recovers NEED-008 only, and says "the audit could not
+   see it". NEED-006 vanishes from the package. Meanwhile the executive summary and the readiness answer say every gap
+   carries a disposition.
+2. **M2. The tool accepts a "fixed" claim, although it tells students it never does.** A `record` disposition with the
+   reason "Fixed", "Withdrawn" or "Resolved" passes every gate. The fixture reaches "review closed" by recording two stale
+   Week 2 dispositions as "Withdrawn", which is an untestable completion claim.
+3. **M3. An ID collision is reported as a harmless rename, and the course tools create the collision.** The Week 4 tool
+   numbers externals from EXT-001 without seeing Week 1's EXT IDs, so every team gets a collision. The Week 6 tool does
+   the same with O IDs. The package tool files both under "One ID, two names", labels the index with the wrong names, and
+   the fixture closes them with the false reason "Same element, shortened name".
 
-## Verdict: **PASS WITH FIXES**
+## Gates run (2026-10-21)
 
-There are no critical defects.
-
-**What holds up**
-- The deterministic decision analysis is correct: totals, closed-form reversal points, tornado margins and the set-based tradespace all reproduce exactly.
-- Citation fidelity is high, and the Keeney quotation is exact.
-- The student build is verified free of exam text.
-
-**What must be fixed**
-1. **Monte Carlo shared driver.** The graduate example claims to model "one demand forecast drives every wait", but the implementation does not do that. A coherent demand model moves the headline by about 10 standard errors.
-2. **Exam 1 key.** The key is inconsistent with Week 6 in two items (the SRR criteria; the TRL environment). Its own caution says it was never re-checked.
-3. **Recurring defects:**
-   - the simulator records no owner or provenance (rule 1);
-   - quiz items are answered verbatim by the lesson (rule 6);
-   - the graduate and exam-preparation time budgets are implausible (rule 3).
-
-Counts: **critical 0 · major 5 · minor 7**.
-
-## Tool runs (from `learning-studio/`)
-
-| Command | Result |
+| Gate | Result |
 |---|---|
-| `npx vitest run src/activities/week05 src/activities/week06 src/activities/week07 src/content` | **8 files, 147 tests passed**. |
-| `npx tsc -b` | **clean** (exit 0). |
-| `node scripts/check-student-build.mjs`, run on the existing `dist-student/`, which was built at 17:22:55, after the last edits to `exam1.ts` (17:22:12) and `week07.ts` (17:22:35) | "student build: none of 13 exam markers present; instructor build (dist/): 13 of 13 markers present". A grep for the scenario name "AeroLink Cargo" in `dist-student/assets` finds nothing. I did not rebuild, to avoid writing to the app tree. |
-| Independent Python recomputation of totals, reversals, tornado, ALT-005, SBD points | All lesson numbers reproduce (see Verified correct). |
-| Monte Carlo cross-check, 200,000 trials (own implementation, same distributions) | Course method: ALT-004 first 95.7 %, consistent with the pinned 96.05 % at n = 10,000. Demand pushed through the wait model: **94.1 %**. See F02. |
+| `npx vitest run` on src/week7, src/workbench/week7, src/content/lectures/week07, src/content/lab/week07Lab.test.ts, src/components/figures/week7FigureKit.test.ts, src/workbench/shortAnswers.test.ts, src/content/content.test.ts | **10 files, 830 / 830 pass** |
+| `npx tsc -b` | clean, exit 0. No in-flight failures from the M4b or M5 streams were present at run time |
+| `npm run build:student` (includes `check-student-build.mjs`) | **PASS**: Week 7 student decks have 22 and 13 notes slides, all empty; 14 of 16 decks shipped (all but Week 1); 0 of 2,879 faculty-notes markers; every .pptx link resolves |
+| Leak check, Week 7 chunks (`Week7App-*.js`, `lectures-*.js`) | no `P7-`, `outline §`, `new-pending-review`, `DECISION_LOG` or `_source_cache`. The register IDs (R06c and others) appear as reading keys and inline "(R06c p.388)" citations, the same convention Week 6 used and its review accepted |
+| Playwright | not run (as instructed) |
+| Probes (scratchpad, read-only imports) | the AeroLink case values; the fixture audit (9 findings); the gate behaviour for "Fixed", "Withdrawn", a week as owner and a two-word rejection; partial packages; the RID round trip; the workload |
+
+## Source spot-check (page text read through `scripts/source_pages.py`)
+
+All of these match: R06c p.386 (definition; independent stakeholders), p.387 (prepare; entry and exit criteria confirmed
+before the review; roles coordinated beforehand; information items made available ahead), p.388 (analysis from different
+perspectives; "too close / too far"; complete once the exit criteria are met; not held before the entry criteria are met);
+R36 pp.498–499 (formally approved snapshot; consistent and immutable; FBL/ABL/PBL; digital artifacts); R40 p.69 (SRR
+assessment), p.70 (SRR "should not begin until … prior technical reviews are complete and their action items closed");
+R44 p.111 (percentage completion as entrance criteria); R45 pp.118–119 (orphan and childless parent; the RTM keeps the
+allocation history and the rationale); R13 p.565 (impact of change; TBX owner), p.566 (requirement validation).
+
+R06c says nothing about RIDs or accept/defer/reject. The slides and lesson correctly label both as course conventions
+(session2.ts:17–18, :199, :225, :374, :377). Neither pending reading, P7-1 (SFR) nor P7-2 (R40 p.73, "the Chair
+determines completion"), is cited anywhere in student or faculty text; they appear only in comments (session1.ts:19–20).
+One paraphrase stretches its source: see m4.
+
+## AeroLink spot-check against the Weeks 1–6 data
+
+Consistent with Week 6's baseline trajectory, including the committed Year-2 decision. YEAR2 gives ALT-004, 16 aircraft
+(+4), 2 upgraded chargers, 4 hubs and 320 trips/day at month 24, against REQUIRED_CAPACITY 300. FLEET_STEP offers +0/+4/+6
+with +4 the smallest step, and supports = 256. The executive summary (aerolinkCase.ts:212–226), RID-003 (:279) and GAP-001
+(week06 :120–126) agree. The 11-hop thread NEED-010 → … → U-002 → INC-000 → DEC-001 resolves. Coverage is 17/17, 16/19,
+15/15, 7/8 and 3/3. There are 27 findings (12 recorded, 15 deferred, 5 stale Week 2 dispositions) and 265 IDs. RID-002
+matches the Week 6 re-dating "before the Week 7 review" (week06 :492). RID-004's three week-owned items (Week 4 F5 → Week 10;
+Week 5 F7 → Week 12; F8 → Week 10) match the data. The defect in the case is what it leaves out (M1), not any number it
+shows.
 
 ## Findings
 
-| ID | Sev. | Location | Finding | Evidence | Recommended fix |
-|---|---|---|---|---|---|
-| W7-F01 | major | `TradeStudySimulator.tsx` `saveWorkspace` / DEC record; `save.ts` `planSave` | **Recorders do not record owner or provenance (§7 rule 1, recurring).** CRIT, ALT and DEC are created with hard-coded `provenance: 'team-derived'`. There is no `ProvenanceOwnerFields`, no `ownerProblem` check and no owner. `assignment.aiUse` requires every AI-suggested alternative, criterion or score to be tagged `AI-suggested-reviewed`; the tool makes that impossible. | `save.ts` l.25, 35; `TradeStudySimulator.tsx` l.73, 88. | Add `ProvenanceOwnerFields` to the save and DEC panel, block on `ownerProblem`, and pass `{owner, provenance}` on each created element. |
-| W7-F02 | major | `reference.ts` `REFERENCE_UNCERTAINTY`; `trade.ts` `monteCarlo` (shared option); `w7-advanced` para 1–2; q7-11; activity `w7-act-mc` | **The "shared driver" does not implement "one demand forecast drives every wait".** The lesson says demand 216–240–264 is "pushed through the wait approximation". The code instead fits a *triangular distribution to the transformed endpoints* of each alternative's wait, then draws the same quantile for all alternatives. A triangular is not preserved under the non-linear wait function, and equal quantiles of different triangles imply different demands for different alternatives. **Consequences:** (1) For the baseline, P(wait < 60 min) is 58.4 % under the fitted triangle but 22.2 % under the stated demand model (demand < 232/day). That probability is the exact mechanism the lesson's "second finding" relies on. (2) My 200,000-trial cross-check gives P(ALT-004 first) = 95.7 % with the course method but **94.1 %** when one demand draw is pushed through each alternative's wait. That is a model difference of ≈ 2 pp, about 10× the quoted "±0.2 pp" standard error. **Why it matters:** the instructor caution mentions "a triangular approximation … not its exact image", but the student-facing text and q7-11 ("one demand draw drives every alternative's wait") state the opposite. Graduate students are told to copy this method for their own trade. | Course-method and demand-model results above; F_tri(60) = 40² / (58.7 × 46.7) = 0.584; P(demand < 232) = 16² / (48 × 24) = 0.222. | Add a "derived score" uncertainty: sample the driver (demand) once per trial and compute each alternative's score through the model. Re-pin the numbers. Otherwise, relabel the method in the student text and q7-11 as "rank-correlated triangular approximation", and say the precision applies to the approximation, not to the demand model. |
-| W7-F03 | major | quiz q7-2, q7-3, q7-8, q7-9, q7-10, q7-11, q7-13 | **Quiz items are answered verbatim by the lesson (§7 rule 6).** | q7-3: "a 30 min wait is worth (60 − 30)/(60 − 5) = 0.545" is printed in `w7-value` para 2. q7-2: "Capacity itself is not a criterion — it would double-count wait — … screened against REQ-STK-004" is worked (a) para 3. q7-8: the 0.478 / 0.226 reversals and the "choosing not to meet MGO-007" sentence are worked (c). q7-9: the 0.182 → 0.090 tornado is worked (c). q7-10 (b): the worked (d) recommendation, nearly word for word. q7-11: the 0.961 / 0.904 Monte Carlo results. q7-13: hub count is the set driver and fleet size the set modifier, from `w7-advanced`. | Re-case each item on new numbers: a different value function and level, a different line pair, a different decision (e.g. charger supplier choice), a different SBD factor pair. |
-| W7-F04 | major | `src/instructor/exams/exam1.ts` items B1(iv), C1(b), C2, C4; `week07.ts` cautions (last bullet) | **The Exam 1 key is inconsistent with what Weeks 4–6 now teach.** Its own caution says it "was written before the Week 4–6 modules … re-check", and the re-check was not done. **(a) C4** asks for "the adapted SRR criterion each fails". The key names "requirements verifiable with verification methods identified; bidirectional traceability; TBDs with closure plans". Week 6 teaches S1–S8, and "TBDs with closure plans" is not one of them (a TBD falls under S1, or under RB-3.2 with an AROU entry). Graders need the S-IDs. **(b) C1(b):** "a prototype charger demonstrated at an operating hub → TRL 6". Week 6 defines AeroLink's *operational* environment as "AeroLink revenue service at its own hubs", and the Cargo scenario *shares the AeroLink hubs*. TRL 7 is therefore equally defensible, and Week 6 teaches that the environment must be defined before rating (R60 p.525), which the item does not do. The item has two defensible answers. **(c) B1(iv)** rewrite "TBD-xx … to be confirmed … by CP2" has no AROU/U-item owner (Week 5, RB-3.2: "explicit TBD/TBR with an AROU entry"), and CP2 is already past in Week 7. **(d) C2** cites R46 p.125 for condition–if–then. R46 gives event + consequence (+ cause) and the two-part if–then; condition–if–then is R61 p.630, as Week 6 cites. The key also omits the trigger and the horizon that Week 6 requires on every rated risk. | Week 6 `srr.ts` SRR_CRITERIA; Week 6 worked TRL para 2; RB-3.2; R46 p.125 text. | (a) Key C4 to S1/S2/S3 with the Week 6 titles. (b) Define the environments on the scenario sheet (e.g. "a supplier's demonstration hub, not an AeroLink hub") or accept 6 or 7 with justification. (c) Require a U-item with owner and need-by. (d) Cite R61 p.630–631; add "trigger" and "horizon" to the C2 marking. Then delete the stale caution. |
-| W7-F05 | major | `workload`; notes open issue 5 | **Time budgets are implausible and not flagged in the module (§7 rule 3).** (1) The graduate memo gets 0.5 h, including R35 (4 pp ≈ 0.27 h). It is a **two-page** memo containing a Monte Carlo on the team's own trade (distributions with sources, correlation, seed, SE) *and* an SBD comparison (drivers and modifiers, feasible sets, a recommendation change), leaving ≈ 15 min. (2) Exam 1 preparation gets 0.6 h for a 12 % exam covering six weeks. (3) Online instruction plus three interactive activities get 0.5 h, although this lesson is longer than Week 5's (Week 5 budgets 0.8 h for 5,150 words). The notes concede "Workload is tight", but `cautions` is silent. | `week07.ts` `workload`. | Re-budget: memo ≥ 1.5 h, exam preparation ≥ 1.5 h, online ≈ 1 h. Record the overrun against the 9 h plan in `cautions`, or move the SBD half of the memo to Week 8. |
-| W7-F06 | minor | `w7-worked-recommendation` para 4 | **Logic slip.** "A demand forecast of 192 trips/day or less (the baseline then runs at 80 % utilisation and meets the capacity objective without investment)". The baseline's capacity is 240 trips/day, which still fails REQ-STK-004 (≥ 300) as written. It would meet a *re-derived* requirement (240 at 80 %), not the current one. | `w7-worked-frame` para 1 defines 300 = 240 / 0.8. | Say "REQ-STK-004 would be re-derived to 240 trips/day, which the baseline already meets". |
-| W7-F07 | minor | `w7-value` para 5 | **R34 is equated with swing weighting (rule 7).** "R34 describes the same selection-criteria model". R34 p.611 weights each criterion "according to its level of relative importance". That is the importance weighting the lesson's misconception list and RB-6.3 (level 2) reject. | R34 p.611 bullet 3 under "Define the selection criteria model". | Present R34 as the analyst's process outline and *contrast* its importance weights with R18's swing weights. |
-| W7-F08 | minor | CRIT-002 ← MOE-005 (reference `week05.ts`, `week07.ts`); `w7-worked-frame` para 3 | **Cost is filed as an MOE.** RB-4.1 and Week 5 define an MOE as mission or user effectiveness. "Capital to meet the Year-2 capacity objective" is a cost measure, which RB-6.2 asks to be "handled explicitly". Tracing CRIT-002 to an "MOE" teaches students that cost is an effectiveness measure. This is reference-level, so the lead owns the fix. | Reference MOE-005 text; RB-4.1; RB-6.2. | Trace CRIT-002 to a cost objective (MGO/CON) and label it, or relabel MOE-005 as a course "cost measure". |
-| W7-F09 | minor | Session 2 run-sheet; `w7-deliverable`; rubric blueprint | **Exam time disagrees with the blueprint.** The blueprint, syllabus §12, the weekly plan and the deliverable text say 75 min. The run-sheet gives 65 min of working time (5 + 65 + 5). Pacing A 15 / B 27 / C 23 is ≈ 0.65 min per point. | `instructorNotes.sessions[1]`. | Either state 65 min to students, or schedule arrival and collection outside the 75 min. |
-| W7-F10 | minor | `w7-lab` text; `trade.ts` `checkStudy` | **The lab overstates what the simulator checks.** "The simulator checks the L7 minimums (≥ 3 alternatives including a baseline, ≥ 4 criteria with MOE traces …)". A missing baseline and missing MOE traces are only *warnings*, so a study with neither can be saved. Baseline detection is a regex that any description containing "baseline" satisfies (e.g. "much better than the baseline"). | `checkStudy` levels. | Make the MOE trace and the baseline errors at save time (L7 acceptance). Detect the baseline by an explicit flag, not text. |
-| W7-F11 | minor | `docs/authoring/week07_notes.md`; `exam1.ts` header; `week07.ts` cautions | **Stale records.** The notes say "14 lesson blocks" (there are 13) and that the module contains "the Exam 1 item bank". Open issue 1 (exam security) is now resolved. The module caution "the Week 4–6 modules were not yet authored" and the `exam1.ts` header "Pending independent review" both remain. | Files as listed. | Update the notes and cautions after fixing F04. |
-| W7-F12 | minor | `exam1.ts` A2 key | **The loop is not closed.** The causal chain stops at "fewer contract renewals". The key gives 5 polarities ("+, +, +, +, −") for a loop that needs a sixth link, renewals → contracts (+), to be a loop at all. The "odd number of negatives" rule still gives balancing, but a student who adds the closing link and lists 6 polarities has no matching key. | Item A2 text. | Add "→ (renewals → contracts, +)" to the stem or key; accept 5 or 6 listed links. |
+| ID | Severity | File:line | Evidence | Fix |
+|---|---|---|---|---|
+| M1 | **Major** | `content/lectures/week07/aerolinkCase.ts:146`, `:160`, `:216`, `:243`, `:262`; `session2.ts:379` | `AUDIT.partialStillOpen` computes **["NEED-008", "NEED-006", "NEED-017"]** (probe) but feeds nothing. Week 2 `PARTIAL_COVERAGE` (week02 :443–447) records each as an *open item* with a due week: NEED-008 and NEED-006 in Week 5, NEED-017 via TBR-02. Weeks 3–6 never mention NEED-006's responder access (grep), and Week 6 `BASELINE_REVIEW` (week06 :496–520) carries only unknowns, TRL assumptions and findings, so all three were dropped. The audit's open-item findings come only from `BASELINE_REVIEW` (:146). The case nonetheless says "every gap in the package carries a disposition: 12 recorded, 15 deferred" (:216) and "every one of the 27 findings has a disposition" (:243). RID-001 says "The audit could not see it" (:262; session2 :379). That is true of the structural parent-link rule, but the package's own Week 2 record holds the item and its due date, and a package-level consistency audit is exactly where a commitment lost between Week 2 and Week 6 should be caught. NEED-006 disappears from the package. This is the same class as the Week 6 review's M1: the central worked example contradicts its own rule ("one enterprise, one meaning"; "none silent"). | Add a finding kind for an earlier week's open item that is overdue or no longer carried, computed from `PARTIAL_COVERAGE` against later weeks (NEED-006 and NEED-008 as deferred findings with owners; NEED-017 recorded against U-006/TBR-02). Recompute the counts. Reword RID-001: the reviewer finds that Week 2's open item was due in Week 5 and was dropped by Week 6, and that the parent link hides it from a structural audit. Add a negative test that fails when a `PARTIAL_COVERAGE` need is neither a finding nor closed. |
+| M2 | **Major** | `workbench/week7/record.ts:536–544`; `content/lab/week07Lab.ts:244`; `workbench/week7/Week7LabTool.tsx:258`; `workbench/week7/fixture.ts:37` | Probe: `assessFinding({disposition:'record', reason:'Fixed'})` gives counts = **true**, and so do "Fixed in Week 4", "Withdrawn" and "Resolved". Students read "The tool never accepts the word ‘fixed’" (week07Lab :244) and "There is no ‘fixed’ choice" (tool :258). The fixture records both `stale-disposition` findings as "Withdrawn" (fixture :37) and reaches `review-closed`, although the Week 2 export still holds the dispositions. If they had been withdrawn, the finding would be gone. The milestone report's "no untestable ‘fixed’ claim" (§2.3, §8) holds only for the dropdown. The 5-test mutation probe on `said()` does not cover this path. | For kinds a re-export resolves (`stale`, `dangling`, `stale-disposition`, `renamed`, `not-ready`), a reason claiming completion (/\b(fixed\|withdrawn\|resolved\|corrected\|done\|closed)\b/i) fails the reason gate with the visible message "still found in your exports: re-export the corrected week; a fix cannot be recorded". Change the fixture's reason for those kinds to a true one (for example "Kept for history: the Week 2 text is superseded by REQ-STK-…"), or re-export the fixture's Week 2 without them. Add a test in both directions. |
+| M3 | **Major** | `workbench/week7/record.ts:377`, `:470–477`; `workbench/week7/fixture.ts:35`; `content/lab/week07Lab.ts:129`, `:198` (T1); upstream `workbench/week4/record.ts:108`, `workbench/week6/record.ts:241–249` | Fixture probe: `renamed:EXT`: EXT-001 is "Grocery store donors" in Week 1 and "County funders’ reporting portal" in Weeks 4–6; EXT-002 is "County health department" in Week 1 and "Stripe" later; EXT-003 to EXT-005 likewise. `renamed:O`: O-001 is "Grocery chain sensor donation" in Week 3 and "Spare pantry refrigerators lent to new partners" in Week 6. These are **different things sharing an ID**, not renames. Cause: Week 4 issues EXT from 0 (`EMPTY_ISSUED.EXT = 0`) and its Week 3 snapshot chain carries no Week 1 externals, so **every team that follows the instructions collides**. Week 6's `floorIds` floors TECH, U, A and R but not O (its `Week3Extra` has no opportunities), so new opportunities reuse Week 3's numbers. The index is "first definer wins" (:377), so every later EXT is shown under Week 1's name in findings, the thread and the exported index and relationships that Week 8 is meant to read. One finding per prefix (:476–477) takes one disposition for all of them, and the fixture's "Same element, shortened name" is false and accepted. T1's top level ("no … renamed finding left that a re-export would fix") and procedure step 2 ("re-export every week that a … renamed finding points at") promise a remedy that does not exist for a collision. | Split the kind in two. **renamed** (same ID, same thing, wording drifted) stays advisory-like with record allowed. **collision** (the same ID defined by two weeks' own records) is a gate that a recorded reason cannot pass. Its message tells the team to renumber in the later week's tool, or accepts a defer with an owner and a carry-forward to Week 8. Key collisions per ID, not per prefix. In the index, keep both definitions (`EXT-001@W1`, `EXT-001@W4`) instead of first-wins. Report both upstream bugs to the Week 4 and Week 6 owners (EXT and O numbering should continue from the earlier weeks' IDs). Correct the fixture reason, T1 and step 2. |
+| m1 | Minor | `workbench/week7/record.ts:386–389`; `workbench/week3/record.ts:145` | The tool reads requirements only from Week 2 and Week 5. AeroLink's headline stale finding F-01 rests on Week 3 writing REQ-STK-018/019 for NEED-011 (aerolinkCase :122–123). A team that follows the worked example and writes requirements in Week 3 (as "derived requirements" in the trade, free text) gets the opposite from the tool: NEED-011 is still childless, the Week 2 disposition is carried, and the stale disposition is missed. | Either parse IDs from Week 3 `trade.derived` (`REQ-… traces to NEED-…`) into the requirement set, or tell students on the slide and in the lab that requirements added after Week 2 must go into the Week 2 record and be re-exported. In that case the AeroLink narrative should say the same. |
+| m2 | Minor | `workbench/week7/record.ts:488`, `:509`, `:541` | Carried dispositions are pre-filled as `record` without an owner, even when the earlier text is a deferral to a week that has passed. Fixture: NEED-003 "Deferred: … planned for Week 3" and NEED-008 "revisited in Week 3" pass as carried. A deferral's owner of "Week 10" passes (probe), although RID-004 teaches that "a week closes nothing" and T1 drops a level for it. The only signal is the generic "carried" advisory. | Add an advisory (never a block) when a carried reason names a week before 7 ("names Week 3, which has passed: say what happened") and when an owner is only a week ("a week is a date, not an owner"). |
+| m3 | Minor | `workbench/week7/record.ts:490–496`, `:505–508`; `Week7LabTool.tsx:284–306` | Partial packages show spurious findings with no caveat. With Weeks 2–6 and no Week 1, the probe gives 15 findings, among them 6 `orphan` ("parent NEED-… does not exist") and `increment-unresolved:INC-004`, all caused by the missing file. The Part 29 gate is correctly blocked by `sources.ok`, but the list invites students to disposition noise, and those dispositions persist under stable keys. | Above the findings, while any week is missing: "Provisional: Week N not loaded; findings that depend on it are hidden". Suppress `orphan` and `childless-need` without Week 1, and `childless-stk` without Week 4, as is already done for `unallocated` and `cap-no-function`. |
+| m4 | Minor | `content/lectures/week07/session1.ts:462` | R40 p.70 requires prior reviews' "action items closed". The notes restate our equivalent as "every open item you named there enters the package as a deferred finding with its owner". That is a tailoring, not an equivalent. AeroLink then enters the review with an item due *before* this review still open (PHY-006, RID-002), which the cited rule would treat as an unmet entry criterion. | Say it as tailoring: "DoD requires prior action items closed; Phase I open items are designed to carry into Phase II, so we require them dispositioned and owned. An item that was due before this review is the exception the chair checks at entry". RID-002 then becomes an entry-criterion finding, a better teaching point. |
+| m5 | Minor | `content/lectures/week07/session2.ts:320`, `:325`, `:391` | The slide face says "Week 8 imports the closed package". The Week 8 tool still imports the Week 1 and Week 2 exports (milestone report §10.2). A student-visible claim of tool behaviour that does not exist. | Say "Week 8 starts from the closed package (its import is being built)" until the adapter exists, or gate the bullet on the adapter. |
+| m6 | Minor | `content/week7Path.ts:127`, `:143–155` | Arithmetic reproduced: 2.5 + 0.7 + 0.5 + 1.9 (7.4 ÷ 4) + 1.0 + 0.3 + 0.2 + 0.1 = **7.2**; graduate 7.9; three-person team 6.8 person-hours (1.6 and 0.8 × 0.75), 2.3 each, 7.6. Unrounded: 7.14, 7.84 and 7.55. **Uncovered case: a graduate student on a three-person team: 7.6 + 0.7 = 8.3 h (unrounded 8.25) > 8.0.** | State the combined case and either reduce the memo for three-person graduate teams or take it to faculty with F8. |
+| m7 | Minor | `content/lab/week07Lab.ts:214–222` vs `workbench/week7/record.ts:40`; `aerolinkCase.ts:248` | The RID form numbers findings "RID-1, RID-2" per reviewer; the tool's IDs are RID-001 per package; so do the case's. The form's "Criterion or source" and "Proposed fix" have no field in the tool's Rid (the AeroLink `CaseRid` has `criterion`). The criterion, which the lecture says makes a RID checkable (session2 :199–201), is lost when the owning team enters the RID. | Add `criterion` (and optionally `fix`) to Rid, and a gate requiring the criterion. The form says "the owning team numbers RIDs RID-001…". |
+| m8 | Minor | `workbench/week7/record.ts:15`, `:759–784`, `:821–824` | "IDs issued (RID) are never reused" fails across a teammate share. `packageJson` omits `issued`, so after RID-002 is deleted and the package exported and imported, `nextRid` returns **RID-002** (probe; locally RID-003). | Export and import `issued`. |
+| m9 | Minor | `workbench/week7/record.ts:509` vs `aerolinkCase.ts:146` | The tool makes one open-item finding per Week 6 review *row* (one disposition, one owner for every item in it). The case makes one per *item* (15), and RID-004 turns on per-item owners. Students see a different granularity from the worked example, and cannot give each item its own owner. | One finding per ID in `row.items` (fall back to the row when it holds no ID). |
+| n1 | Note | `workbench/week7/record.ts:629` | A rejection passes with any two words ("Disagree strongly" passes; probe). The `reject-no-id` advisory flags it, and the gate table says a phrase is enough, so this is consistent with the stated rule. | Optional: make the advisory text say a reason is not evidence. |
+| n2 | Note | `docs/lectures/week07/WEEK07_LECTURE_OUTLINE.md:3–9` | The outline was edited (revision banner), but the milestone report's file table does not list it. | List it. |
 
-**§7 rule check**
+Checked and found correct: the six importers are each week's own (record.ts:148–183). Wrong format, Markdown, a list, text
+versions, a Week 7 package in the weekly slot, AeroLink and a week stored in the wrong slot are all refused with
+actionable messages (:136–143, :186, :363). The package format is versioned (`week7-package` v1) and documented. A
+teammate import confirms before replacing work. Empty answers are rejected through the shared `emptyAnswer.ts`, and
+short valid answers ("Duplicate", "TL", "R-002") are accepted. Gate reasons are student-visible. Routing, aliases and the
+archive follow the Week 6 pattern. The no-quiz rationale is stated on the page (assessmentParts.ts:8–10). The old Exam 1
+assumption is surfaced, not changed (`instructor/exams/exam1.ts:9` "week: 7"; Assessment page EXAM_NOTE). Every rubric
+criterion (6 team, 2 individual, 4 graduate) has four distinct level descriptors (week07Lab.ts:198–211).
 
-| Rule | Result |
-|---|---|
-| 1 | ✗ (F01). |
-| 2 | ✓: `rubricScope` names RB-16.1 for the memo. |
-| 3 | ✗ (F05). |
-| 4 | ✓: the reference study passes `checkStudy`; the totals and reversals are test-asserted against the reference layer. |
-| 5 | Weak (F10). |
-| 6 | ✗ (F03). |
-| 7 | Partly (F07, F08); the proportional-rescaling and Monte Carlo methods are labelled as course conventions. |
-| 8 | ✓: ALT-005 in q7-6 is new and does not collide. |
+## Faculty items
 
-## Exam 1 audit
+- **FI-1 RIDs before the meeting (departure from the outline's Plan A).** It is sound on the source: SEBoK's participants
+  analyse independently and then meet (R06c p.388), with the information made available ahead (p.387). Pedagogically it
+  is the better design, because a meeting spent finding defects is wasted. Its cost is the calendar. Procedure steps 2–5
+  put the audit, the summary, the briefing build and the upload "Day 1 after Session 1 / 24 h before Session 2". The peer
+  team then has the remaining time to read another package and write at least two RIDs each. On a Tue/Thu cadence that is
+  about 24 h each way. Also, the entry criterion "each reviewer has submitted at least two RIDs" makes one team's entry
+  depend on another team's diligence. Recommend: release the Part 28 audit at the end of Week 6 (the exports exist then),
+  and treat a missing peer RID set as the reviewer's I2 score, not the owner's entry criterion.
+- **FI-2 Slot length.** Five teams get 4 min of briefing and 4 min of questions. "Every member presents" means about 1 min
+  each, and a peer team holding at least 8 RIDs gets about 30 s per RID. The meeting can only sample RIDs. Say so: the
+  chair picks the 2–3 major RIDs to discuss and the rest are answered in writing within the 3 days. Six or more teams
+  remains a faculty decision.
+- **FI-3 Exam placement:** `exam1.ts` still says week 7. This is a grading-policy decision, correctly left unchanged.
+- **FI-4 No readiness quiz:** agree. The review, the I1/I2 individual criteria and the graduate memo assess the week.
+- **FI-5 Three-person teams:** 7.6 h, and 8.3 h for a graduate student (m6).
+- **FI-6 Proposed AeroLink content:** the PHY-006 disposition, the decisions needed and the four RIDs. Decide M1's fix
+  (which overdue Week 2 items enter the audit) together with RID-001's wording.
+- **FI-7 Upstream ID numbering:** the Week 4 EXT and Week 6 O issuing (M3) is a Weeks 4/6 tool change. It needs its owner
+  and a re-export of the fixtures.
+- **FI-8 Register:** P7-1 and P7-2 are staged and not cited. Confirmed.
 
-- **Totals.** Part A = A1 5 + A2 8 + A3 7 + A4 5 = **25**. Part B = 16 + 8 + 8 + 8 = **40**. Part C = C1 7 (3 × 2 + 1) + C2 14 + C3 8 + C4 6 = **35**. 12 items, 100 points.
-- **Blueprint alignment.**
-  - Part A: classify a stakeholder set (A3), explain a causal loop (A2), short answer (A1, A4) ✓.
-  - Part B: critique and rewrite 4 flawed requirements (B1), MOE/MOP classification (B2), missing scenario (B3) ✓.
-  - Part C: assign a TRL (C1), write and rate 2 risks (C2), assumption vs risk (C3) ✓. C4 (SRR) is an addition and is fine.
-- **Applied share.** The stated ≈ 84 of 100 points on the scenario is correct (A1–A4, B1, B3, C1–C4), well above the 60 % guideline.
-- **Coverage gaps.** B3.1, B3.3, B4.3, B5.2 and B5.4 are acknowledged in `mapping`. B5.2 is partly touched by C4's "no parent".
-- **Keys verified correct.**
-  - A4: acknowledged SoS (R09 p.868 definition matches).
-  - C1(a) TRL 4, C1(c) TRL 5.
-  - C2's examples rate into moderate cells with Week 6-consistent handling: avoid for L2–3 × C4; L2 × C5 matches the reference R-003.
-  - C3 classifications.
-  - B2 classifications.
-  - B1 (i)–(iii) rewrites.
-- **Keys inconsistent with Weeks 4–6:** C4, C1(b), B1(iv), C2 (F04); A2 (F12).
-- **Security.** The bank is excluded from the student build (verified). Instructor mode remains a display toggle in the instructor edition, and the caution says so.
+## Recommended order of revision
 
-## Citation table
-
-| Claim / location | Citation | Verdict | Evidence |
-|---|---|---|---|
-| Keeney quote "Most important decisions involve multiple objectives, … you can't have it all." | R18 p.465 | OK (exact) | |
-| Purpose (15288), formal process criteria, trade study within cognitive limits | R18 p.463 | OK | |
-| Four best practices; UAV example; five trade-space objectives | R18 p.464 | OK | |
-| Framing: baseline, boundaries, decision problem statement | R18 p.465 | OK | |
-| Objective tests; measure properties | R18 p.465 | OK | |
-| Walk-away → 0; stretch goal → 100 (or 1, 10); document shape rationale | R18 p.465–466 | OK | |
-| Weights depend on importance and range; swing matrix; 100 top-left; normalise | R18 p.466–467 | OK | |
-| Scoring sheets; ideal alternative | R18 p.468 | OK | |
-| Value table, heat map, additive model | R18 p.469 | OK | The equation is an image; course notation is labelled |
-| Value component chart | R18 p.470 | OK | |
-| Stakeholder value scatter plot | R18 p.470–471 | OK | |
-| Uncertainty of independent variables; lower/nominal/upper; Monte Carlo identifies key uncertainties | R18 p.471 | OK | |
-| Line, tornado and waterfall diagrams; Monte Carlo, decision trees, influence diagrams; line diagram for swing weights | R18 p.472 | OK | |
-| Value-focused improvement; actionable task list; report | R18 p.472–473 | OK | |
-| Cognitive bias; confirmation; self-mitigation infeasible; rankism, complacency, optimism | R18 p.473 | OK | |
-| Independent review (organisationally and financially independent), CRM, premortem | R18 p.474 | OK | |
-| Traceable, defendable, actionable plan; integration with SE processes | R43 p.109 | OK | |
-| Scale analysis to the decision; decision maker has full responsibility | R43 p.110 | OK | |
-| Criteria include cost/time constraints; objective/subjective; sensitivity | R34 p.609 | OK | Cited as 608–609 |
-| Full life-cycle cost | R34 p.609–610 | OK | |
-| Selection-criteria model "the same" as swing weighting | R34 p.611 | OVERCLAIM | R34 weights by relative importance (F07) |
-| Check sensitivity of scores to weights | R34 p.612 | OK | Last bullet of the "Checking correctness" list |
-| Modelling is an aid, not a decision tool; keep modelling context | R34 p.614 | OK | |
-| SBD definition; set drivers vs set modifiers | R35 p.1396 | OK | |
-| One-requirement-at-a-time tornado | R35 p.1397 | OK | |
-| Uniform random design variables; Monte Carlo; dominance; select sets | R35 p.1399 | OK | |
-| Exam C1 TRL scale | R16 p.767 | OK | |
-| Exam C2 condition–if–then | R46 p.125 | WRONG PAGE / OVERCLAIM | R46 gives event + consequence (+ cause) and two-part if–then; condition–if–then is R61 p.630 (F04d) |
-| Exam C4 SRR criteria | R40 p.69–72 | OK (page) | The key's criterion names do not match Week 6 S1–S8 (F04a) |
-| Exam B1 characteristics; rationale/verification attributes | R13 p.566; p.559 | OK | |
-| Exam A3 supporters/skeptics | R63 p.235–237 | OK | |
-| Exam A4 acknowledged SoS | R09 p.868–869 | OK | |
-
-## Verified correct (independent recomputation)
-
-**Raw scores**
-- Wait from w(u): 240 → 66.67, 288 → 12.0, 320 → 8.0 min.
-- Capacities: 240 / 288 / 240 / 320.
-- Retained capacity: 80 / 66.7 / 100 / 90 %.
-
-**Totals**
-- 0.4520 / 0.4884 / 0.4580 / 0.6702.
-- ALT-004 leads ALT-002 by 0.182.
-- Largest gap to the ideal: capital, 0.192.
-
-**Reversal points** (closed form and brute force agree)
-- CRIT-002 0.478 → ALT-001, tie value 0.591.
-- CRIT-001 0.2263 → ALT-003; the baseline crosses at 0.220.
-- CRIT-003 0.5925 → ALT-003.
-- CRIT-004 0.555 → ALT-003. This uses the rounded score 6.86; the exact 48/7 gives 0.554.
-- ALT-003 crosses on cost at 0.569.
-- Spot values at w = 0.47 and 0.49 are correct.
-
-**Tornado (±0.1)**
-- Worst margins 0.090 (wait at 0.30) and 0.096 (cost at 0.40).
-- No crossing at ±0.1; both cross at ±0.2.
-- The margin is concave in w, so the endpoint bound is valid.
-
-**Other numbers**
-- ALT-004 with zero capital value: 0.562.
-- Mutation key: ALT-004 at USD 16 M scores 0.622, and the cost reversal moves down.
-- q7-4: 0.364. q7-6: 0.651 (second). q7-7: w* = 0.50. q7-3: 0.545 and 0.
-- Monte Carlo pins (seed 2026, as implemented): 9605 / 213 / 182 / 0 shared, which rounds to the quoted 96.1 / 2.1 / 1.8 %; 9039 independent (90.4 %); means 0.657 / 0.510 / 0.506 / 0.462; ALT-004 P5–P95 0.625–0.687; the bound argument 0.474 / 0.495 < 0.575.
-- SBD: 15 points, 6 feasible, and the capital and retained values in the table are right (e.g. 16/5: 13.6, 100 %; 20/4: 24.8, 75 %). No feasible point dominates another.
-
-**Sessions and workload**
-- Session 1 = 45 + 30 = 75 min.
-- The reading count of 14 pp is correct (R18 12 + R43 2). The workload sums to 9.0 h.
-- RB-6.1–6.6 map one-to-one onto template sections 2–7.
-- The CP3 continuity (RB-6 45 %, 9 %) matches syllabus §12.
-
-**Accessibility**
-- The line diagram and tornado have table equivalents, and series are distinguished by pattern and label.
+M2 (small, mechanical, tests both ways) → M3 (split the kind and fix the index; file the upstream items) → M1 (case finding
+plus counts; the decks and lab markdown regenerate) → m1–m9. Then re-run the Week 7 vitest set, `tsc -b`,
+`build:student`, and the two e2e specs, since the fixture's dispositions change.

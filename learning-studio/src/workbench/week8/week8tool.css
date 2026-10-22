@@ -107,6 +107,7 @@
   margin: 0;
 }
 .w8-scroll {
+  position: relative;
   overflow: auto;
   max-width: 100%;
   border: 1px solid var(--wb-line);
@@ -146,4 +147,112 @@
 }
 .w8-answer {
   margin: 4px 0 0;
+}
+/* M7: the Week 1 source (My Project or a file) and the package per Week 1 ID. Indigo = the team's own project, the
+   same token pair as My Project (project.css --pj-project), in light and dark. */
+.w8-tool {
+  --w8-project: #3d4ac4;
+  --w8-project-soft: #e8eafb;
+  --w8-project-edge: #8f98e6;
+}
+.dark .w8-tool {
+  --w8-project: #9aa4ff;
+  --w8-project-soft: #1f2347;
+  --w8-project-edge: #4b54a8;
+}
+.w8-source {
+  border: 1px solid var(--wb-line);
+  border-radius: 6px;
+  margin: 0;
+  padding: 8px 12px 10px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.w8-source legend {
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0 4px;
+}
+.w8-source-wrap {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.w8-project {
+  border: 1px solid var(--w8-project-edge);
+  border-left: 4px solid var(--w8-project);
+  background: var(--w8-project-soft);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.w8-project-line {
+  margin: 0;
+}
+.w8-project-line strong {
+  color: var(--w8-project);
+}
+.w8-msg.warn {
+  color: var(--wb-warn);
+}
+.w8-drift {
+  border: 1px solid var(--wb-line);
+  border-left: 4px solid var(--wb-warn);
+  background: var(--wb-warn-soft);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+.w8-drift h3 {
+  font: 600 15px/1.3 var(--wb-body);
+  margin: 0 0 4px;
+}
+.w8-drift ul {
+  margin: 0 0 4px;
+  padding-left: 20px;
+}
+.w8-select {
+  font: inherit;
+  color: var(--wb-fg);
+  background: var(--wb-bg, var(--wb-panel));
+  border: 1px solid var(--wb-line);
+  border-radius: 6px;
+  padding: 4px 6px;
+  max-width: 100%;
+}
+.w8-mono {
+  font-family: var(--wb-mono, ui-monospace, monospace);
+  white-space: nowrap;
+}
+.w8-sub {
+  color: var(--wb-muted);
+  font-size: 13px;
+}
+.w8-save {
+  font-size: 14px;
+  color: var(--wb-muted);
+}
+.w8-save.err {
+  color: var(--wb-warn);
+  font-weight: 600;
+}
+.w8-editaccess:empty {
+  display: none;
+}
+.w8-editaccess .pj-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  border: 1px solid var(--wb-line);
+  border-left: 4px solid var(--wb-warn);
+  background: var(--wb-warn-soft);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
 }

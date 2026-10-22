@@ -14,7 +14,8 @@
 // unstated word minimums on free text rejected answers the lecture calls complete ("Fail safe", "Power only",
 // "Approved"; review 2026-10-19 M2). Since that review every free-text threshold is the shortest answer the lecture
 // accepts, and it is stated in the gate's own text: one word where a word is an answer, two where the lecture asks for an
-// action (verb and object), and a criterion counts with one token when it carries a number or an owned TBD. No gate
+// action (verb and object), and a criterion counts with one token when it is a value with its unit; a TBD needs its
+// owner. An empty answer ("none", "n/a", "-", "?"; src/workbench/emptyAnswer.ts) never counts (confirmation N1, N2). No gate
 // tests a name's form, its capitalization or its vocabulary; one-word names, proper nouns, IDs, people and external AI
 // services are valid ends and names. src/workbench/shortAnswers.test.ts asserts short valid answers in every week's tool.
 //
@@ -122,7 +123,7 @@ export const DEGRADED_PROMPTS = [
 export type GateRow = { id: string; short: string; basis: string }
 
 export const COMPONENT_GATES = [
-  { id: 'name', short: 'a name (one word is enough)', basis: 'A component is one of the parts that make up a system (SEBoK glossary p.1643, after ISO/IEC/IEEE 15288); an element with no name cannot be traced. Session 1, “System element and component”.' },
+  { id: 'name', short: 'a name (one word is enough)', basis: 'A component is one of the parts that make up a system (SEBoK glossary, “Component”, definition 2, IEEE 2008; R101 p.1467); an element with no name cannot be traced. Session 1, “System element and component”.' },
   { id: 'parent', short: 'placed under a Week 4 physical element that exists', basis: 'The breakdown is a hierarchy (SEBoK glossary p.1640; R20c p.597 layers); a component with no parent is outside the structure. Session 1, “Layers, and five plus or minus two per level”.' },
   { id: 'kind', short: 'its kind: hardware, software, data, people, procedure, facility or a combination', basis: 'Elements can be hardware, software, data, humans, processes, procedures, facilities (SEBoK glossary p.1643); the kind decides how it is verified. Session 1, “System element and component”.' },
   { id: 'responsibility', short: 'its responsibility: an action and what it acts on, at least two words (“Charges aircraft”)', basis: 'Course convention taught on the responsibility card (“the responsibility in one sentence”): a component exists to carry allocated functions; a component with no stated responsibility cannot be checked against them. A sentence needs at least a verb and its object. Session 1, “Responsibility cards: one per element”.' },
@@ -140,7 +141,7 @@ export const INTERFACE_GATES = [
   { id: 'direction', short: 'the direction: from which end to which, for what flows (an organizational interface needs none)', basis: 'Defining the interaction includes which way it goes; a physical or information interface without a direction cannot be verified at either end. Session 1, “The interface definition table” (course convention, after R13 p.563 and R57 p.413).' },
   { id: 'medium', short: 'the medium or carrier: connector, network, document or agreement', basis: 'A physical interface is like a link or a connector, and in enterprise systems a protocol, procedure or document (R20c p.597); without the medium a hidden external interface cannot be found (R55 p.369). Session 1, “External and hidden external interfaces”.' },
   { id: 'owners', short: 'the owner of each side', basis: 'Interface management needs the roles and responsibilities of each side (DoD p.139) and an ICWG of the interfacing activities (DoD p.140). Session 2, “Governance and the interface control working group”.' },
-  { id: 'protection', short: 'if it crosses a trust boundary: its protection, or the reason it needs none (one word is enough: “TLS”, “Power only”)', basis: 'Adversity often comes through or from connected systems (R25 p.1234), and data must be protected from unauthorized alteration (R25 p.1231). Session 2, “Interface security: trust boundaries”: “a power cable carries no data, and saying so is a complete answer”.' },
+  { id: 'protection', short: 'if it crosses a trust boundary: its protection, or the reason it needs none (one word is enough: “TLS”, “Power only”; “none”, “n/a” or “-” is not an answer)', basis: 'Adversity often comes through or from connected systems (R25 p.1234), and data must be protected from unauthorized alteration (R25 p.1231). Session 2, “Interface security: trust boundaries”: “a power cable carries no data, and saying so is a complete answer”.' },
   { id: 'degraded', short: 'its degraded mode: what each side does when the interface fails, at least two words (“Fail safe”)', basis: 'Resilience asks how the system withstands and degrades gracefully when an element fails (R24 p.1205). Session 2, “Degraded modes at interfaces”, whose slide gives “Fail safe” as a complete degraded mode.' },
 ] as const satisfies readonly GateRow[]
 
@@ -157,7 +158,7 @@ export const INTERFACE_ADVISORIES = [
 export const REQUIREMENT_GATES = [
   { id: 'one-shall', short: 'exactly one “shall” (one requirement per statement)', basis: 'The Week 2 rule, kept: one requirement per statement, so that each can be verified on its own (taught in Week 2; in Week 5 Session 1, “Interface requirements in three steps”, every worked statement carries one “shall”).' },
   { id: 'interface', short: 'names the interface it governs, an interface in the record', basis: 'An interface requirement deals with an interaction across an interface boundary (R13 p.563); one that names no interface cannot be traced to it.' },
-  { id: 'criterion', short: 'a verification criterion: a value with its unit (“2 min”) or a TBD with an owner (“TBD (Ops)”); one token counts when it holds a number or a TBD, otherwise two words', basis: 'Each requirement has a measurable criterion or a tracked TBD (Week 2 rule; R13 p.565).' },
+  { id: 'criterion', short: 'a verification criterion: a value with its unit (“2 min”) or a TBD with an owner (“TBD (Ops)”); a value with its unit counts however short, a TBD or TBR needs its owner, otherwise two words that are not themselves vague (“Very fast”, a bare “1” or a TBD with no owner fail)', basis: 'Each requirement has a measurable criterion or a tracked TBD (Week 2 rule; R13 p.565).' },
   { id: 'method', short: 'a verification method: inspection, analysis, demonstration or test', basis: 'The Week 2 rule: a requirement without a verification method is not verifiable.' },
   { id: 'parent', short: 'a parent need, capability or requirement that exists in the record', basis: 'The Week 2 trace rule: every requirement traces up.' },
 ] as const satisfies readonly GateRow[]
@@ -166,7 +167,7 @@ export const CHANGE_GATES = [
   { id: 'interface', short: 'the interface it changes, an interface in the record', basis: 'Interface changes are managed under configuration management (DoD p.138); a change request must name what it changes. Session 2, “Change control”.' },
   { id: 'change', short: 'the change: an action and what it acts on, at least two words (“Add encryption”)', basis: 'Session 2, “Worked example I: one interface change, traced through the N²”, step Request: “state the change to one interface” before its impact can be assessed.' },
   { id: 'impact', short: 'at least one affected interface or element found from the N² row and column, existing in the record', basis: 'Course method, Session 2 “Worked example I: one interface change, traced through the N²”: the rows and columns of the changed interface’s two ends list every candidate neighbor, and judgment narrows them to the ones the change reaches; a change request that names none has not been assessed.' },
-  { id: 'decision', short: 'the decision (one word is enough: “Approved”) and who made it', basis: 'An ICWG or the owners decide interface issues (DoD p.140; MITRE p.414): a change with no decider is not controlled.' },
+  { id: 'decision', short: 'the decision (one word is enough: “Approved”; “n/a” or “?” is not a decision) and who made it', basis: 'An ICWG or the owners decide interface issues (DoD p.140; MITRE p.414): a change with no decider is not controlled.' },
 ] as const satisfies readonly GateRow[]
 
 export type ComponentGateId = (typeof COMPONENT_GATES)[number]['id']

@@ -119,17 +119,17 @@ describe('M3: problem statement, mission (MGO-001) and goals in Part 2; every ne
   it('bad: no problem statement, a two-sentence mission, a thin goal, goal IDs that clash with the mission or repeat', () => {
     expect(checkProposal({ ...F.proposal, problem: '' }, TODAY).issues.join(' ')).toMatch(/Problem statement: one sentence/)
     expect(checkProposal({ ...F.proposal, purpose: 'We move food to pantries every week. We also store it safely.' }, TODAY).issues.join(' ')).toMatch(/Mission \(MGO-001\): a single sentence/)
-    expect(checkProposal({ ...F.proposal, goals: [{ id: 'MGO-002', text: '' }] }, TODAY).issues.join(' ')).toMatch(/MGO-002: state the goal/)
+    expect(checkProposal({ ...F.proposal, goals: [{ id: 'MGO-002', text: '' }] }, TODAY).issues.join(' ')).toMatch(/MGO-002: state the objective/)
     // gate sweep 2026-10-19: a three-word goal and a short one-sentence mission are accepted; two words are not a sentence
     expect(checkProposal({ ...F.proposal, goals: [{ id: 'MGO-002', text: 'Cut food waste' }] }, TODAY).issues).toEqual([])
     expect(checkProposal({ ...F.proposal, purpose: 'Feed every family weekly.' }, TODAY).issues).toEqual([])
     expect(checkProposal({ ...F.proposal, purpose: 'Feed families.' }, TODAY).issues.join(' ')).toMatch(/Mission \(MGO-001\): one sentence/)
     expect(checkProposal({ ...F.proposal, goals: [{ id: 'MGO-001', text: 'Keep pantries stocked every week' }] }, TODAY).issues.join(' ')).toMatch(/run from MGO-002/)
-    expect(checkProposal({ ...F.proposal, goals: [...F.proposal.goals, { ...F.proposal.goals[0] }] }, TODAY).issues.join(' ')).toMatch(/Duplicate goal ID MGO-002/)
+    expect(checkProposal({ ...F.proposal, goals: [...F.proposal.goals, { ...F.proposal.goals[0] }] }, TODAY).issues.join(' ')).toMatch(/Duplicate objective ID MGO-002/)
   })
   it('bad: a need with no goal, or a goal that is not in Part 2, does not count', () => {
     expect(needStatus({ ...F.needs[0], goal: '' }, F).reasons.join(' ')).toMatch(/Trace the need to the mission \(MGO-001\)/)
-    expect(needStatus({ ...F.needs[0], goal: 'MGO-009' }, F).reasons.join(' ')).toMatch(/MGO-009 is not the mission or a goal/)
+    expect(needStatus({ ...F.needs[0], goal: 'MGO-009' }, F).reasons.join(' ')).toMatch(/MGO-009 is not the mission or an objective/)
     expect(checkNeedsPart(withF({ proposal: { ...F.proposal, goals: [] } })).ok).toBe(false)
   })
 })
@@ -190,7 +190,7 @@ describe('F03: the concern check matches what L5 promises', () => {
   it('a register of eight generic concerns does not pass part 4', () => {
     const r = withF({ stakeholders: F.stakeholders.map((s, i) => ({ ...s, concerns: [{ ...s.concerns[0], text: GENERIC[i % GENERIC.length] }] })) })
     expect(checkRegister(r).ok).toBe(false)
-    expect(checkRegister(r).issues[0]).toMatch(/At least 8 complete stakeholders, each with a specific concern \(0 so far\)/)
+    expect(checkRegister(r).issues[0]).toMatch(/At least 8 complete stakeholders, each with a specific concern and a level of interest with a reason \(0 so far\)/)
   })
   it('specific concerns are accepted: the fixture, the AeroLink reference rows and a new example', () => {
     for (const s of F.stakeholders) for (const c of s.concerns) expect(isSpecificConcern(c.text, s.name), c.text).toBe(true)
@@ -306,7 +306,7 @@ describe('F11: the exports carry priority, concern links, several concerns per s
     expect(md).toContain(`- Problem statement: ${F.proposal.problem}`)
     expect(md).toContain(`- Mission (MGO-001): ${F.proposal.purpose}`)
     expect(md).toContain('| REL-001 | STK-007 | conflicts with | STK-004 |')
-    expect(md).toContain('| Goal (MGO) |')
+    expect(md).toContain('| Objective (MGO) |')
     expect(md).toContain('CON-009: Families with no car')
     expect(md).toContain(F.aiStatement)
     expect(md).toMatch(/Record status:\*\* complete and approved/)

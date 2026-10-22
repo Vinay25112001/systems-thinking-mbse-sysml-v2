@@ -2,6 +2,7 @@
 // generated .pptx. Kept outside the Week 1 flow (src/flow/*), which it does not change.
 import { lecturesOfWeek } from '../content/lectures'
 import { lectureStem } from '../content/lectures/text'
+import { deckShipped } from './decks'
 import { Link } from '../lib/router'
 import { lessonPath, pptxHref, viewerPath } from './route'
 
@@ -32,7 +33,7 @@ export function LectureEntry({ week }: { week: number }) {
           <Link to={lessonPath(week)} className={btn}>
             Read the lesson
           </Link>
-          {lectures.map((l) => (
+          {lectures.filter((l) => deckShipped(lectureStem(l))).map((l) => (
             <a key={l.session} href={pptxHref(lectureStem(l))} download className={btn}>
               Download .pptx{lectures.length > 1 ? ` (session ${l.session})` : ''}
             </a>

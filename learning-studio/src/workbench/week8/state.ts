@@ -8,12 +8,18 @@
 // Review status: new-pending-review.
 import { AUDIT_QUESTIONS, FINDING_CLASSES, LAB8_MINIMUMS, MAPPING_KINDS } from '../../content/lectures/week08/labBrief'
 import { auditFindings, auditSummary, generateSysml, mappingMatrix, type Finding, type Generated, type ImportSource, type ManualRow, type MappingRow, type Week2Part } from './skeleton'
+import type { ProjectRef } from '../../project/adapters/week8'
 
 export const W8_KEY = 'w8.import'
 export const WORKSPACE_FORMAT = 'week8-import'
 export const WORKSPACE_VERSION = 1
 
 export type W8State = {
+  /** Where the Week 1 input comes from, chosen by the student (M7): a model-inputs file (the default, as before) or the
+   *  team's My Project. */
+  source: 'file' | 'project'
+  /** Which project was read for `week1`, and when (only when `source` is 'project'). */
+  projectRef: ProjectRef | null
   /** The source read from the Week 1 model inputs (full register). */
   week1: ImportSource | null
   week1Origin: string
@@ -29,12 +35,14 @@ export type W8State = {
   notes: Record<string, string>
   assessment: boolean
   relationships: 'all' | 'conflicts'
+  /** A one-time explanation shown when the saved state had to be repaired on load (not saved back as such). */
+  notice?: string
   updatedAt?: number
   exportedSysmlAt?: number
   exportedMdAt?: number
 }
 
-export const EMPTY_STATE: W8State = { week1: null, week1Origin: '', week2: null, snapshot: null, purpose: '', manual: [], dispositions: {}, notes: {}, assessment: true, relationships: 'all' }
+export const EMPTY_STATE: W8State = { source: 'file', projectRef: null, week1: null, week1Origin: '', week2: null, snapshot: null, purpose: '', manual: [], dispositions: {}, notes: {}, assessment: true, relationships: 'all' }
 
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x)
 const objs = (x: unknown): Record<string, unknown>[] => (Array.isArray(x) ? x.filter(isObj) : [])
@@ -75,9 +83,18 @@ export function normalizeSource(x: unknown): ImportSource | null {
 /** Fills missing fields of a stored or shared state. Never throws. */
 export function normalizeState(v: unknown): W8State {
   const r = isObj(v) ? v : {}
+  const p = isObj(r.projectRef) ? r.projectRef : null
+  const storage = p && (p.storage === 'http' || p.storage === 'indexeddb' || p.storage === 'memory') ? p.storage : 'indexeddb'
+  const ref = p && str(p.uid) ? p : null
+  // a project source without a readable project reference (damaged saved state) falls back to the file import, with
+  // what came from the project cleared, so the radio, the summary and the source never disagree (M7 review M7-10)
+  const lost = r.source === 'project' && !ref
   return {
-    week1: normalizeSource(r.week1),
-    week1Origin: str(r.week1Origin),
+    source: r.source === 'project' && ref ? 'project' : 'file',
+    projectRef: ref ? { uid: str(ref.uid), title: str(ref.title), team: str(ref.team), rev: num(ref.rev) ?? 0, savedAt: str(ref.savedAt), readAt: str(ref.readAt), storage } : null,
+    week1: lost ? null : normalizeSource(r.week1),
+    week1Origin: lost ? '' : str(r.week1Origin),
+    ...(lost ? { notice: 'The saved Week 8 work no longer says which project it was read from, so the tool is back on the file import. Choose My Project again to read it.' } : {}),
     week2: normalizeWeek2(r.week2),
     snapshot: normalizeSource(r.snapshot),
     purpose: str(r.purpose),
@@ -126,7 +143,7 @@ export function readiness(s: W8State): { ready: boolean; items: ReadinessItem[] 
   const relOk = d.summary.conflicts >= LAB8_MINIMUMS.conflicts && (reduced || d.summary.relationships >= LAB8_MINIMUMS.relationships)
   const exported = !!s.updatedAt && (s.exportedSysmlAt ?? 0) >= s.updatedAt && (s.exportedMdAt ?? 0) >= s.updatedAt
   const items = [
-    item('week1', 'Week 1 model inputs imported', !!s.week1, s.week1 ? `Imported from ${s.week1Origin || s.week1.origin}.` : 'Only a Week 2 file is imported: import the Week 1 model inputs to model the concerns, context and relationships.'),
+    item('week1', s.source === 'project' ? 'Week 1 work read from My Project' : 'Week 1 model inputs imported', !!s.week1, s.week1 ? `Imported from ${s.week1Origin || s.week1.origin}.` : 'Only a Week 2 file is imported: import the Week 1 model inputs to model the concerns, context and relationships.'),
     item('purpose', `Purpose statement (at least ${LAB8_MINIMUMS.purposeWords} words)`, words(s.purpose) >= LAB8_MINIMUMS.purposeWords, `${words(s.purpose)} words: who uses the model, and for which decisions.`),
     item('coverage', 'Register coverage: no defects', defects.length === 0, defects.length ? `${defects.length} item(s) left out: ${defects.map((f) => f.id).join(', ')}.` : `${d.summary.stakeholders.model} stakeholders, ${d.summary.concerns.model} concerns and ${d.summary.externals.model} external systems in the model.`),
     item('relationships', reduced ? 'At least one conflict relationship modeled (reduced scope)' : `At least ${LAB8_MINIMUMS.relationships} relationships, ${LAB8_MINIMUMS.conflicts} of them a conflict`, relOk, `${d.summary.relationships} modeled, ${d.summary.conflicts} conflict(s).`),
@@ -163,7 +180,7 @@ export function matrixMarkdown(s: W8State, date = new Date().toISOString().slice
   if (!d) return '# Week 8 mapping matrix\n\nNothing imported yet: import the Week 1 model inputs in the lab tool.\n'
   const src = d.source
   L.push(`# ${fileStem(s)}: artifact-to-model mapping matrix and import audit (Week 8)`, '')
-  L.push(`- Enterprise: ${src.enterprise.name || '(no name)'}`, `- Source: ${src.origin}${src.week2 ? ' and the Week 2 model inputs' : ''}`, `- Model file: ${sysmlFileName(s)}`, `- Date: ${date}`, '')
+  L.push(`- Enterprise: ${src.enterprise.name || '(no name)'}`, `- Source: ${(s.source === 'project' && s.week1Origin) || src.origin}${src.week2 ? ' and the Week 2 model inputs' : ''}`, `- Model file: ${sysmlFileName(s)}`, `- Date: ${date}`, '')
   L.push('Course acceptance checks only. Validity is decided by the course-designated checker; a checker PASS does not show the model says what the register says.', '')
   L.push('## Mapping matrix', '')
   L.push('| Prefix | Artifact | Phase I week | Package | Construct | Modeled in | Count / IDs | Status | Team reason |', '|---|---|---|---|---|---|---|---|---|')

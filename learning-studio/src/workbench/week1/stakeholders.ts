@@ -126,7 +126,7 @@ export function registerRowIssues(r: RegisterRow, allowed: string[] = ROW_CHOICE
   const concern = r.concern.trim()
   // gate sweep 2026-10-19: no word count ("Noise after 10 pm" is specific in four words); specificity is the gate
   if (words(concern) < 1) out.push('Write the concern.')
-  else if (!isSpecificConcern(concern, ROW_CHOICES.find((c) => c.id === r.stk)?.name)) out.push(`The concern is generic: it names only a general quality (safety, cost, noise…) or no concrete detail. ${CONCERN_HELP} (RB-1.3)`)
+  else if (!isSpecificConcern(concern, ROW_CHOICES.find((c) => c.id === r.stk)?.name)) out.push(`The concern is generic: it names only a general quality (safety, cost, noise…) or no concrete detail. ${CONCERN_HELP}`)
   const v = r.influence.trim()
   if (!/^[1-5]$/.test(v)) out.push('Rate influence as a whole number from 1 to 5.')
   if (words(r.reason) < 1) out.push('Give the reason for the rating, so that a reviewer can challenge it.')

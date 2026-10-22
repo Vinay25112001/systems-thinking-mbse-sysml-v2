@@ -1,0 +1,187 @@
+/* Dialogs, buttons and the template-copy action shared by Guided Practice (M5) and the My Project / Lab handoff.
+   Dialogs render in a portal outside .sc-root, so they carry the design tokens of spec §l themselves. Text floor 13 px. */
+.gp-dialog,
+.tc {
+  --gpd-panel: #ffffff;
+  --gpd-ink: #18202d;
+  --gpd-muted: #566071;
+  --gpd-line: #d3d9e1;
+  --gpd-line-strong: #b4bdc9;
+  --gpd-course: #0f6e8c;
+  --gpd-project: #3d4ac4;
+  --gpd-example: #8a3a78;
+  --gpd-example-soft: #f6e8f2;
+  --gpd-example-edge: #d39cc5;
+  --gpd-bad: #b3261e;
+  --gpd-on: #ffffff;
+}
+.dark .gp-dialog,
+.dark .tc {
+  --gpd-panel: #181e27;
+  --gpd-ink: #e3e8ef;
+  --gpd-muted: #9ba5b4;
+  --gpd-line: #2b3340;
+  --gpd-line-strong: #3d4757;
+  --gpd-course: #4fb3d4;
+  --gpd-project: #9aa4ff;
+  --gpd-example: #e391cf;
+  --gpd-example-soft: #3a1d33;
+  --gpd-example-edge: #7d3f6d;
+  --gpd-bad: #ff8a80;
+  --gpd-on: #0b1218;
+}
+.gp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 20, 0.45);
+  z-index: 90;
+}
+.gp-dialog {
+  position: fixed;
+  z-index: 91;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  padding: 24px;
+  border-radius: 14px;
+  background: var(--gpd-panel);
+  color: var(--gpd-ink);
+  box-shadow: 0 8px 24px rgba(24, 32, 45, 0.18), 0 0 0 1px var(--gpd-line);
+  font: 16px/1.55 'IBM Plex Sans', system-ui, sans-serif;
+}
+.gp-dialog:focus-visible,
+.gp-dialog :focus-visible,
+.tc :focus-visible {
+  outline: 2px solid var(--gpd-course);
+  outline-offset: 2px;
+}
+.gp-dialog-title {
+  margin: 0 0 12px;
+  font: 600 22px/1.25 'IBM Plex Sans Condensed', system-ui, sans-serif;
+}
+.gp-dialog p {
+  margin: 0 0 12px;
+}
+.gp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+.gp-btn,
+.tc-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--gpd-line-strong, var(--sc-line-strong));
+  background: var(--gpd-panel, var(--sc-panel));
+  color: var(--gpd-ink, var(--sc-ink)) !important;
+  font: 500 15px/1.2 'IBM Plex Sans', system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.gp-btn:disabled,
+.tc-trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.gp-btn.course {
+  background: var(--gpd-course, var(--sc-course));
+  border-color: var(--gpd-course, var(--sc-course));
+  color: var(--gpd-on, var(--sc-on-accent)) !important;
+}
+.gp-btn.project {
+  background: var(--gpd-project, var(--sc-project));
+  border-color: var(--gpd-project, var(--sc-project));
+  color: var(--gpd-on, var(--sc-on-accent)) !important;
+}
+.gp-btn.danger {
+  border-color: var(--gpd-bad, #b3261e);
+  color: var(--gpd-bad, #b3261e) !important;
+}
+.gp-btn.small {
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: 14px;
+}
+.gp-mono {
+  font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  font-size: 0.92em;
+}
+.gp-readwhy {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 15px;
+}
+.gp-readwhy input,
+.tc-list input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  flex: none;
+}
+.tc {
+  margin-top: 12px;
+}
+.tc-trigger {
+  border-color: var(--gpd-example-edge);
+  color: var(--gpd-example) !important;
+}
+.tc-note {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--gpd-muted);
+}
+.tc-warning {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--gpd-example-edge);
+  border-left: 4px solid var(--gpd-example);
+  background: var(--gpd-example-soft);
+  font-size: 15px;
+}
+.tc-list {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.tc-list legend {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+.tc-list ul,
+.tc-plan {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+.tc-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gpd-line);
+}
+.tc-list label {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 15px;
+}
+.tc-list .tc-sub {
+  margin: 4px 0 0 26px;
+  font-size: 14px;
+  color: var(--gpd-muted);
+}
+.tc-plan li {
+  padding: 4px 0;
+  font-size: 15px;
+}

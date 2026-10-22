@@ -3,7 +3,16 @@
 **Project:** Systems Thinking and MBSE with SysML v2 — one integrated 14-week graduate course (Weeks 1–7 Systems Thinking, Weeks 8–14 MBSE with SysML v2) and its local interactive application, `learning-studio/`.
 **Governing directive:** 2026-10-09 deadline directive — submission **2026-12-01** (DECISION_LOG A6–A8). Milestones and acceptance criteria: `IMPLEMENTATION_ROADMAP.md`. Live task board: `TASK_BOARD.md`.
 **Folder:** `C:\Users\w451vxs\Documents\Course_Work\SysML` — local git repository (no remote; never pushed).
-**Last updated:** 2026-10-11 (night)
+**Last updated:** 2026-10-21 late (M0, M1, M2, M4a and Week 6 committed)
+
+## Current phase (2026-10-21): Week 1 reconstruction + admin/student platform (DECISION_LOG A23)
+- **Specification:** `docs/directives/2026-10-21_MASTER_IMPLEMENTATION_DIRECTIVE_WEEK1.md` + `docs/directives/2026-10-21_WEEK1_REDESIGN_PROPOSAL.md`.
+- **Evidence of current state:** `docs/audits/current-state-2026-10-21/` (read-only audit, 11 documents).
+- **Milestone 0 (closed 2026-10-21).** Baseline tag `baseline/2026-10-21-pre-week1`, WIP branch `wip/2026-10-19-interrupted-snapshot`, P0 save defect fixed (`d24f379`), W5 shared empty-answer fix (`9643455`), architecture (`SECURITY_ARCHITECTURE.md`, `CONTENT_PUBLISHING_DESIGN.md`, `PROJECT_DATA_SCHEMA.md`, `docs/architecture/BACKEND_OPTIONS_AND_RECOMMENDATION.md`), Week 1 planning (`docs/week1/`), `WEEK1_IMPLEMENTATION_BASELINE.md`, `WEEK1_CHANGE_IMPACT_MATRIX.md`, `WEEK1_RECOVERY_PLAN.md`.
+- **Critical path:** `docs/week1/WEEK1_CRITICAL_PATH.md`. About 35 agent-days for Week 1 + platform, plus about 20–23 for Weeks 6, 7 and 9–14. It is feasible only with parallel content production (faculty decision pending).
+- **Committed 2026-10-21 (late):** M1 spec `1aed289`; Week 6 package `693d620`; M2 course server `042befc` (tag `week1/m2`); M4 part A Week 1 nav + Learn + homepage `355207b` (tag `week1/m4a`). Final tree verified: tsc clean, vitest 2695/2695, server 248/248, build:student + leak check PASS, e2e week1-flow 11/11, week6-flow 6/6, app 10/10. Next: M3 limited publishing, M5 Guided Practice, M6 My Project canvas + Excel import, M7 Week 8 continuity; content stream Week 7.
+- **Course weeks:** taught and tested are Weeks 1–6 and 8 (Week 6 reviewed and confirmed 2026-10-21). Weeks 7 and 9–14 are outline only.
+- **Sections below** describe earlier phases and are kept for history.
 
 ## Current phase
 **2026-10-18 — schedule realigned (DECISION_LOG A19).** The faculty whiteboard schedule in `COURSE_SCHEDULE.md` is now

@@ -4,12 +4,19 @@
 // (.json). Rendered by the Week 8 page shell at #/week/8/lab/tool. All logic lives in skeleton.ts and state.ts (pure,
 // tested both ways); saved in this browser under 'w8.import'. Only a real defect (a relationship end that is not a
 // registered stakeholder) keeps an item out of the model; everything else imports and is reported for a disposition.
+// M7: the student may read the Week 1 input from the team's My Project instead of a file (ProjectSource.tsx); the
+// skeleton is generated from the same projection, so it is byte-identical to a file import of the same data.
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { loadJSON, saveJSON } from '../../lib/storage'
 import { downloadText } from '../download'
 import { AUDIT_QUESTIONS, FINDING_CLASSES } from '../../content/lectures/week08/labBrief'
 import { importFile, type ManualRow } from './skeleton'
-import { W8_KEY, auditAnswer, derive, findingKey, importWorkspace, matrixFileName, matrixMarkdown, needsDisposition, normalizeState, readiness, sysmlFileName, words, workspaceFileName, workspaceJson, type W8State } from './state'
+import { projectRefOf, week8SourceFromProject } from '../../project/adapters/week8'
+import { recordCounts, recordHasContent, toTeamRecord } from '../../project/adapters/week1'
+import { useProjectOptional, useProjectState } from '../../project/store/ProjectProvider'
+import { isAeroLink } from '../week1/team'
+import { IdMappings, SourceChooser } from './ProjectSource'
+import { W8_KEY, normalizeSource, auditAnswer, derive, findingKey, importWorkspace, matrixFileName, matrixMarkdown, needsDisposition, normalizeState, readiness, sysmlFileName, words, workspaceFileName, workspaceJson, type W8State } from './state'
 import './week8tool.css'
 
 const readFile = (f: File) =>
@@ -37,9 +44,39 @@ export default function Week8LabTool() {
   useEffect(() => {
     saveJSON(W8_KEY, st)
   }, [st])
+  // a saved state repaired on load (M7 review M7-10) says so once, then the repaired state is what is saved
+  useEffect(() => {
+    if (!st.notice) return
+    setMsg({ ok: false, text: st.notice })
+    setSt(({ notice: _n, ...rest }) => (void _n, rest))
+  }, [st.notice])
   const edit = (f: (s: W8State) => W8State) => setSt((s) => ({ ...f(s), updatedAt: Date.now() }))
   const d = useMemo(() => derive(st), [st])
   const ready = useMemo(() => readiness(st), [st])
+  const handle = useProjectOptional()
+  const pstate = useProjectState()
+  // the Week 1 content changed since it was read (compared on the generated source, so the team's own mapping writes,
+  // which also raise the project revision, do not count)
+  const stale = useMemo(() => !!(handle && st.source === 'project' && st.week1 && st.projectRef?.uid === handle.doc.project.uid && JSON.stringify(normalizeSource(week8SourceFromProject(handle.doc))) !== JSON.stringify(normalizeSource(st.week1))), [handle, st.source, st.week1, st.projectRef])
+
+  /** Reads the Week 1 input from My Project (the student's explicit choice), recording which project and revision. */
+  function readProject() {
+    if (!handle) return setMsg({ ok: false, text: 'No team project is open in this browser yet.' })
+    const doc = handle.doc
+    const rec = toTeamRecord(doc, { excludeUnadapted: true })
+    if (!recordHasContent(rec)) return setMsg({ ok: false, text: `My Project “${projectRefOf(doc, pstate.storage, '').title}” has no Week 1 work yet: record it in My Project first.` })
+    if ([rec.proposal.name, rec.proposal.domain, rec.proposal.soi].some(isAeroLink)) return setMsg({ ok: false, text: 'This project is about AeroLink, the instructor’s worked example: use your team’s own enterprise.' })
+    const source = week8SourceFromProject(doc)
+    const ref = projectRefOf(doc, pstate.storage, new Date().toISOString())
+    edit((s) => ({ ...s, source: 'project', projectRef: ref, week1: source, week1Origin: `My Project “${ref.title}”, revision ${ref.rev}`, snapshot: null }))
+    const n = recordCounts(rec)
+    return setMsg({ ok: true, text: `My Project “${ref.title}” read at revision ${ref.rev} (${n.stakeholders} stakeholders, ${n.concerns} concerns, ${n.context} external systems).` })
+  }
+  /** Back to a file: what came from the project is cleared, so the tool never mixes the two sources. */
+  function chooseFile() {
+    setMsg(null)
+    edit((s) => (s.source === 'project' ? { ...s, source: 'file', projectRef: null, week1: null, week1Origin: '' } : s))
+  }
 
   async function onFile(kind: 'week1' | 'week2' | 'workspace', f: File | undefined) {
     if (!f) return
@@ -99,8 +136,9 @@ export default function Week8LabTool() {
 
       <Section id="w8-part-import" title="1 · Import your Phase I exports">
         <p className="w8-help">Your team’s Week 1 model inputs (.json, versions 1–3) carry the register: enterprise, system of interest, context, stakeholders, concerns, relationships, mission, goals and needs. The Week 2 model inputs add the scenario, capability, requirement and measure IDs to the mapping. AeroLink files are refused: import your own enterprise.</p>
+        <SourceChooser source={st.source} projectRef={st.projectRef} handle={handle} loading={!pstate.ready} stale={stale} onProject={readProject} onFile={chooseFile} />
         <div className="w8-row">
-          {fileInput('w8-import-week1', 'Week 1 model inputs (.json)', 'week1')}
+          {st.source === 'file' && fileInput('w8-import-week1', 'Week 1 model inputs (.json)', 'week1')}
           {fileInput('w8-import-week2', 'Week 2 model inputs (.json, optional)', 'week2')}
           {fileInput('w8-import-workspace', 'A teammate’s Week 8 workspace (.json)', 'workspace')}
         </div>
@@ -116,6 +154,12 @@ export default function Week8LabTool() {
             <dd>{src.team || '(no team number)'}</dd>
             <dt>Enterprise</dt>
             <dd>{src.enterprise.name || '(no name)'}</dd>
+            {st.source === 'project' && (
+              <>
+                <dt>Source</dt>
+                <dd data-testid="w8-summary-source">{st.week1Origin}</dd>
+              </>
+            )}
             <dt>Imported</dt>
             <dd>
               {src.stakeholders.length} stakeholders, {src.concerns.length} concerns, {src.context.length} external systems, {src.relationships.length} relationships, {src.needs.length} needs{src.week2 ? `, Week 2: ${Object.values(src.week2).reduce((a, x) => a + x.length, 0)} IDs` : ''}
@@ -191,6 +235,12 @@ export default function Week8LabTool() {
               </table>
             </div>
           </Section>
+
+          {st.source === 'project' && handle && st.projectRef?.uid === handle.doc.project.uid && (
+            <Section id="w8-part-ids" title="4b · Package for each Week 1 ID (saved in My Project)">
+              <IdMappings handle={handle} />
+            </Section>
+          )}
 
           <Section id="w8-part-findings" title="5 · Import findings">
             <div data-testid="w8-findings">

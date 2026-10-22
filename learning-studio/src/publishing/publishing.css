@@ -1,0 +1,43 @@
+/* Student-facing publishing UI (M3): the "Updated content available" banner and the "Updated since you read it" badge.
+   Uses the shared tokens of the student chrome where they exist, with neutral fallbacks. */
+.pub-banner-slot:empty { display: none; }
+.pub-banner {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--sc-course, #0f6e8c);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: var(--sc-course-soft, #e1eff4);
+  color: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.pub-banner-btn {
+  margin-left: 4px;
+  padding: 4px 10px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pub-banner-btn:focus-visible { outline: 2px solid var(--sc-course, #0f6e8c); outline-offset: 2px; }
+.pub-updated {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--sc-course, #0f6e8c);
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.pub-edit {
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  vertical-align: middle;
+}
+.dark .pub-banner { background: rgba(15, 110, 140, 0.2); }

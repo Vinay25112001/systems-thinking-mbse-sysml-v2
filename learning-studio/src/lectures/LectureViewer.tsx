@@ -10,6 +10,7 @@ import { backOf } from './route'
 import { lecturesOfWeek } from '../content/lectures'
 import { IS_STUDENT_EDITION } from '../lib/edition'
 import { handoutPath, lessonPath, pptxHref, viewerPath } from './route'
+import { deckShipped } from './decks'
 import { SlideFace } from './SlideFace'
 
 const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
@@ -91,9 +92,12 @@ export default function LectureViewer({ lecture, initialSlide }: { lecture: Lect
         <Link to={handoutPath(lecture.week, lecture.session)} className="lec-btn">
           Handout
         </Link>
-        <a href={pptxHref(stem)} download className="lec-btn">
-          Download .pptx
-        </a>
+        {/* the student build ships no Week 1 deck (NAV-13, review M4A F5; FD-g) */}
+        {deckShipped(stem) && (
+          <a href={pptxHref(stem)} download className="lec-btn">
+            Download .pptx
+          </a>
+        )}
       </TopBar>
       <FixtureBanner lecture={lecture} />
       <div className="lec-viewer">

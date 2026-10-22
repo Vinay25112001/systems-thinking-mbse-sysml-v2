@@ -1,4 +1,5 @@
-// Laboratory (#/week/1/lab): the full Lab L1 instructions, rendered from the single source
+// Lab instructions (#/week/1/project/instructions; M6: moved off the My Project / Lab canvas into their own page, MP-26;
+// formerly the My Project / Lab page and before that Laboratory): the full Lab L1 instructions, rendered from the single source
 // src/content/lab/week01Lab.ts (docs/lectures/week01/WEEK1_LAB_INSTRUCTIONS.md is generated from the same module),
 // with the lab tool (the Team enterprise view) linked, the record's live readiness, the blank template and the
 // model-inputs map. No check or reading gates the lab.
@@ -7,8 +8,8 @@ import { CitationLink } from '../lectures/Blocks'
 import { LAB_AT_A_GLANCE, LAB_INPUTS, LAB_METHOD, LAB_OBJECTIVES, LAB_OUTPUT_FILES, LAB_PARTS, LAB_PROCEDURE, LAB_PURPOSE, LAB_RUBRIC_NOTE, LAB_RUBRIC_ROWS, LAB_SUBMISSION, LAB_TITLE, LAB_TOOL, LAB_WORKLOAD, LAB_WORKLOAD_NOTE } from '../content/lab/week01Lab'
 import { teamRecordTemplate } from '../content/learn/week01'
 import { ModelInputsSection, RecordReadiness, RubricTable } from '../flow/CheckSubmit'
-import { preselectWorkbenchView } from '../flow/storage'
 import { Link } from '../lib/router'
+import { IS_STUDENT_EDITION } from '../lib/edition'
 import { downloadText } from '../workbench/download'
 import { WEEK1_PATHS } from './route'
 import { Handoff } from '../project/practice/Handoff'
@@ -16,12 +17,12 @@ import { Handoff } from '../project/practice/Handoff'
 export default function Lab() {
   return (
     <div className="wk-page" data-testid="week1-lab">
-      <p className="lf-kicker">Week 1 · Engineering laboratory</p>
+      <p className="lf-kicker">Week 1 · My Project / Lab</p>
       <h1 className="lf-h1">{LAB_TITLE}</h1>
       <p className="lf-lede lf-column">{LAB_PURPOSE.text}</p>
       <div className="lf-actions" style={{ marginTop: 6 }}>
-        <Link to={WEEK1_PATHS['lab-tool']} className="lf-btn primary" data-testid="open-lab-tool" onClick={() => preselectWorkbenchView('team')}>
-          Open the lab tool <ArrowRight size={15} aria-hidden />
+        <Link to={WEEK1_PATHS.project} className="lf-btn primary" data-testid="open-lab-tool">
+          Open My Project <ArrowRight size={15} aria-hidden />
         </Link>
         <button type="button" className="lf-btn" onClick={() => downloadText('team-NN-week1-record-template.md', teamRecordTemplate(), 'text/markdown')} data-testid="record-template">
           <Download size={14} aria-hidden /> Blank template (.md)
@@ -29,7 +30,8 @@ export default function Lab() {
       </div>
 
       {/* My Project (A22): where the lab's output lives */}
-      <Handoff week={1} where="lab" />
+      {/* m6: the full hand-off (what to create, how it is judged) sits with the Lab brief; the canvas is the editor */}
+      <Handoff week={1} where="practice" />
 
       <dl className="lf-terms lf-wide" style={{ marginTop: 18 }} data-testid="lab-glance">
         {LAB_AT_A_GLANCE.map((x) => (
@@ -64,7 +66,7 @@ export default function Lab() {
                   <>
                     {' '}
                     <Link to={i.to} className="underline">
-                      {i.to === WEEK1_PATHS.examples ? 'Worked examples' : 'Lab tool'}
+                      {i.to === WEEK1_PATHS.examples ? 'Worked example in Learn' : 'Lab tool'}
                     </Link>
                   </>
                 )}
@@ -77,12 +79,12 @@ export default function Lab() {
             Objectives
           </h2>
           <ul className="lf-plain">
-            {LAB_OBJECTIVES.map((o) => (
+            {LAB_OBJECTIVES.filter((o) => !IS_STUDENT_EDITION || !o.proposed).map((o) => (
               <li key={o.id} className="lf-objective">
                 <span className="lf-chip">{o.id}</span>
                 <span>
                   {o.text}
-                  {o.proposed && <span className="lf-muted"> (proposed, pending faculty approval)</span>}
+                  {!IS_STUDENT_EDITION && o.proposed && <span className="lf-muted"> (proposed, pending faculty approval)</span>}
                 </span>
               </li>
             ))}
@@ -230,8 +232,8 @@ export default function Lab() {
         </h2>
         <p className="lf-prose lf-column">{LAB_TOOL.text}</p>
         <div className="lf-actions" style={{ marginTop: 6 }}>
-          <Link to={WEEK1_PATHS['lab-tool']} className="lf-btn primary" onClick={() => preselectWorkbenchView('team')}>
-            Open the Team enterprise view <ArrowRight size={15} aria-hidden />
+          <Link to={WEEK1_PATHS.project} className="lf-btn primary">
+            Open My Project, the Week 1 canvas <ArrowRight size={15} aria-hidden />
           </Link>
         </div>
         <ModelInputsSection />
@@ -267,10 +269,10 @@ export default function Lab() {
 
       <div className="lf-actions" style={{ marginTop: 34 }}>
         <Link to={WEEK1_PATHS.assessment} className="lf-btn primary">
-          Next: assessment and submission <ArrowRight size={16} aria-hidden />
+          Next: Review &amp; Submit <ArrowRight size={16} aria-hidden />
         </Link>
         <Link to={WEEK1_PATHS.examples} className="lf-btn">
-          Back to the worked examples
+          Back to the worked example in Learn
         </Link>
       </div>
     </div>

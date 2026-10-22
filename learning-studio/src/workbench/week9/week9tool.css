@@ -1,0 +1,51 @@
+/* Week 9 lab tool additions (Week9LabTool.tsx) on top of the Week 8 tool classes (week8tool.css), on the workbench
+   tokens, so light and dark use the validated pairs. Status always carries a glyph and a word, never color alone. */
+.w9-files,
+.w9-reqs,
+.w9-ai {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.w9-req,
+.w9-ai > li {
+  border: 1px solid var(--wb-line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.w9-req-head {
+  margin: 0;
+}
+.w9-name {
+  color: var(--wb-muted);
+  font-weight: 400;
+}
+.w9-wide {
+  flex: 1 1 18rem;
+}
+.w9-formal {
+  margin: 0;
+  font: 13.5px/1.45 var(--wb-mono);
+  overflow-wrap: anywhere;
+}
+.w9-formal.ok {
+  color: var(--wb-fg);
+}
+.w9-formal.gap,
+.w9-problem {
+  color: var(--wb-muted);
+}
+.w9-problem {
+  font-size: 13.5px;
+}
+/* The sr-only captions and cell labels are absolutely positioned; without a positioned scroll wrapper their containing
+   block is outside it, so they escape the sideways scroll and widen the page at 400 px. */
+.w9-tool .w8-scroll {
+  position: relative;
+}

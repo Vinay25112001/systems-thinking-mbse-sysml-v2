@@ -31,7 +31,7 @@ export const lessonPath = (week: number, section?: string) => `/week/${week}/les
 /** Where the generated deck is served from (scripts/build-lectures.mjs copies it into public/lectures/). */
 export const pptxHref = (stem: string) => `./lectures/${stem}.pptx`
 
-/** Weeks with a lecture-first week page (Week 1, and Weeks 2, 3, 4, 5 and 8 on the same template). */
-export const WEEK_PAGES = new Set([1, 2, 3, 4, 5, 8])
+/** Weeks with a lecture-first week page (Week 1, and Weeks 2, 3, 4, 5, 6, 7, 8, 9 and 10 on the same template). */
+export const WEEK_PAGES = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 /** Where a lecture page leads back to: the week page when the week has one, else the dashboard. */
 export const backOf = (week: number) => (WEEK_PAGES.has(week) ? { back: `/week/${week}`, backLabel: `Week ${week}` } : { back: '/', backLabel: 'Dashboard' })

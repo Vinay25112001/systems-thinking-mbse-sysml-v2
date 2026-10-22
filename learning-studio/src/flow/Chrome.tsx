@@ -2,8 +2,11 @@
 import { Check, Lock } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from '../lib/router'
+import { IS_STUDENT_EDITION } from '../lib/edition' // week1-m4a
 import { useApp, type ThemePref } from '../state/AppState'
 import { MyProjectLink } from '../project/nav/MyProjectLink'
+import { AccountIndicator } from '../auth/AccountIndicator'
+import { AuthoringNavLink } from '../authoring/EditLink' // publishing (M3)
 
 import { STAGES, stagePath, type FlowStage as Stage } from './route'
 
@@ -11,10 +14,13 @@ function Settings() {
   const { theme, setTheme, instructor, setInstructor } = useApp()
   return (
     <div className="lf-tools">
-      <label className="lf-toggle">
-        <input type="checkbox" checked={instructor} onChange={(e) => setInstructor(e.target.checked)} />
-        <span className={instructor ? 'font-semibold' : ''}>Instructor mode</span>
-      </label>
+      {/* week1-m4a: no instructor checkbox in the student edition (NAV-02, X14) */}
+      {!IS_STUDENT_EDITION && (
+        <label className="lf-toggle">
+          <input type="checkbox" checked={instructor} onChange={(e) => setInstructor(e.target.checked)} />
+          <span className={instructor ? 'font-semibold' : ''}>Instructor mode</span>
+        </label>
+      )}
       <label className="lf-toggle">
         <span className="lf-muted">Theme</span>
         <select aria-label="Color theme" className="lf-select" value={theme} onChange={(e) => setTheme(e.target.value as ThemePref)}>
@@ -41,10 +47,13 @@ export function TopBar({ title, right, children, projectCurrent = false }: { tit
         </span>
         <MyProjectLink current={projectCurrent} />
         {right}
+        {/* course server account (M2); renders nothing offline */}
+        <AuthoringNavLink /> {/* publishing (M3): instructors only */}
+        <AccountIndicator />
         <Settings />
       </div>
       {children}
-      {instructor && (
+      {!IS_STUDENT_EDITION && instructor && (
         <div className="lf-instructor" role="status">
           Instructor mode: instructor material is visible, including the faculty notes in the slide viewer. Stored in this browser only.
         </div>

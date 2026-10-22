@@ -1,0 +1,61 @@
+# Project workspace status (My Project), 2026-10-21
+
+Read-only discovery audit. Code paths are relative to `learning-studio/src/` unless noted. Screenshots are outside the repo in
+`C:\Users\w451vxs\Documents\Course_Work\SysML-audit-screenshots-2026-10-21\` (written below as `SS\name.png`).
+
+**Working-tree caveat.** The dev server serves the working tree, which holds uncommitted, unverified partial work from stopped agents (Week 6 lecture, lab and `workbench/week6/` untracked; Week 5 fixes; W9, W11 and W12 edits; `workbench/week2/record.ts`, `week3/record.ts`, `week1/team.ts`, `week8/skeleton.ts` modified). The My Project code (`src/project/**`) is committed in `8b9637d` and unchanged in the working tree. Week 1 → Week 8 code paths do use the modified `workbench/week1/team.ts` and `workbench/week8/skeleton.ts`.
+
+## 1. Verdict
+
+A student project workspace **exists and works for Week 1 only**. It is a real, persistent, versioned, single-user, local-only store with stable IDs, typed relationships, integrity rules, a change log, undo, snapshots, export and import. Weeks 2 to 14 are listed as milestones but are not wired to it. Inside My Project nothing is directly editable except review, retire, restore, mark-adapted, milestone "marked submitted" and saved versions. All content editing happens in the Week 1 lab tool.
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Dedicated workspace and routes | Yes | `project/route.ts:1-30`; routed before the week routes in `App.tsx` (`projectRoute`, `ProjectApp` lazy chunk); `SS\d30-project-overview.png` |
+| Navigation placement | Yes, persistent link | `project/nav/MyProjectLink.tsx`; rendered in the classic sidebar (`App.tsx` NAV item `/project`), the flow top bar (`flow/Chrome.tsx:42`) and the lecture top bar (`lectures/Chrome.tsx:54`). **Not** in the workbench shell's own toolbar, but the Week 1 lab tool sits under the flow top bar, so the link is visible there (`SS\d17-week1-lab-tool-linked.png`) |
+| Project creation | Yes | `project/pages/CreateProject.tsx:67-147`: empty project, import a project or Week 1 file, or create from the legacy browser record; `project/model/create.ts:200-227` (starts with blank ENT-001 and MGO-001 only); `SS\d14-project-empty-create.png`, `SS\d15-project-create-filled.png` |
+| Enterprise name and mission | Yes, edited in the Week 1 lab tool Part 2 | ENT-001 title and attributes, MGO-001 description: `project/adapters/week1.ts:146-160` |
+| Team membership | Partial | `Team.members` is derived from role initials typed in the charter (`adapters/week1.ts:133-141`). Initials only, "self-declared", with no accounts or invitations (`CreateProject.tsx:82-86`) |
+| Approval status | Self-reported | The student picks "Instructor's decision" in a select (`workbench/week1/TeamView.tsx:347-355`), and it is stored on ENT-001 `attributes.approval` and Milestone 1 (`adapters/week1.ts:148-157`). The instructor has no approval action anywhere |
+| Weekly milestones | 14 created; **only Week 1 computed** | `project/model/milestones.ts:112-140` (expected artifacts for W1–W5 come from the lab briefs; W6, W7 and W9–14 are "provisional"). State is computed only for Week 1 (`adapters/week1Status.ts:58-66`). The stored `Milestone.state` is never updated by any operation. `SS\d31-project-milestones.png`, `SS\d32-project-milestone-week2.png` |
+| Artifact editors | **None inside My Project** | `pages/ArtifactPage.tsx:2-3,156-191`: "Edit in the Week 1 lab tool", Mark reviewed (rationale of 3 or more words), Retire (reason), Restore, Mark adapted. Editable types (through the Week 1 lab tool only): ENT, MGO, PRT, EXT, STK, CON, NEED and REL (stakeholder relationships), plus team and charter fields and the AI statement. P1 report §5 confirms "Generic artifact editors (P2.8) are not built" |
+| Persistent storage | Yes, IndexedDB | DB `sysml-studio-projects` v1, stores `meta`, `projects`, `changes` and `snapshots` (`project/store/indexedDb.ts:1-130`); one transaction per save with a rev check (`indexedDb.ts:165-183`); confirmed in the browser (IndexedDB database list in the audit run) |
+| Memory fallback and flags | Yes | `store/ProjectProvider.tsx:25-37`: `?storage=memory`, `?storage=fail`, no-IndexedDB and open-failure fallbacks; banners in `pages/ProjectApp.tsx:23-86`; `SS\d61-project-storage-memory-after-create.png`, `SS\d61-project-storage-fail-after-create.png` |
+| Autosave | Yes | 600 ms debounce (`store/ProjectStore.ts:228-231`, `revisions.ts` AUTOSAVE_MS), keystroke coalescing (`ProjectStore.ts:193-205`), flush on hide, pagehide and hashchange (`ProjectProvider.tsx:56-69`), one retry, then a "Not saved" banner (`ProjectStore.ts:254-265`) |
+| Versioning and history | Yes | Change sets `CHG-nnnnnn` (`ProjectStore.ts:183-216`); undo by inverse ops (`:218-225`); snapshots manual, milestone, pre-import, pre-restore and daily auto, with retention (`:269-295`, `revisions.ts`); restore as a new revision (`:297-322`); `pages/History.tsx`; `SS\d37-project-history.png` |
+| Multi-tab safety | Yes | Web Locks single writer, so other tabs are read-only with "Take over editing" (`ProjectStore.ts:107-138`); BroadcastChannel reload (`:81-86`); rev-conflict guard in the adapter |
+| Export | Yes | `sysml-studio-project` v1 JSON with SHA-256 over canonical JSON (`transfer/exportProject.ts:12-66`); project report `.md` (`transfer/report.ts`); Week 1 `.md` plus `week1-model-inputs` v3 (`pages/actions.ts:32-44`). **Every** export is recorded on Milestone 1 (`actions.ts:18,27,42`), including the whole-project export |
+| Import, validation, conflicts | Yes | `transfer/importProject.ts:76-186` parse, normalise and validate; never throws; checksum ok, mismatch or absent. Plan classes are new, identical, changed-theirs, changed-mine, conflict, id-collision and broken (`:189-266`); per-item choices (`:267-354`); merge, replace (typed title) or open as a separate project (`ProjectStore.ts:326-350`); pre-import snapshot always. Accepts only `sysml-studio-project` v1 and `week1-model-inputs` v1–3 |
+| Relationships | Yes | Trace, structure and stakeholder vocabulary with allowed pairs (`model/vocabulary.ts`); integrity I1–I13 (`model/integrity.ts:43-137`); impact and suspect propagation (`model/impact.ts:150-244`). In P1 only `derives-from`, `contains` and the stakeholder REL types are created (`adapters/week1.ts:127-129,195-247`) |
+| Practice Canvas connection | One-way, opt-in | "Copy from practice" copies AeroLink stakeholders and concerns with new IDs and `copied-from-practice` provenance, not counted until adapted (`practice/copyFromPractice.ts:300-346`, `practice/Handoff.tsx:28,191`). Shown on Week 1 Examples and Lab (`week1/Examples.tsx:198`, `week1/Lab.tsx:32`). Flag `COPY_FROM_PRACTICE_ENABLED = true` pending faculty decision F4 |
+| Week 8 / MBSE connection | **Preview only** | `#/project/model` builds `sourceFromProject` and runs the Week 8 generator and audit unchanged (`adapters/week8.ts:16-61`); nothing is stored and nothing is ever "Mapped". The real Week 8 lab tool (`workbench/week8/Week8LabTool.tsx:35-70`) does **not** read the project: it accepts files only (verified in the browser, `SS\d41-week8-lab-tool-with-project.png`). No link to the MBSE Studio desktop tool exists, although the preview kicker reads "MBSE Studio preview · Week 8" (`pages/ModelPreview.tsx:24`) |
+| Instructor review capability | **None** | `src/instructor/` holds exams only; `pages/InstructorReview.tsx` reviews course content items, not team projects; no file under `src/project/` reads the instructor flag. The P1 report §8 F8 says "Instructor review mode not changed" |
+| Local-only, single-user | **Yes** | No network or back end: all storage is IndexedDB or localStorage (`indexedDb.ts`, `lib/storage.ts`). The editor is free-typed initials (`ProjectStore.ts:141-145`). Collaboration happens by exchanging export files (P1 report §5). Several projects can coexist in one browser (`pages/Transfer.tsx:86-99`) |
+
+## 2. Where code and design documents differ
+
+The design docs (`PROJECT_WORKSPACE_ARCHITECTURE.md`, `CANONICAL_ENGINEERING_DATA_MODEL.md`, `CROSS_PHASE_TRACEABILITY_PLAN.md`, `UI_UX_REDESIGN_PROPOSAL.md` at the repo root) describe Weeks 1–14. The code implements this subset:
+
+- **Types are defined for all weeks, but only Week 1 types are produced.** `model/types.ts:18-24` declares 41 artifact types (CONOPS…RID), plus `ModelElement`, `ModelMapping` and `Finding` (`:155-197`). The only creators are `adapters/week1.ts` and `practice/copyFromPractice.ts`. `modelElements`, `mappings` and `findings` stay empty: no operation fills them, although `upsert-mapping` and `upsert-model-element` exist in the union (`types.ts:227-228`).
+- **The architecture says Week 2–14 lab tools write the project. They do not.** Weeks 2–6 keep their own localStorage records (`w2.record` … `w6.record`) and their own JSON formats (section 4). The P1 report §3.7 states this.
+- **`adapter.contract.ts`** is named in `store/adapter.ts:2` but no such file exists. The contract suite is inline in `store/store.test.ts`.
+- **Milestone state** is a stored field in the data model, but code derives it at render time for Week 1 only. The stored value stays `not-started` (`create.ts`/`milestones.ts:139`; no `update-milestone` writes `state`).
+- **Exports for submission go to Milestone 1 only.** `exportProject` and `exportReport` call `recordExport(1, …)` regardless of week (`actions.ts:18,27`).
+- The P1 report matches the code on: the legacy mirror, draft REL, additive fields, impact brought forward, no generic editors, preview-only Week 8, and no instructor review.
+
+## 3. Reusable assets for extending the workspace
+
+- **Data layer**: `model/ops.ts` (apply and invert ops, `fieldDiff`), `model/commit.ts`, `model/integrity.ts`, `model/impact.ts`, `model/ids.ts` (never-reused counters, `nextId`) and `model/vocabulary.ts` (`ARTIFACT_INFO` covers all 41 types, with library groups and SysML constructs from the Week 8 lab brief). These are pure and tested (`model/model.test.ts`).
+- **Store**: `store/ProjectStore.ts` (`apply`, `undo`, `importMerge`, `importReplace`, `recordExport`, snapshots) and the `StorageAdapter` interface (`store/adapter.ts:402-417`). Both adapters are tested.
+- **Adapter pattern for a week**: `adapters/week1.ts` (projection `toTeamRecord`, `diffTeamRecord` edit → ops, `fromTeamRecord` legacy import) plus `adapters/useTeamRecord.ts` (single read/write path, with a legacy mode when no project exists). Weeks 2–6 could follow the same pattern against their `record.ts` modules.
+- **UI**: `pages/ui.tsx` (`ProjectBanner`, `SaveStatus`, `Chip`), `pages/ImportFlow.tsx` (reusable plan dialog, already embedded in the Week 1 lab tool via `adapters/TeamProject.tsx:99-104`), `pages/Library.tsx` and `pages/ArtifactPage.tsx` (generic by type, read-only), `pages/MilestoneStrip.tsx`, `practice/Handoff.tsx` (per-week `HANDOFFS`, where only week 1 is defined: `practice/handoffs.ts:262-286`).
+- **Transfer**: `transfer/exportProject.ts` and `transfer/importProject.ts` are generic over all artifact types and relationships, so new weeks need no format change while schema v1 holds.
+
+## 4. Browser demonstration (fresh Playwright context only)
+
+1. `#/project` with an empty store shows the create screen (`SS\d14-project-empty-create.png`).
+2. Created team "99", initials "AU", enterprise "Audit Test Enterprise" (`SS\d16-project-overview-new.png`).
+3. In `#/week/1/lab/tool` the banner says "Linked to My Project" (`SS\d17-week1-lab-tool-linked.png`). Added STK-001 "County Emergency Dispatch Office", a concern and a need (`SS\d18-week1-lab-tool-after-edit.png`).
+4. The library, artifact page and history show STK-001, CON-001, CON-002, NEED-001, LNK-001 and LNK-002 with CHG-000001… and self-declared initials (`SS\d34-project-artifacts-stk.png`, `SS\d35-project-artifact-stk001.png`, `SS\d37-project-history.png`).
+5. The mirror wrote `sysml-studio:v1:wb-artefacts['w1.team']` with `STK-001:County Emergency Dispatch Office` (localStorage inspected), so the Week 2 tool's "use the saved Week 1 record" can see it.
+6. `?storage=fail` shows both banners ("not saving" and "Not saved: The browser refused to save.."), and Export remains offered (`SS\d61-project-storage-fail-after-create.png`).

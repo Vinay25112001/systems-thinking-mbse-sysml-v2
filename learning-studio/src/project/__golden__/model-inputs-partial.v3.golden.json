@@ -1,0 +1,711 @@
+{
+  "format": "week1-model-inputs",
+  "version": 3,
+  "team": "07",
+  "status": "not-ready",
+  "enterprise": {
+    "id": "ENT-001",
+    "name": "Riverside Food Bank Network",
+    "domain": "Food security and logistics",
+    "problem": "Donated food reaches partner pantries unevenly across the county, so fresh produce runs out early while surplus spoils in store back rooms.",
+    "purpose": "Collect surplus food from donors and deliver it safely to partner pantries across the county every week.",
+    "suitability": "The network has many interacting parts (donors, a warehouse, vans, volunteers and pantries), people as well as technology, exchanges with outside systems such as the health department and the road network, and stakeholders whose needs conflict, such as neighbors and early delivery shifts. It is large enough to model in SysML v2 and small enough for one term.",
+    "seeds": [
+      "part def",
+      "doc"
+    ]
+  },
+  "missionGoals": [
+    {
+      "id": "MGO-001",
+      "level": "mission",
+      "statement": "Collect surplus food from donors and deliver it safely to partner pantries across the county every week.",
+      "seeds": [
+        "requirement / doc"
+      ]
+    },
+    {
+      "id": "MGO-002",
+      "level": "goal",
+      "statement": "Keep partner pantries stocked with fresh food every week",
+      "seeds": [
+        "requirement / doc"
+      ]
+    },
+    {
+      "id": "MGO-003",
+      "level": "goal",
+      "statement": "Keep all donated food safe from collection to delivery",
+      "seeds": [
+        "requirement / doc"
+      ]
+    },
+    {
+      "id": "MGO-004",
+      "level": "goal",
+      "statement": "Run the service within what donors, volunteers and neighbors can sustain",
+      "seeds": [
+        "requirement / doc"
+      ]
+    },
+    {
+      "id": "MGO-005",
+      "level": "goal",
+      "statement": "Show funders how far every delivered pound reaches",
+      "seeds": [
+        "requirement / doc"
+      ]
+    }
+  ],
+  "systemOfInterest": {
+    "statement": "The network’s collection, warehousing and delivery service that moves donated food from donors to partner pantries.",
+    "inside": [
+      {
+        "id": "PRT-001",
+        "name": "Warehouse and cold storage",
+        "seeds": [
+          "part (usage)"
+        ]
+      },
+      {
+        "id": "PRT-002",
+        "name": "Delivery vans and volunteer drivers",
+        "seeds": [
+          "part (usage)"
+        ]
+      },
+      {
+        "id": "PRT-003",
+        "name": "Volunteer scheduling office",
+        "seeds": [
+          "part (usage)"
+        ]
+      },
+      {
+        "id": "PRT-004",
+        "name": "Donation intake desk",
+        "seeds": [
+          "part (usage)"
+        ]
+      }
+    ],
+    "seeds": [
+      "part def",
+      "part (usage)"
+    ]
+  },
+  "context": [
+    {
+      "id": "EXT-001",
+      "name": "Grocery store donors",
+      "kind": "actor",
+      "crosses": "surplus food",
+      "direction": "in",
+      "seeds": [
+        "actor",
+        "item def",
+        "port def"
+      ]
+    },
+    {
+      "id": "EXT-002",
+      "name": "County health department",
+      "kind": "actor",
+      "crosses": "inspection results and permits",
+      "direction": "both",
+      "seeds": [
+        "actor",
+        "item def",
+        "port def"
+      ]
+    },
+    {
+      "id": "EXT-003",
+      "name": "Partner pantries",
+      "kind": "actor",
+      "crosses": "food deliveries and demand reports",
+      "direction": "both",
+      "seeds": [
+        "actor",
+        "item def",
+        "port def"
+      ]
+    },
+    {
+      "id": "EXT-004",
+      "name": "Regional food bank federation",
+      "kind": "actor",
+      "crosses": "shared stock and guidance",
+      "direction": "both",
+      "seeds": [
+        "actor",
+        "item def",
+        "port def"
+      ]
+    },
+    {
+      "id": "EXT-005",
+      "name": "Road network",
+      "kind": "system",
+      "crosses": "delivery routes and travel times",
+      "direction": "in",
+      "seeds": [
+        "part (usage) in a context",
+        "item def",
+        "port def"
+      ]
+    },
+    {
+      "id": "EXT-006",
+      "name": "Electric utility",
+      "kind": "actor",
+      "crosses": "power for cold storage",
+      "direction": "in",
+      "seeds": [
+        "actor",
+        "item def",
+        "port def"
+      ]
+    }
+  ],
+  "stakeholders": [
+    {
+      "id": "STK-001",
+      "name": "Families using partner pantries",
+      "role": "user",
+      "stage": "Operation",
+      "side": "external",
+      "approvingAuthority": false,
+      "influence": 2,
+      "influenceReason": "little leverage alone, but they decide demand",
+      "concerns": [
+        "CON-001"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    },
+    {
+      "id": "STK-002",
+      "name": "County health department",
+      "role": "authority",
+      "stage": "Concept",
+      "side": "external",
+      "approvingAuthority": true,
+      "influence": 5,
+      "influenceReason": "it can suspend the food permit",
+      "concerns": [
+        "CON-002"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    },
+    {
+      "id": "STK-003",
+      "name": "Grocery store donors",
+      "role": "supplier",
+      "stage": "Operation",
+      "side": "external",
+      "approvingAuthority": false,
+      "influence": 4,
+      "influenceReason": "they decide how much is donated",
+      "concerns": [
+        "CON-003"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    },
+    {
+      "id": "STK-004",
+      "name": "Volunteer drivers",
+      "role": "user",
+      "stage": "Operation",
+      "side": "internal",
+      "approvingAuthority": false,
+      "influence": 3,
+      "influenceReason": "volunteer availability limits deliveries",
+      "concerns": [
+        "CON-004"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    },
+    {
+      "id": "STK-005",
+      "name": "Warehouse staff",
+      "role": "maintainer",
+      "stage": "Logistics and maintenance",
+      "side": "internal",
+      "approvingAuthority": false,
+      "influence": 2,
+      "influenceReason": "they keep storage running",
+      "concerns": [
+        "CON-005"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    },
+    {
+      "id": "STK-006",
+      "name": "Funders and grant makers",
+      "role": "customer",
+      "stage": "Concept",
+      "side": "external",
+      "approvingAuthority": false,
+      "influence": 4,
+      "influenceReason": "they fund staff and vans",
+      "concerns": [
+        "CON-006"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    },
+    {
+      "id": "STK-007",
+      "name": "Neighbors of the warehouse",
+      "role": "public",
+      "stage": "Operation",
+      "side": "external",
+      "approvingAuthority": false,
+      "influence": 2,
+      "influenceReason": "they can complain to the zoning board",
+      "concerns": [
+        "CON-007"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    },
+    {
+      "id": "STK-008",
+      "name": "Waste hauler",
+      "role": "supplier",
+      "stage": "Disposal",
+      "side": "external",
+      "approvingAuthority": false,
+      "influence": 2,
+      "influenceReason": "disposal costs rise when loads are refused",
+      "concerns": [
+        "CON-008"
+      ],
+      "seeds": [
+        "part def",
+        "stakeholder"
+      ]
+    }
+  ],
+  "concerns": [
+    {
+      "id": "CON-001",
+      "stakeholders": [
+        "STK-001"
+      ],
+      "text": "Families arriving after work find the shelves empty of fresh produce by 5 p.m.",
+      "seeds": [
+        "concern"
+      ]
+    },
+    {
+      "id": "CON-002",
+      "stakeholders": [
+        "STK-002"
+      ],
+      "text": "Cold-chain temperatures above 5 °C during delivery could make donated food unsafe to distribute.",
+      "seeds": [
+        "concern"
+      ]
+    },
+    {
+      "id": "CON-003",
+      "stakeholders": [
+        "STK-003"
+      ],
+      "text": "Store managers want surplus collected before closing so it does not fill their back rooms overnight.",
+      "seeds": [
+        "concern"
+      ]
+    },
+    {
+      "id": "CON-004",
+      "stakeholders": [
+        "STK-004"
+      ],
+      "text": "Volunteers drop out when delivery shifts run past the two hours they signed up for.",
+      "seeds": [
+        "concern"
+      ]
+    },
+    {
+      "id": "CON-005",
+      "stakeholders": [
+        "STK-005"
+      ],
+      "text": "Freezer breakdowns on weekends go unnoticed until Monday and spoil stored meat.",
+      "seeds": [
+        "concern"
+      ]
+    },
+    {
+      "id": "CON-006",
+      "stakeholders": [
+        "STK-006"
+      ],
+      "text": "Grant reports have to show pounds delivered per county district each quarter.",
+      "seeds": [
+        "concern"
+      ]
+    },
+    {
+      "id": "CON-007",
+      "stakeholders": [
+        "STK-007"
+      ],
+      "text": "Residents on Mill Street are woken by van loading before 6 a.m.",
+      "seeds": [
+        "concern"
+      ]
+    },
+    {
+      "id": "CON-008",
+      "stakeholders": [
+        "STK-008"
+      ],
+      "text": "Spoiled food mixed with packaging is refused at the composting site.",
+      "seeds": [
+        "concern"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "REL-001",
+      "from": "STK-007",
+      "to": "STK-004",
+      "type": "conflicts-with",
+      "note": "Neighbors want no loading before 6 a.m.; volunteer drivers need early starts to finish within their shifts.",
+      "seeds": [
+        "connection or dependency between stakeholder parts (course working mapping)"
+      ]
+    },
+    {
+      "id": "REL-002",
+      "from": "STK-002",
+      "to": "STK-005",
+      "type": "regulates",
+      "note": "Food-safety inspections of the warehouse and cold storage",
+      "seeds": [
+        "connection or dependency between stakeholder parts (course working mapping)"
+      ]
+    },
+    {
+      "id": "REL-003",
+      "from": "STK-004",
+      "to": "STK-005",
+      "type": "coordinates-with",
+      "note": "Loading times at the warehouse dock",
+      "seeds": [
+        "connection or dependency between stakeholder parts (course working mapping)"
+      ]
+    }
+  ],
+  "needs": [
+    {
+      "id": "NEED-001",
+      "name": "Produce until closing",
+      "statement": "Families using partner pantries need the delivery service to keep fresh produce on the pantry shelves until closing time.",
+      "condition": "",
+      "rationale": "Families arriving after work currently find no produce left.",
+      "priority": "critical",
+      "sources": [
+        "STK-001"
+      ],
+      "concerns": [
+        "CON-001"
+      ],
+      "goal": "MGO-002",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    },
+    {
+      "id": "NEED-002",
+      "name": "Safe temperatures",
+      "statement": "The county health department needs the network to keep donated food within safe temperature limits throughout collection, storage and delivery.",
+      "condition": "",
+      "rationale": "Unsafe temperatures could make distributed food harmful.",
+      "priority": "mandatory",
+      "sources": [
+        "STK-002"
+      ],
+      "concerns": [
+        "CON-002"
+      ],
+      "goal": "MGO-003",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    },
+    {
+      "id": "NEED-003",
+      "name": "Collection before closing",
+      "statement": "Grocery store donors need the collection service to collect surplus food at every store before it closes for the night.",
+      "condition": "",
+      "rationale": "Surplus left overnight fills their storage space.",
+      "priority": "desirable",
+      "sources": [
+        "STK-003"
+      ],
+      "concerns": [
+        "CON-003"
+      ],
+      "goal": "MGO-004",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    },
+    {
+      "id": "NEED-004",
+      "name": "Shifts within commitment",
+      "statement": "Volunteer drivers need the delivery service to end each delivery shift within the two hours they signed up for, even when donations are heavy.",
+      "condition": "",
+      "rationale": "Volunteers drop out when shifts overrun their commitment.",
+      "priority": "critical",
+      "sources": [
+        "STK-004"
+      ],
+      "concerns": [
+        "CON-004"
+      ],
+      "goal": "MGO-004",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    },
+    {
+      "id": "NEED-005",
+      "name": "Early warning of storage failure",
+      "statement": "Warehouse staff need the network to warn them of a freezer failure within minutes, at any hour including weekends.",
+      "condition": "",
+      "rationale": "Weekend failures currently spoil stored meat before anyone notices.",
+      "priority": "critical",
+      "sources": [
+        "STK-005"
+      ],
+      "concerns": [
+        "CON-005"
+      ],
+      "goal": "MGO-003",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    },
+    {
+      "id": "NEED-006",
+      "name": "Reach by district",
+      "statement": "Funders need the network to show how much food reached each county district during every quarter.",
+      "condition": "",
+      "rationale": "Grant renewals depend on evidence of reach across districts.",
+      "priority": "desirable",
+      "sources": [
+        "STK-006"
+      ],
+      "concerns": [
+        "CON-006"
+      ],
+      "goal": "MGO-005",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    },
+    {
+      "id": "NEED-007",
+      "name": "Quiet early mornings",
+      "statement": "Neighbors of the warehouse need the delivery service to keep loading noise within the limits agreed with the city, at night and early in the morning.",
+      "condition": "",
+      "rationale": "Early loading currently wakes residents on Mill Street.",
+      "priority": "mandatory",
+      "sources": [
+        "STK-007"
+      ],
+      "concerns": [
+        "CON-007"
+      ],
+      "goal": "MGO-004",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    },
+    {
+      "id": "NEED-008",
+      "name": "Separated spoiled food",
+      "statement": "The waste hauler needs the network to separate spoiled food from packaging whenever a load is handed over for composting.",
+      "condition": "",
+      "rationale": "Mixed loads are refused at the composting site.",
+      "priority": "optional",
+      "sources": [
+        "STK-008"
+      ],
+      "concerns": [
+        "CON-008"
+      ],
+      "goal": "MGO-003",
+      "selfCheck": [
+        "form",
+        "solution-free",
+        "attributed",
+        "traced",
+        "condition",
+        "rationale"
+      ],
+      "warnings": [],
+      "justification": "",
+      "counts": true,
+      "seeds": [
+        "requirement def / requirement",
+        "doc",
+        "subject",
+        "stakeholder",
+        "frame"
+      ]
+    }
+  ],
+  "charter": {
+    "threePersonTeam": false,
+    "roles": {
+      "Requirements & Compliance": "JS",
+      "Architecture": "AK",
+      "AI & Data Management": "RM",
+      "Verification & Validation": "TL"
+    },
+    "decisionRules": "The area lead proposes; the team aims for consensus within one working day, then a majority vote decides.",
+    "norms": "One team channel; replies within one working day; a short stand-up after each lab.",
+    "prefixes": [
+      "JS: STK, CON, NEED",
+      "AK: ENT, PRT, EXT, REL",
+      "RM: INFO, AI",
+      "TL: VER"
+    ]
+  },
+  "decision": {
+    "status": "approved",
+    "date": "2026-10-16"
+  },
+  "aiStatement": ""
+}

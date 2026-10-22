@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["node", "vite/client"],
+    "allowArbitraryExtensions": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode: the server runs through Vite's SSR loader (server/run.mjs), like the shared model it reuses */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["server", "vitest.server.config.ts", "playwright.server.config.ts", "e2e/server-two-session.e2e.ts", "e2e/publishing-demo-a.e2e.ts"]
+}

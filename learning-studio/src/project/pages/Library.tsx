@@ -13,7 +13,7 @@ import { Chip, EmptyState, fmtDate } from './ui'
 
 const LAB_PART: Record<string, string> = { ENT: 'Part 2', MGO: 'Part 2', PRT: 'Part 2', EXT: 'Part 3', STK: 'Part 4', CON: 'Part 4', NEED: 'Part 5', REL: 'Part 4' }
 export function ProvenanceBadge({ p }: { p: Provenance }) {
-  if (p.kind === 'copied-from-practice') return <Chip tone="example" title={`Copied from AeroLink ${p.copiedFrom.id}`}>{p.adapted ? 'Adapted from practice' : 'Copied from practice'}</Chip>
+  if (p.kind === 'copied-from-practice') return <Chip tone="example" title={`Copied from AeroLink ${p.copiedFrom.id}`}>{p.adapted ? 'Adapted from AeroLink template' : 'Template from AeroLink — adapt before use'}</Chip>
   if (p.kind === 'imported') return <Chip tone="neutral" title={`${p.from.format} ${p.from.version}${p.from.file ? `, ${p.from.file}` : ''}`}>Imported</Chip>
   return <Chip tone="project">Own</Chip>
 }

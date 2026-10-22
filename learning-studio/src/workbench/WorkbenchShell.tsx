@@ -7,6 +7,7 @@
 // Breakpoints: >= 1280 px full layout; 1024–1279 the model browser and properties open as an overlay drawer from the
 // rail; < 1024 one region at a time with a panel switcher.
 import * as Tabs from '@radix-ui/react-tabs'
+import { IS_STUDENT_EDITION } from '../lib/edition' // week1-m4a
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { BookOpen, Boxes, ChevronDown, ChevronUp, ClipboardCheck, Download, Gauge, Map as MapIcon, Play, Redo2, Settings2, SlidersHorizontal, Target, Undo2, X } from 'lucide-react'
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
@@ -147,10 +148,13 @@ function SettingsMenu({ onShortcuts }: { onShortcuts: () => void }) {
               <option value="dark">Dark</option>
             </select>
           </label>
-          <label className="row cursor-pointer">
-            <span className={instructor ? 'font-semibold text-wb-warn' : ''}>Instructor review mode</span>
-            <input type="checkbox" checked={instructor} onChange={(e) => setInstructor(e.target.checked)} />
-          </label>
+          {/* week1-m4a: no instructor checkbox in the student edition (NAV-02, X14) */}
+          {!IS_STUDENT_EDITION && (
+            <label className="row cursor-pointer">
+              <span className={instructor ? 'font-semibold text-wb-warn' : ''}>Instructor review mode</span>
+              <input type="checkbox" checked={instructor} onChange={(e) => setInstructor(e.target.checked)} />
+            </label>
+          )}
           <hr />
           <button
             type="button"
@@ -175,6 +179,7 @@ function TopBar({ onShortcuts, embedded = false }: { onShortcuts: () => void; em
   const { model } = useWorkspace()
   const w = weekByNumber(wb.week)!
   const mission = wb.evals.find((e) => e.mission.id === wb.missionId)?.mission
+  const brand = usePracticeLinks()?.brand
   const weekTitle = `Week ${w.number} — ${w.title}`
   const runChecks = () => {
     const c = countBySeverity(wb.problems)
@@ -195,7 +200,7 @@ function TopBar({ onShortcuts, embedded = false }: { onShortcuts: () => void; em
   return (
     <header className="wb-topbar wb-region" data-wb-region="topbar" data-wb-always-visible="true" tabIndex={-1} aria-label="Top bar">
       {embedded ? (
-        <span className="wb-brand">Practice workbench</span>
+        <span className="wb-brand">{brand ?? 'Practice workbench'}</span>
       ) : (
         <Link to="/" className="wb-brand no-underline" style={{ color: 'inherit' }} aria-label="Practice workbench — dashboard">
           Practice workbench
@@ -236,13 +241,15 @@ function TopBar({ onShortcuts, embedded = false }: { onShortcuts: () => void; em
         <button type="button" className="wb-btn primary" onClick={runChecks}>
           <Play size={12} aria-hidden /> Run checks
         </button>
-        <button type="button" className="wb-btn" onClick={exportAll} aria-label="Export">
-          <Download size={12} aria-hidden /> <span className="wb-hide-medium">Export</span>
-        </button>
+        {!brand && (
+          <button type="button" className="wb-btn" onClick={exportAll} aria-label="Export">
+            <Download size={12} aria-hidden /> <span className="wb-hide-medium">Export</span>
+          </button>
+        )}
       </div>
       {embedded ? (
         <div className="wb-btn-group">
-          {instructor && <span className="wb-chip warn">Instructor mode</span>}
+          {!IS_STUDENT_EDITION && instructor && <span className="wb-chip warn">Instructor mode</span>}
           <button type="button" className="wb-btn ghost" onClick={onShortcuts}>
             Shortcuts <kbd className="wb-kbd">?</kbd>
           </button>
@@ -263,7 +270,7 @@ function TopBar({ onShortcuts, embedded = false }: { onShortcuts: () => void; em
         <Link to={`/week/${wb.week}/classic`} className="wb-link whitespace-nowrap">
           Classic page
         </Link>
-        {instructor && <span className="wb-chip warn">Instructor mode</span>}
+        {!IS_STUDENT_EDITION && instructor && <span className="wb-chip warn">Instructor mode</span>}
         <SettingsMenu onShortcuts={onShortcuts} />
       </div>
       )}
@@ -824,7 +831,7 @@ function ShellBody({ embedded = false }: { embedded?: boolean }) {
       </a>
       <TopBar onShortcuts={() => setShortcuts(true)} embedded={embedded} />
       {embedded && <PracticeBar />}
-      {instructor && !embedded && (
+      {!IS_STUDENT_EDITION && instructor && !embedded && (
         <div className="flex-none border-b border-wb-line bg-wb-warn-soft px-3 py-1 text-[12px] text-wb-warn" role="status">
           Instructor review mode: provenance, review controls and instructor notes (Assessments) are visible. Reviews are stored in this browser only.
         </div>
@@ -858,14 +865,25 @@ function ShellBody({ embedded = false }: { embedded?: boolean }) {
  *  instructor mode and week navigation, so the shell drops them and fills its parent instead of the viewport. */
 export function WorkbenchShell({ week, embedded = false }: { week: number; embedded?: boolean }) {
   const all = workbenchWeek(week)
-  const ui = WEEK_UI[week]
+  const ui0 = WEEK_UI[week]
   // the lecture-first path shows only the missions its page is for (sign-off Mo3: the lab tool shows the Team Record)
-  const only = usePracticeLinks()?.missions
-  const def = useMemo(() => {
+  const links = usePracticeLinks()
+  const only = links?.missions
+  const def0 = useMemo(() => {
     if (!all || !only) return all
     const missions = all.missions.filter((m) => only.includes(m.id))
     return missions.length ? { ...all, missions } : all
   }, [all, only])
+  // week1-m5 (audit M2): the lab tool hides the AeroLink rehearsal views, tree groups and rules
+  const views = links?.views
+  const hideRules = links?.hideRules
+  const hideGroups = links?.hideTreeGroups
+  const def = useMemo(() => {
+    if (!def0) return def0
+    const v = views ? def0.views.filter((x) => views.includes(x)) : def0.views
+    return { ...def0, views: v.length ? v : def0.views, rules: hideRules ? def0.rules.filter((r) => !hideRules.includes(r.id)) : def0.rules }
+  }, [def0, views, hideRules])
+  const ui = useMemo(() => (ui0 && hideGroups ? { ...ui0, tree: (s: Parameters<typeof ui0.tree>[0]) => ui0.tree(s).filter((g) => !hideGroups.includes(g.id)) } : ui0), [ui0, hideGroups])
   const ok = useMemo(() => !!def && !!ui, [def, ui])
   if (!ok) return <p>Week {week} is not converted to the workbench.</p>
   return (

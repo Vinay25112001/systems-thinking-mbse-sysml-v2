@@ -11,3 +11,4 @@ learning-studio/sysml/_selftest/selftest-report.json
 learning-studio/sysml/partial-report.json
 exports/
 learning-studio/dist-student/
+node_modules/

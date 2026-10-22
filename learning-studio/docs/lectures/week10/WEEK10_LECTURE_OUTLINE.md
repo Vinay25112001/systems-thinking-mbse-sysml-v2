@@ -521,9 +521,9 @@ B10.1–B10.5 applied to the team's own enterprise; the graduate interaction vie
 | Lesson and worked examples review | 0.5 | Lesson of about 4,000 words |
 | Lab out of class (student's share of steps 2–8) | 2.6 | About 10.5 person-hours per team of 4 (functions 2.0; flow 3.0; states 2.0; use cases 1.0; checker and fixes 1.0; self-review 1.0; statement and integration 0.5) |
 | Quiz (§6.1) | 0.3 | 12 items |
-| Applied exercise (§6.2) | 0.7 | 40 min plus upload |
+| Applied exercise (§6.2) | 0.8 | 50 min plus upload |
 | Time log | 0.1 | |
-| **Total** | **7.7** | Within 8.0 h. A 3-person team carries about 3.5 h of lab each (8.6 h total) unless the scenario minimum drops to the main flow plus two alternates; graduate interaction view adds about 0.5 h (faculty decision) |
+| **Total** | **7.8** | Within 8.0 h. Superseded by the review fixes: the computed figures are in `labBrief.ts` and WEEK10_MILESTONE_REPORT.md (team of four 7.8 h; team of three reduced scope, 7.5 person-hours of lab, 7.9 h per student) |
 
 ## 6. Assessment outline (separate from the lecture)
 
@@ -548,7 +548,7 @@ Unseen, non-AeroLink contexts; no reuse of in-class retrieval items or worked-ex
 
 Scoring: 1 point each for 1–9, 2 points each for 10–12 (two-criterion key); total 15.
 
-### 6.2 Applied exercise (individual, about 40 min, open book, unseen case)
+### 6.2 Applied exercise (individual, about 50 min, open book, unseen case)
 - **Case brief** (about 300 words, FICTIONAL): a city bike-share service with a rental scenario (unlock, ride, return; alternates: no bike available, dock full at return) and a dock-station with modes (available, charging, out of service).
 - **Tasks.** (1) Mapping table for the rental scenario (B10.2). (2) The action flow in SysML v2 text with one decision, one merge and both alternates (B10.2). (3) A state definition for the dock with ≥ 4 states, ≥ 5 transitions and one guard (B10.3). (4) The use case header with subject, actors and objective (B10.4). (5) Three findings on a provided, checker-accepted but defective fragment, each with location, criterion and fix (B10.5).
 - **Rubric** (4 levels each, 20 points): mapping completeness; flow semantics (choice, alternates, ending vs rejoining); state semantics (initial state, triggers, guard, one-active-substate); use case correctness; review findings (real defect, criterion, actionable fix). Syntax slips that do not change meaning cost at most one level in total; the exercise is graded on meaning, not on a checker run.

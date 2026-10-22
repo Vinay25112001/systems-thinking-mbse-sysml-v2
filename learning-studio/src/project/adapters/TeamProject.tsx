@@ -8,7 +8,9 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useEffect, type ReactNode } from 'react'
 import { Link } from '../../lib/router'
 import { useProjectState, useProjectStore } from '../store/ProjectProvider'
+import { showReadOnly } from '../store/ProjectStore'
 import { projectTitle } from '../model/create'
+import { EditAccess } from '../pages/EditAccess'
 import { ImportFlow } from '../pages/ImportFlow'
 import { ProjectBanner, SaveStatus } from '../pages/ui'
 import { recordCounts } from './week1'
@@ -70,9 +72,13 @@ export function TeamProjectBanner({ mode }: { mode: 'project' | 'legacy' }) {
         }
       >
         Linked to My Project: every edit here is saved to your project with its history{st.storage === 'memory' ? ' (this browser is not saving: export before you close the tab)' : ''}.
-        {st.readOnly && <strong> Read-only in this tab: {st.readOnlyReason}</strong>}
         {unadapted.length > 0 && <> {unadapted.join(', ')} {unadapted.length > 1 ? 'were' : 'was'} copied from the AeroLink practice and {unadapted.length > 1 ? 'do' : 'does'} not count in My Project until adapted.</>}
       </ProjectBanner>
+      {(showReadOnly(st) || st.refused) && (
+        <div className="pj-scope pj-stack" style={{ marginTop: 8 }}>
+          <EditAccess st={st} store={store} />
+        </div>
+      )}
     </div>
   )
 }

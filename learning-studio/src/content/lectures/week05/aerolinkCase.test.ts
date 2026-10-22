@@ -15,7 +15,7 @@ import { RISKS, W3_REQUIREMENTS, W3_UNKNOWNS } from '../week03/aerolinkCase'
 import { FINDINGS as W4_FINDINGS, FUNCTIONS, INFORMATION, INTERFACES as W4_INTERFACES, PHYSICAL, W4_EXTERNALS } from '../week04/aerolinkCase'
 import {
   ADDED_IDS, CHANGE_REQUEST, COMPONENTS, COUNTS, COUPLING, DIAGONAL, DRIVING_QUESTION, EXTERNAL_DISPOSITIONS, FN_FLOWS, GROUPINGS, HIDDEN_EXTERNAL, ICWG, INTERFACES, INTERFACE_DECISION,
-  INTERFACE_REQUIREMENTS, KNOWN_IDS, LATENCY_BUDGET, LEASE_DEPENDENT, RADIO_INTERFACES, RECEIVED, ROUTES, W4_FEED, W4_HANDOVERS, boundaryReasons, carriesOf, componentsOf, countsOf, crossesBoundary, crossingFlows, degreeOf,
+  INTERFACE_REQUIREMENTS, KNOWN_IDS, LATENCY_BUDGET, LEASE_DEPENDENT, RADIO_INTERFACES, RECEIVED, ROUTES, W4_FEED, W4_HANDOVERS, POSSIBLE_CROSSING, boundaryReasons, carriesOf, crossingText, componentsOf, countsOf, crossesBoundary, crossingFlows, degreeOf,
   directionOf, externalsWithoutInterface, functionsAt, groupingCounts, n2Cell, n2Upper, ownerOf, uncoveredPairs, undisposedExternals, type InterfaceDef,
 } from './aerolinkCase'
 
@@ -203,6 +203,19 @@ describe('Week 5 case: security and resilience at the interfaces', () => {
     expect(HIDDEN_EXTERNAL).toEqual(['IF-002', 'IF-008', 'IF-010', 'IF-012', 'IF-013', 'IF-014', 'IF-015'])
     expect(RADIO_INTERFACES).toEqual(['IF-002', 'IF-013'])
     expect(LEASE_DEPENDENT.filter((id) => !COUNTS.crossing.includes(id))).toEqual(['IF-012'])
+  })
+  it('confirmation N7: one trust-boundary cell for every interface table (lesson, slides, Examples), both directions', () => {
+    const cell = (id: string, none?: string) => crossingText(INTERFACES.find((x) => x.id === id)!, none)
+    expect(cell('IF-012')).toBe(POSSIBLE_CROSSING)
+    expect(cell('IF-012', 'no')).toBe(POSSIBLE_CROSSING)
+    expect(cell('IF-004')).toBe('none')
+    expect(cell('IF-004', 'no')).toBe('no')
+    expect(cell('IF-013')).toBe('radio medium')
+    // a crossing lease-dependent interface shows its reasons, never "possibly"
+    for (const id of LEASE_DEPENDENT.filter((x) => COUNTS.crossing.includes(x))) expect(cell(id), id).not.toBe(POSSIBLE_CROSSING)
+    const possible = INTERFACES.filter((x) => crossingText(x) === POSSIBLE_CROSSING).map((x) => x.id)
+    const none = INTERFACES.filter((x) => crossingText(x) === 'none').map((x) => x.id)
+    expect([COUNTS.crossing.length, possible, none]).toEqual([14, ['IF-012'], ['IF-004']])
   })
   it('radio medium, both directions: radio, Wi-Fi, cellular, satellite media cross; a wired ground network alone does not', () => {
     const base = { ...INTERFACES.find((y) => y.id === 'IF-012')! }

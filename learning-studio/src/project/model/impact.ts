@@ -1,7 +1,7 @@
 // Change impact (trace plan §5): a material change to an artifact flags the artifacts that depend on it, direction-aware
 // along the vocabulary's impact rule, and turns the directly involved relationships suspect. Never deletes, never marks
 // anything valid: only a person clears a flag, with a rationale (clearReviewOps).
-import { VOCABULARY } from './vocabulary'
+import { ruleOf } from './vocabulary'
 import type { AttrValue, Operation, ProjectDoc, ReviewCause, ReviewState } from './types'
 
 export type Flag = { target: string; kind: 'artifact' | 'relationship'; cause: ReviewCause }
@@ -21,7 +21,7 @@ export function impactOf(doc: ProjectDoc, changedUid: string, cause: Omit<Review
       for (const rel of rels) {
         if (rel.from !== uid && rel.to !== uid) continue
         if (!rel.type) continue
-        const dir = VOCABULARY[rel.type].impact
+        const dir = ruleOf(rel.type, rel.category)?.impact ?? 'none'
         const other = rel.from === uid ? rel.to : rel.from
         const propagates = dir === 'both' || (dir === '→from' && rel.to === uid) || (dir === '→to' && rel.from === uid)
         if (!propagates) continue

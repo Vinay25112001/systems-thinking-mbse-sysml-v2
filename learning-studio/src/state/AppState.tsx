@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, type ReactNode } from 'react'
 import { usePersistentState } from '../lib/usePersistentState'
+import { IS_STUDENT_EDITION } from '../lib/edition' // week1-m4a
 import {
   nextRelationshipId,
   SEED_STAKEHOLDERS,
@@ -70,7 +71,9 @@ function systemDark(): boolean {
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = usePersistentState<ThemePref>('theme', 'system')
-  const [instructor, setInstructor] = usePersistentState<boolean>('instructor', false)
+  const [instructorStored, setInstructor] = usePersistentState<boolean>('instructor', false)
+  // week1-m4a: the student edition has no instructor view at all (NAV-02, X14), whatever an earlier visit stored
+  const instructor = IS_STUDENT_EDITION ? false : instructorStored
   const [reviews, setReviews] = usePersistentState<Record<string, ReviewRecord>>('reviews', {})
   const [completed, setCompleted] = usePersistentState<Record<string, boolean>>('completed', {})
   const [quiz, setQuiz] = usePersistentState<Record<string, QuizRecord>>('quiz', {})

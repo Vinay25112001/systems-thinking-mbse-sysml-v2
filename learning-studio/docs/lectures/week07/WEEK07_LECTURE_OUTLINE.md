@@ -1,5 +1,13 @@
 # Week 7 Lecture Outline: Final Presentation
 
+> **Revision 2026-10-21 (built).** The Week 7 package is now in the app source (`src/content/lectures/week07/`,
+> `src/week7/`, `src/workbench/week7/`; report: `WEEK7_MILESTONE_REPORT.md`). It departs from this outline as the
+> integrator's brief directs: Session 1 is the package, its audit and the design review (56 min of lecture, 13 min of
+> studio); Session 2 is 25 min on presenting and defending decisions and answering review findings, then the 44-min review
+> itself (slots computed from the class size). Peer findings (RIDs) are written **before** the review from the package sent
+> 24 h ahead, and dispositioned within 3 days after it. The SFR (P7-1) is not cited, because it is not in the register
+> (staged in `WEEK7_PENDING_READINGS.md`); R105 is the registered form of P6-1. The original plan below is kept as written.
+
 **Status.** Draft outline for faculty review (COURSE_PRODUCTION_PLAN M2), written 2026-10-19. Nothing here is in the app source yet.
 **Governing documents.** DECISION_LOG A19 and A20 (Week 7 is a review and presentation week); COURSE_SCHEDULE.md (Week 7 subject, exact: *Final Presentation*; output: the **Systems Thinking Engineering Package** (Weeks 1–6 integrated) and the Phase I presentation; rule 4: the Week 7 output is the source material for Phase II); the Week 1 template.
 **Reuse.** The old checkpoints CP1 (Problem Definition & ConOps), CP2 (Requirements Baseline, with the SRR-style review in old Week 6, block `w6-srr`) and CP3 (Trade Study & Architecture Concept); old Week 7 worked example (d) (a recommendation with conditions, residual risk and what would change it); the course document's Deliverable 16 (final package and executive presentation).

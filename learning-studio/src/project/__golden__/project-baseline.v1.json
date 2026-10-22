@@ -1,0 +1,3617 @@
+{
+  "format": "sysml-studio-project",
+  "schemaVersion": 1,
+  "exportedAt": "2026-10-20T10:00:00.000Z",
+  "exportedBy": "JS",
+  "app": {
+    "name": "sysml-learning-studio",
+    "version": "0.0.0",
+    "edition": "student"
+  },
+  "scope": "full",
+  "includesHistory": true,
+  "project": {
+    "uid": "b6b38e29-e784-4405-9422-43984818fe0e",
+    "title": "",
+    "createdAt": "2026-10-20T09:00:00.000Z",
+    "updatedAt": "2026-10-20T09:00:00.000Z",
+    "createdWith": {
+      "app": "sysml-learning-studio",
+      "version": "0.0.0"
+    },
+    "course": {
+      "teamLabel": "07"
+    },
+    "model": {
+      "purpose": "",
+      "options": {
+        "assessment": true,
+        "relationships": "all"
+      }
+    }
+  },
+  "team": {
+    "label": "07",
+    "threePersonTeam": false,
+    "members": [
+      {
+        "initials": "JS",
+        "active": true
+      },
+      {
+        "initials": "AK",
+        "active": true
+      },
+      {
+        "initials": "RM",
+        "active": true
+      },
+      {
+        "initials": "TL",
+        "active": true
+      }
+    ],
+    "roles": {
+      "Requirements & Compliance": "JS",
+      "Architecture": "AK",
+      "AI & Data Management": "RM",
+      "Verification & Validation": "TL"
+    },
+    "decisionRules": "The area lead proposes; the team aims for consensus within one working day, then a majority vote decides.",
+    "norms": "One team channel; replies within one working day; a short stand-up after each lab.",
+    "prefixOwnership": {
+      "STK": "JS",
+      "CON": "JS",
+      "NEED": "JS",
+      "ENT": "AK",
+      "PRT": "AK",
+      "EXT": "AK",
+      "REL": "AK",
+      "INFO": "RM",
+      "AI": "RM",
+      "VER": "TL"
+    },
+    "prefixesText": "JS: STK, CON, NEED\nAK: ENT, PRT, EXT, REL\nRM: INFO, AI\nTL: VER",
+    "charterUpdatedAt": "2026-10-20T09:00:00.000Z"
+  },
+  "artifacts": [
+    {
+      "uid": "583ab5bb-a373-4a7e-97b5-67b8abb31374",
+      "id": "ENT-001",
+      "type": "ENT",
+      "title": "Riverside Food Bank Network",
+      "description": "",
+      "attributes": {
+        "domain": "Food security and logistics",
+        "problem": "Donated food reaches partner pantries unevenly across the county, so fresh produce runs out early while surplus spoils in store back rooms.",
+        "suitability": "The network has many interacting parts (donors, a warehouse, vans, volunteers and pantries), people as well as technology, exchanges with outside systems such as the health department and the road network, and stakeholders whose needs conflict, such as neighbors and early delivery shifts. It is large enough to model in SysML v2 and small enough for one term.",
+        "soi": "The network’s collection, warehousing and delivery service that moves donated food from donors to partner pantries.",
+        "approval": {
+          "decision": "approved",
+          "decidedOn": "2026-10-16"
+        }
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 2
+    },
+    {
+      "uid": "15b7be29-58ab-4f90-986a-6a9ecb158505",
+      "id": "PRT-001",
+      "type": "PRT",
+      "title": "Warehouse and cold storage",
+      "description": "",
+      "attributes": {
+        "seq": 1
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (PRT)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "eb80ca18-93fb-4878-8e06-bfcb5f6585cb",
+      "id": "PRT-002",
+      "type": "PRT",
+      "title": "Delivery vans and volunteer drivers",
+      "description": "",
+      "attributes": {
+        "seq": 2
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (PRT)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "99ab5daf-ba63-4ea0-ace9-23ece080d462",
+      "id": "PRT-003",
+      "type": "PRT",
+      "title": "Volunteer scheduling office",
+      "description": "",
+      "attributes": {
+        "seq": 3
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (PRT)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "f1707d13-e493-44c2-b77a-0ad69c8c92a1",
+      "id": "PRT-004",
+      "type": "PRT",
+      "title": "Donation intake desk",
+      "description": "",
+      "attributes": {
+        "seq": 4
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (PRT)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "d36ba47a-5e9e-4ceb-98ac-03a4da9a1c7c",
+      "id": "EXT-001",
+      "type": "EXT",
+      "title": "Grocery store donors",
+      "description": "",
+      "attributes": {
+        "kind": "actor",
+        "crosses": "surplus food",
+        "direction": "in",
+        "seq": 1
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts contextRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "f14ddb12-9d9e-470d-9c87-7934ba5d8d5a",
+      "id": "EXT-002",
+      "type": "EXT",
+      "title": "County health department",
+      "description": "",
+      "attributes": {
+        "kind": "actor",
+        "crosses": "inspection results and permits",
+        "direction": "both",
+        "seq": 2
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts contextRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "04d89556-196e-4bda-a113-498b94ef3df8",
+      "id": "EXT-003",
+      "type": "EXT",
+      "title": "Partner pantries",
+      "description": "",
+      "attributes": {
+        "kind": "actor",
+        "crosses": "food deliveries and demand reports",
+        "direction": "both",
+        "seq": 3
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts contextRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "ac032841-4a26-4e01-b8d6-626472440a15",
+      "id": "EXT-004",
+      "type": "EXT",
+      "title": "Regional food bank federation",
+      "description": "",
+      "attributes": {
+        "kind": "actor",
+        "crosses": "shared stock and guidance",
+        "direction": "both",
+        "seq": 4
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts contextRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "d5ab018b-feba-45a3-8789-f895b71df5eb",
+      "id": "EXT-005",
+      "type": "EXT",
+      "title": "Road network",
+      "description": "",
+      "attributes": {
+        "kind": "system",
+        "crosses": "delivery routes and travel times",
+        "direction": "in",
+        "seq": 5
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts contextRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "b666cbac-edc7-41dc-b62a-8e36d5748e1a",
+      "id": "EXT-006",
+      "type": "EXT",
+      "title": "Electric utility",
+      "description": "",
+      "attributes": {
+        "kind": "actor",
+        "crosses": "power for cold storage",
+        "direction": "in",
+        "seq": 6
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts contextRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "ac45ed29-0765-4793-9657-25002799a80f",
+      "id": "STK-001",
+      "type": "STK",
+      "title": "Families using partner pantries",
+      "description": "",
+      "attributes": {
+        "role": "user",
+        "stage": "Operation",
+        "side": "external",
+        "approving": false,
+        "influence": 2,
+        "influenceText": "2",
+        "influenceReason": "little leverage alone, but they decide demand",
+        "seq": 1
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "d9bf4c18-5ec5-4678-b969-96ab46938068",
+      "id": "STK-002",
+      "type": "STK",
+      "title": "County health department",
+      "description": "",
+      "attributes": {
+        "role": "authority",
+        "stage": "Concept",
+        "side": "external",
+        "approving": true,
+        "influence": 5,
+        "influenceText": "5",
+        "influenceReason": "it can suspend the food permit",
+        "seq": 2
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "c4aa73a6-3d51-4cf6-8e6b-5bb779b0e432",
+      "id": "STK-003",
+      "type": "STK",
+      "title": "Grocery store donors",
+      "description": "",
+      "attributes": {
+        "role": "supplier",
+        "stage": "Operation",
+        "side": "external",
+        "approving": false,
+        "influence": 4,
+        "influenceText": "4",
+        "influenceReason": "they decide how much is donated",
+        "seq": 3
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "33b67c84-992f-4c7d-b42c-fd7d41bea6bf",
+      "id": "STK-004",
+      "type": "STK",
+      "title": "Volunteer drivers",
+      "description": "",
+      "attributes": {
+        "role": "user",
+        "stage": "Operation",
+        "side": "internal",
+        "approving": false,
+        "influence": 3,
+        "influenceText": "3",
+        "influenceReason": "volunteer availability limits deliveries",
+        "seq": 4
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "15f2f402-317a-4685-94ad-22a674763b93",
+      "id": "STK-005",
+      "type": "STK",
+      "title": "Warehouse staff",
+      "description": "",
+      "attributes": {
+        "role": "maintainer",
+        "stage": "Logistics and maintenance",
+        "side": "internal",
+        "approving": false,
+        "influence": 2,
+        "influenceText": "2",
+        "influenceReason": "they keep storage running",
+        "seq": 5
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "be093d08-7fa5-43e8-bb4d-4d4f720c640a",
+      "id": "STK-006",
+      "type": "STK",
+      "title": "Funders and grant makers",
+      "description": "",
+      "attributes": {
+        "role": "customer",
+        "stage": "Concept",
+        "side": "external",
+        "approving": false,
+        "influence": 4,
+        "influenceText": "4",
+        "influenceReason": "they fund staff and vans",
+        "seq": 6
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "8e281fe0-c91c-421c-a4d6-fe0cee35c0f5",
+      "id": "STK-007",
+      "type": "STK",
+      "title": "Neighbors of the warehouse",
+      "description": "",
+      "attributes": {
+        "role": "public",
+        "stage": "Operation",
+        "side": "external",
+        "approving": false,
+        "influence": 2,
+        "influenceText": "2",
+        "influenceReason": "they can complain to the zoning board",
+        "seq": 7
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "3db196ae-5954-4bb6-aefe-2d928890a8b6",
+      "id": "STK-008",
+      "type": "STK",
+      "title": "Waste hauler",
+      "description": "",
+      "attributes": {
+        "role": "supplier",
+        "stage": "Disposal",
+        "side": "external",
+        "approving": false,
+        "influence": 2,
+        "influenceText": "2",
+        "influenceReason": "disposal costs rise when loads are refused",
+        "seq": 8
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts stakeholderRowIssues"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "b72c1d82-ddd7-44c3-ac86-f477e2605a21",
+      "id": "CON-001",
+      "type": "CON",
+      "title": "",
+      "description": "Families arriving after work find the shelves empty of fresh produce by 5 p.m.",
+      "attributes": {
+        "seq": 1
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "0d1c8d32-96fb-478e-a300-522fbb57e6fd",
+      "id": "CON-002",
+      "type": "CON",
+      "title": "",
+      "description": "Cold-chain temperatures above 5 °C during delivery could make donated food unsafe to distribute.",
+      "attributes": {
+        "seq": 2
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "c6439345-3147-4d64-a923-a8107f0aade7",
+      "id": "CON-003",
+      "type": "CON",
+      "title": "",
+      "description": "Store managers want surplus collected before closing so it does not fill their back rooms overnight.",
+      "attributes": {
+        "seq": 3
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "11e9a175-5f9b-475b-b00d-1b74e09e463a",
+      "id": "CON-004",
+      "type": "CON",
+      "title": "",
+      "description": "Volunteers drop out when delivery shifts run past the two hours they signed up for.",
+      "attributes": {
+        "seq": 4
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "38fcd1ce-4f4b-49e9-baf4-11c5e7ccb5ed",
+      "id": "CON-005",
+      "type": "CON",
+      "title": "",
+      "description": "Freezer breakdowns on weekends go unnoticed until Monday and spoil stored meat.",
+      "attributes": {
+        "seq": 5
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "506511be-3613-4d9e-88c1-9dbf794b9084",
+      "id": "CON-006",
+      "type": "CON",
+      "title": "",
+      "description": "Grant reports have to show pounds delivered per county district each quarter.",
+      "attributes": {
+        "seq": 6
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "10123a1d-4f5a-4219-ab69-77be0d9c5e29",
+      "id": "CON-007",
+      "type": "CON",
+      "title": "",
+      "description": "Residents on Mill Street are woken by van loading before 6 a.m.",
+      "attributes": {
+        "seq": 7
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "92a56d0c-2cf6-42c7-86fe-c24893d07163",
+      "id": "CON-008",
+      "type": "CON",
+      "title": "",
+      "description": "Spoiled food mixed with packaging is refused at the composting site.",
+      "attributes": {
+        "seq": 8
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts concernIssue"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "cdab1133-19d9-43ec-9beb-05cb9ac8f2ce",
+      "id": "MGO-001",
+      "type": "MGO",
+      "title": "Mission",
+      "description": "Collect surplus food from donors and deliver it safely to partner pantries across the county every week.",
+      "attributes": {
+        "level": "mission"
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (mission)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 2
+    },
+    {
+      "uid": "c0a9683b-d271-4c9c-8cb4-aeb4796f090b",
+      "id": "MGO-002",
+      "type": "MGO",
+      "title": "",
+      "description": "Keep partner pantries stocked with fresh food every week",
+      "attributes": {
+        "level": "goal",
+        "seq": 1
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (goals)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "b5c77328-bfc9-495a-bb4b-caccf1433a51",
+      "id": "MGO-003",
+      "type": "MGO",
+      "title": "",
+      "description": "Keep all donated food safe from collection to delivery",
+      "attributes": {
+        "level": "goal",
+        "seq": 2
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (goals)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "9e424599-536d-44b1-b22d-d8f80e9d851a",
+      "id": "MGO-004",
+      "type": "MGO",
+      "title": "",
+      "description": "Run the service within what donors, volunteers and neighbors can sustain",
+      "attributes": {
+        "level": "goal",
+        "seq": 3
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (goals)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "fd88849e-8bb7-4b38-abc1-5229bd88465c",
+      "id": "MGO-005",
+      "type": "MGO",
+      "title": "",
+      "description": "Show funders how far every delivered pound reaches",
+      "attributes": {
+        "level": "goal",
+        "seq": 4
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts checkProposal (goals)"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "7451c602-e845-4e98-a0bd-9a026d22b8cd",
+      "id": "NEED-001",
+      "type": "NEED",
+      "title": "Produce until closing",
+      "description": "Families using partner pantries need the delivery service to keep fresh produce on the pantry shelves until closing time.",
+      "attributes": {
+        "conditions": "",
+        "priority": "critical",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-001",
+        "concernsText": "CON-001",
+        "goalText": "MGO-002",
+        "addedIn": 1,
+        "seq": 1
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Families arriving after work currently find no produce left.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "91b08f71-0588-4bbf-942d-38000f10bb57",
+      "id": "NEED-002",
+      "type": "NEED",
+      "title": "Safe temperatures",
+      "description": "The county health department needs the network to keep donated food within safe temperature limits throughout collection, storage and delivery.",
+      "attributes": {
+        "conditions": "",
+        "priority": "mandatory",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-002",
+        "concernsText": "CON-002",
+        "goalText": "MGO-003",
+        "addedIn": 1,
+        "seq": 2
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Unsafe temperatures could make distributed food harmful.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "2ec4d4c1-d822-4f8c-95b3-a5a246d81f70",
+      "id": "NEED-003",
+      "type": "NEED",
+      "title": "Collection before closing",
+      "description": "Grocery store donors need the collection service to collect surplus food at every store before it closes for the night.",
+      "attributes": {
+        "conditions": "",
+        "priority": "desirable",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-003",
+        "concernsText": "CON-003",
+        "goalText": "MGO-004",
+        "addedIn": 1,
+        "seq": 3
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Surplus left overnight fills their storage space.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "dd193270-5631-4698-a09d-18241ac7218c",
+      "id": "NEED-004",
+      "type": "NEED",
+      "title": "Shifts within commitment",
+      "description": "Volunteer drivers need the delivery service to end each delivery shift within the two hours they signed up for, even when donations are heavy.",
+      "attributes": {
+        "conditions": "",
+        "priority": "critical",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-004",
+        "concernsText": "CON-004",
+        "goalText": "MGO-004",
+        "addedIn": 1,
+        "seq": 4
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Volunteers drop out when shifts overrun their commitment.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "1b8ddfc2-4e79-4b48-b089-0f9d7a46d669",
+      "id": "NEED-005",
+      "type": "NEED",
+      "title": "Early warning of storage failure",
+      "description": "Warehouse staff need the network to warn them of a freezer failure within minutes, at any hour including weekends.",
+      "attributes": {
+        "conditions": "",
+        "priority": "critical",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-005",
+        "concernsText": "CON-005",
+        "goalText": "MGO-003",
+        "addedIn": 1,
+        "seq": 5
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Weekend failures currently spoil stored meat before anyone notices.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "4e0ce903-3303-4680-8708-ae651b5cedf3",
+      "id": "NEED-006",
+      "type": "NEED",
+      "title": "Reach by district",
+      "description": "Funders need the network to show how much food reached each county district during every quarter.",
+      "attributes": {
+        "conditions": "",
+        "priority": "desirable",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-006",
+        "concernsText": "CON-006",
+        "goalText": "MGO-005",
+        "addedIn": 1,
+        "seq": 6
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Grant renewals depend on evidence of reach across districts.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "ea02b859-ed83-42f9-bcd2-bc0134ee61de",
+      "id": "NEED-007",
+      "type": "NEED",
+      "title": "Quiet early mornings",
+      "description": "Neighbors of the warehouse need the delivery service to keep loading noise within the limits agreed with the city, at night and early in the morning.",
+      "attributes": {
+        "conditions": "",
+        "priority": "mandatory",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-007",
+        "concernsText": "CON-007",
+        "goalText": "MGO-004",
+        "addedIn": 1,
+        "seq": 7
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Early loading currently wakes residents on Mill Street.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    },
+    {
+      "uid": "2c407313-0c2e-4bec-9a65-a1fdf2544884",
+      "id": "NEED-008",
+      "type": "NEED",
+      "title": "Separated spoiled food",
+      "description": "The waste hauler needs the network to separate spoiled food from packaging whenever a load is handed over for composting.",
+      "attributes": {
+        "conditions": "",
+        "priority": "optional",
+        "selfCheck": {
+          "form": true,
+          "solution-free": true,
+          "attributed": true,
+          "traced": true,
+          "condition": true,
+          "rationale": true
+        },
+        "justification": "",
+        "sourcesText": "STK-008",
+        "concernsText": "CON-008",
+        "goalText": "MGO-003",
+        "addedIn": 1,
+        "seq": 8
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "rationale": "Mixed loads are refused at the composting site.",
+      "validation": {
+        "state": "passing",
+        "gates": [
+          {
+            "id": "all",
+            "ok": true,
+            "message": "The course checks for this item pass."
+          }
+        ],
+        "advisories": [],
+        "checkedAt": "2026-10-20T09:00:00.000Z",
+        "checker": "week1/team.ts needStatus"
+      },
+      "review": {
+        "state": "none"
+      },
+      "milestones": [
+        1
+      ],
+      "aiAssisted": false,
+      "unresolvedRefs": [],
+      "formerIds": [],
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revision": 1
+    }
+  ],
+  "relationships": [
+    {
+      "uid": "c689abfc-006b-4035-b050-3463b3b1c2ca",
+      "id": "LNK-001",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "c0a9683b-d271-4c9c-8cb4-aeb4796f090b",
+      "to": "cdab1133-19d9-43ec-9beb-05cb9ac8f2ce",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "MGO-002",
+      "toId": "MGO-001"
+    },
+    {
+      "uid": "7e9539ad-06ae-4dd6-bf0b-9b2ebc73307a",
+      "id": "LNK-002",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "b5c77328-bfc9-495a-bb4b-caccf1433a51",
+      "to": "cdab1133-19d9-43ec-9beb-05cb9ac8f2ce",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "MGO-003",
+      "toId": "MGO-001"
+    },
+    {
+      "uid": "aaaede3c-29a9-49e2-80e4-44e91a12d257",
+      "id": "LNK-003",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "9e424599-536d-44b1-b22d-d8f80e9d851a",
+      "to": "cdab1133-19d9-43ec-9beb-05cb9ac8f2ce",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "MGO-004",
+      "toId": "MGO-001"
+    },
+    {
+      "uid": "c58c7dde-84f7-498f-9de8-8aaa8c02cf72",
+      "id": "LNK-004",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "fd88849e-8bb7-4b38-abc1-5229bd88465c",
+      "to": "cdab1133-19d9-43ec-9beb-05cb9ac8f2ce",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "MGO-005",
+      "toId": "MGO-001"
+    },
+    {
+      "uid": "325360fa-e0ba-4079-87a4-b77e2885092c",
+      "id": "LNK-005",
+      "category": "structure",
+      "type": "contains",
+      "from": "583ab5bb-a373-4a7e-97b5-67b8abb31374",
+      "to": "15b7be29-58ab-4f90-986a-6a9ecb158505",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "ENT-001",
+      "toId": "PRT-001"
+    },
+    {
+      "uid": "df5077e1-aeca-4636-ada6-d82b19fd5eda",
+      "id": "LNK-006",
+      "category": "structure",
+      "type": "contains",
+      "from": "583ab5bb-a373-4a7e-97b5-67b8abb31374",
+      "to": "eb80ca18-93fb-4878-8e06-bfcb5f6585cb",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "ENT-001",
+      "toId": "PRT-002"
+    },
+    {
+      "uid": "ab820247-ffbf-4fb0-9423-8e705e713c97",
+      "id": "LNK-007",
+      "category": "structure",
+      "type": "contains",
+      "from": "583ab5bb-a373-4a7e-97b5-67b8abb31374",
+      "to": "99ab5daf-ba63-4ea0-ace9-23ece080d462",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "ENT-001",
+      "toId": "PRT-003"
+    },
+    {
+      "uid": "b0f5cfe5-7540-42a0-a901-69eef9b1ad76",
+      "id": "LNK-008",
+      "category": "structure",
+      "type": "contains",
+      "from": "583ab5bb-a373-4a7e-97b5-67b8abb31374",
+      "to": "f1707d13-e493-44c2-b77a-0ad69c8c92a1",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "ENT-001",
+      "toId": "PRT-004"
+    },
+    {
+      "uid": "136e6298-cc2d-49b3-b2d3-41512f5e7d2f",
+      "id": "LNK-009",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "b72c1d82-ddd7-44c3-ac86-f477e2605a21",
+      "to": "ac45ed29-0765-4793-9657-25002799a80f",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-001",
+      "toId": "STK-001"
+    },
+    {
+      "uid": "04e66a2d-1f0a-4374-b6a7-229138d772cc",
+      "id": "LNK-010",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "0d1c8d32-96fb-478e-a300-522fbb57e6fd",
+      "to": "d9bf4c18-5ec5-4678-b969-96ab46938068",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-002",
+      "toId": "STK-002"
+    },
+    {
+      "uid": "5c30864d-c5e8-47fe-ad29-bfcf143f8e4b",
+      "id": "LNK-011",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "c6439345-3147-4d64-a923-a8107f0aade7",
+      "to": "c4aa73a6-3d51-4cf6-8e6b-5bb779b0e432",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-003",
+      "toId": "STK-003"
+    },
+    {
+      "uid": "b72e4ce3-3c09-4aa8-82b4-c861647806b1",
+      "id": "LNK-012",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "11e9a175-5f9b-475b-b00d-1b74e09e463a",
+      "to": "33b67c84-992f-4c7d-b42c-fd7d41bea6bf",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-004",
+      "toId": "STK-004"
+    },
+    {
+      "uid": "b0cd9625-9cef-4428-80f1-f5ad73964484",
+      "id": "LNK-013",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "38fcd1ce-4f4b-49e9-baf4-11c5e7ccb5ed",
+      "to": "15f2f402-317a-4685-94ad-22a674763b93",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-005",
+      "toId": "STK-005"
+    },
+    {
+      "uid": "280b80f1-357c-491e-a717-5b4f15722dc9",
+      "id": "LNK-014",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "506511be-3613-4d9e-88c1-9dbf794b9084",
+      "to": "be093d08-7fa5-43e8-bb4d-4d4f720c640a",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-006",
+      "toId": "STK-006"
+    },
+    {
+      "uid": "07be9226-e4ef-4e32-b551-0fa48f712109",
+      "id": "LNK-015",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "10123a1d-4f5a-4219-ab69-77be0d9c5e29",
+      "to": "8e281fe0-c91c-421c-a4d6-fe0cee35c0f5",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-007",
+      "toId": "STK-007"
+    },
+    {
+      "uid": "ed0491c4-3499-4885-a295-a8d56f9f9968",
+      "id": "LNK-016",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "92a56d0c-2cf6-42c7-86fe-c24893d07163",
+      "to": "3db196ae-5954-4bb6-aefe-2d928890a8b6",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "CON-008",
+      "toId": "STK-008"
+    },
+    {
+      "uid": "b83bf734-7a96-4115-a049-89a80303ea60",
+      "id": "LNK-017",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "7451c602-e845-4e98-a0bd-9a026d22b8cd",
+      "to": "ac45ed29-0765-4793-9657-25002799a80f",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-001",
+      "toId": "STK-001"
+    },
+    {
+      "uid": "ba38026e-4d5a-4ecd-8b4a-2b40b1b5ce7c",
+      "id": "LNK-018",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "7451c602-e845-4e98-a0bd-9a026d22b8cd",
+      "to": "b72c1d82-ddd7-44c3-ac86-f477e2605a21",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-001",
+      "toId": "CON-001"
+    },
+    {
+      "uid": "02a5509d-4374-4c85-b12c-477f0e813751",
+      "id": "LNK-019",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "7451c602-e845-4e98-a0bd-9a026d22b8cd",
+      "to": "c0a9683b-d271-4c9c-8cb4-aeb4796f090b",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-001",
+      "toId": "MGO-002"
+    },
+    {
+      "uid": "4dd07812-4749-41f5-b9ea-dabdd3cd97fe",
+      "id": "LNK-020",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "91b08f71-0588-4bbf-942d-38000f10bb57",
+      "to": "d9bf4c18-5ec5-4678-b969-96ab46938068",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-002",
+      "toId": "STK-002"
+    },
+    {
+      "uid": "1e275760-6f13-44fc-a764-87eca16ee3b3",
+      "id": "LNK-021",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "91b08f71-0588-4bbf-942d-38000f10bb57",
+      "to": "0d1c8d32-96fb-478e-a300-522fbb57e6fd",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-002",
+      "toId": "CON-002"
+    },
+    {
+      "uid": "61b20496-b6e5-419c-8f5e-df45e156686e",
+      "id": "LNK-022",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "91b08f71-0588-4bbf-942d-38000f10bb57",
+      "to": "b5c77328-bfc9-495a-bb4b-caccf1433a51",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-002",
+      "toId": "MGO-003"
+    },
+    {
+      "uid": "99258ee4-2d7a-4271-9d18-70213a8c0f79",
+      "id": "LNK-023",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "2ec4d4c1-d822-4f8c-95b3-a5a246d81f70",
+      "to": "c4aa73a6-3d51-4cf6-8e6b-5bb779b0e432",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-003",
+      "toId": "STK-003"
+    },
+    {
+      "uid": "a9289c18-1e26-4afb-b261-b8749f3014c4",
+      "id": "LNK-024",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "2ec4d4c1-d822-4f8c-95b3-a5a246d81f70",
+      "to": "c6439345-3147-4d64-a923-a8107f0aade7",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-003",
+      "toId": "CON-003"
+    },
+    {
+      "uid": "4596317c-c559-4bcd-adf2-ef37f5f8cd3c",
+      "id": "LNK-025",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "2ec4d4c1-d822-4f8c-95b3-a5a246d81f70",
+      "to": "9e424599-536d-44b1-b22d-d8f80e9d851a",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-003",
+      "toId": "MGO-004"
+    },
+    {
+      "uid": "aefe39a7-0504-4f27-b717-64e0ec9837aa",
+      "id": "LNK-026",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "dd193270-5631-4698-a09d-18241ac7218c",
+      "to": "33b67c84-992f-4c7d-b42c-fd7d41bea6bf",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-004",
+      "toId": "STK-004"
+    },
+    {
+      "uid": "efc5348c-0793-4d8a-ad54-e3ab25effdc1",
+      "id": "LNK-027",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "dd193270-5631-4698-a09d-18241ac7218c",
+      "to": "11e9a175-5f9b-475b-b00d-1b74e09e463a",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-004",
+      "toId": "CON-004"
+    },
+    {
+      "uid": "a66673a3-0638-459a-94f0-da2b936cbcdc",
+      "id": "LNK-028",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "dd193270-5631-4698-a09d-18241ac7218c",
+      "to": "9e424599-536d-44b1-b22d-d8f80e9d851a",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-004",
+      "toId": "MGO-004"
+    },
+    {
+      "uid": "03ddc147-f88b-48b9-85d2-0f4525029e32",
+      "id": "LNK-029",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "1b8ddfc2-4e79-4b48-b089-0f9d7a46d669",
+      "to": "15f2f402-317a-4685-94ad-22a674763b93",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-005",
+      "toId": "STK-005"
+    },
+    {
+      "uid": "a5ef8dac-9147-4a24-b453-98059e556ff9",
+      "id": "LNK-030",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "1b8ddfc2-4e79-4b48-b089-0f9d7a46d669",
+      "to": "38fcd1ce-4f4b-49e9-baf4-11c5e7ccb5ed",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-005",
+      "toId": "CON-005"
+    },
+    {
+      "uid": "c26a84d2-9364-4372-abd4-e4b89b037d0e",
+      "id": "LNK-031",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "1b8ddfc2-4e79-4b48-b089-0f9d7a46d669",
+      "to": "b5c77328-bfc9-495a-bb4b-caccf1433a51",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-005",
+      "toId": "MGO-003"
+    },
+    {
+      "uid": "ccabd75f-fde6-4961-acdb-cad03b43337a",
+      "id": "LNK-032",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "4e0ce903-3303-4680-8708-ae651b5cedf3",
+      "to": "be093d08-7fa5-43e8-bb4d-4d4f720c640a",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-006",
+      "toId": "STK-006"
+    },
+    {
+      "uid": "8c31dfe8-60d6-4173-89ca-65aad130cbfa",
+      "id": "LNK-033",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "4e0ce903-3303-4680-8708-ae651b5cedf3",
+      "to": "506511be-3613-4d9e-88c1-9dbf794b9084",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-006",
+      "toId": "CON-006"
+    },
+    {
+      "uid": "51072a54-c142-426a-af11-1e40dc794879",
+      "id": "LNK-034",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "4e0ce903-3303-4680-8708-ae651b5cedf3",
+      "to": "fd88849e-8bb7-4b38-abc1-5229bd88465c",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-006",
+      "toId": "MGO-005"
+    },
+    {
+      "uid": "133b979c-67e4-4e12-a457-43b235038ebd",
+      "id": "LNK-035",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "ea02b859-ed83-42f9-bcd2-bc0134ee61de",
+      "to": "8e281fe0-c91c-421c-a4d6-fe0cee35c0f5",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-007",
+      "toId": "STK-007"
+    },
+    {
+      "uid": "57f93275-e47c-4954-8021-9066e84b0833",
+      "id": "LNK-036",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "ea02b859-ed83-42f9-bcd2-bc0134ee61de",
+      "to": "10123a1d-4f5a-4219-ab69-77be0d9c5e29",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-007",
+      "toId": "CON-007"
+    },
+    {
+      "uid": "c1f0de5e-6d75-425b-a210-be2798b51232",
+      "id": "LNK-037",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "ea02b859-ed83-42f9-bcd2-bc0134ee61de",
+      "to": "9e424599-536d-44b1-b22d-d8f80e9d851a",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-007",
+      "toId": "MGO-004"
+    },
+    {
+      "uid": "dc14dee7-3275-47e7-8efa-8336fc59c912",
+      "id": "LNK-038",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "2c407313-0c2e-4bec-9a65-a1fdf2544884",
+      "to": "3db196ae-5954-4bb6-aefe-2d928890a8b6",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-008",
+      "toId": "STK-008"
+    },
+    {
+      "uid": "9e83828f-6b59-456f-9cc5-d94953142c51",
+      "id": "LNK-039",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "2c407313-0c2e-4bec-9a65-a1fdf2544884",
+      "to": "92a56d0c-2cf6-42c7-86fe-c24893d07163",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-008",
+      "toId": "CON-008"
+    },
+    {
+      "uid": "d873cc43-e424-4bb8-a781-7853bdcc0509",
+      "id": "LNK-040",
+      "category": "trace",
+      "type": "derives-from",
+      "from": "2c407313-0c2e-4bec-9a65-a1fdf2544884",
+      "to": "b5c77328-bfc9-495a-bb4b-caccf1433a51",
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "NEED-008",
+      "toId": "MGO-003"
+    },
+    {
+      "uid": "610dbeb2-229d-4445-9226-574966961aae",
+      "id": "REL-001",
+      "category": "stakeholder",
+      "type": "conflicts-with",
+      "from": "8e281fe0-c91c-421c-a4d6-fe0cee35c0f5",
+      "to": "33b67c84-992f-4c7d-b42c-fd7d41bea6bf",
+      "note": "Neighbors want no loading before 6 a.m.; volunteer drivers need early starts to finish within their shifts.",
+      "attributes": {
+        "fromText": "STK-007",
+        "toText": "STK-004",
+        "seq": 1
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "STK-007",
+      "toId": "STK-004"
+    },
+    {
+      "uid": "9743e7b2-72a8-4853-b627-27cde7a668ca",
+      "id": "REL-002",
+      "category": "stakeholder",
+      "type": "regulates",
+      "from": "d9bf4c18-5ec5-4678-b969-96ab46938068",
+      "to": "15f2f402-317a-4685-94ad-22a674763b93",
+      "note": "Food-safety inspections of the warehouse and cold storage",
+      "attributes": {
+        "fromText": "STK-002",
+        "toText": "STK-005",
+        "seq": 2
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "STK-002",
+      "toId": "STK-005"
+    },
+    {
+      "uid": "f53f7635-1872-4677-aac7-9c2eb9034605",
+      "id": "REL-003",
+      "category": "stakeholder",
+      "type": "coordinates-with",
+      "from": "33b67c84-992f-4c7d-b42c-fd7d41bea6bf",
+      "to": "15f2f402-317a-4685-94ad-22a674763b93",
+      "note": "Loading times at the warehouse dock",
+      "attributes": {
+        "fromText": "STK-004",
+        "toText": "STK-005",
+        "seq": 3
+      },
+      "status": "active",
+      "provenance": {
+        "kind": "own"
+      },
+      "created": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "revised": {
+        "at": "2026-10-20T09:00:00.000Z",
+        "by": "JS",
+        "change": "CHG-000000"
+      },
+      "fromId": "STK-004",
+      "toId": "STK-005"
+    }
+  ],
+  "milestones": [
+    {
+      "week": 1,
+      "title": "Team Formation / Needs / Identifying Stakeholders",
+      "expected": [
+        {
+          "type": "ENT",
+          "min": 1,
+          "rule": "the enterprise proposal, with the instructor’s decision recorded"
+        },
+        {
+          "type": "MGO",
+          "min": 1,
+          "rule": "the mission (MGO-001); goals MGO-002 onward are optional"
+        },
+        {
+          "type": "PRT",
+          "min": 3,
+          "rule": "elements inside the boundary of the system of interest"
+        },
+        {
+          "type": "EXT",
+          "min": 6,
+          "rule": "external systems and actors, each with what crosses and its direction"
+        },
+        {
+          "type": "STK",
+          "min": 8,
+          "rule": "in at least 3 role groups, each with a specific concern"
+        },
+        {
+          "type": "REL",
+          "min": 3,
+          "rule": "stakeholder relationships, at least 1 a conflict"
+        },
+        {
+          "type": "NEED",
+          "min": 8,
+          "rule": "from at least 5 stakeholders (three-person team: 6 from 4)",
+          "minThreePerson": 6
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "We used a chat assistant to brainstorm candidate stakeholders; we kept two (waste hauler, neighbors) after checking them against the life-cycle stages and rejected three that were systems, not stakeholders. No AI wrote any need statement.",
+      "notes": {},
+      "exports": [],
+      "approval": {
+        "decision": "approved",
+        "decidedOn": "2026-10-16"
+      },
+      "contentUpdatedAt": "2026-10-20T09:00:00.000Z"
+    },
+    {
+      "week": 2,
+      "title": "ConOps / Requirements",
+      "expected": [
+        {
+          "type": "CONOPS",
+          "min": 1
+        },
+        {
+          "type": "SCN",
+          "min": 3
+        },
+        {
+          "type": "CAP",
+          "min": 5
+        },
+        {
+          "type": "REQ-STK",
+          "min": 6
+        },
+        {
+          "type": "REQ-SYS",
+          "min": 4
+        },
+        {
+          "type": "MOE",
+          "min": 3
+        },
+        {
+          "type": "MOP",
+          "min": 3
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 3,
+      "title": "Technology Assessment / Risk Management / Trade Study",
+      "expected": [
+        {
+          "type": "TECH",
+          "min": 3
+        },
+        {
+          "type": "R",
+          "min": 6
+        },
+        {
+          "type": "O",
+          "min": 1
+        },
+        {
+          "type": "TPM",
+          "min": 2
+        },
+        {
+          "type": "ALT",
+          "min": 3
+        },
+        {
+          "type": "CRIT",
+          "min": 4
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 4,
+      "title": "Architecture / Information View",
+      "expected": [
+        {
+          "type": "VP",
+          "min": 5
+        },
+        {
+          "type": "FN",
+          "min": 10
+        },
+        {
+          "type": "FG",
+          "min": 3
+        },
+        {
+          "type": "LOG",
+          "min": 4
+        },
+        {
+          "type": "PHY",
+          "min": 4
+        },
+        {
+          "type": "DEC",
+          "min": 1
+        },
+        {
+          "type": "INFO",
+          "min": 5
+        },
+        {
+          "type": "AI",
+          "min": 1
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 5,
+      "title": "Components / Interfaces",
+      "expected": [
+        {
+          "type": "CMP",
+          "min": 5
+        },
+        {
+          "type": "IF",
+          "min": 8
+        },
+        {
+          "type": "REQ-SYS",
+          "min": 3,
+          "rule": "interface requirements"
+        },
+        {
+          "type": "ICR",
+          "min": 1
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 6,
+      "title": "Evolution Roadmap",
+      "expected": [
+        {
+          "type": "INC",
+          "min": 0,
+          "rule": "roadmap increments (provisional: minimums come with the Week 6 lab brief)"
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 7,
+      "title": "Final Presentation",
+      "expected": [
+        {
+          "type": "PKG",
+          "min": 1,
+          "rule": "the Phase I package and baseline (provisional)"
+        },
+        {
+          "type": "RID",
+          "min": 0,
+          "rule": "design review items (provisional)"
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 8,
+      "title": "Import Systems Thinking Artifacts / Stakeholders",
+      "expected": [
+        {
+          "type": "ENT",
+          "min": 0,
+          "rule": "Week 1 artifacts mapped into the model baseline: ENT, PRT, EXT, STK, CON, REL (provisional)"
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 9,
+      "title": "Needs / Requirements",
+      "expected": [
+        {
+          "type": "NEED",
+          "min": 0,
+          "rule": "needs and requirements as model elements (provisional)"
+        },
+        {
+          "type": "REQ-STK",
+          "min": 0
+        },
+        {
+          "type": "REQ-SYS",
+          "min": 0
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 10,
+      "title": "Logical / Behavioral Modeling",
+      "expected": [
+        {
+          "type": "CAP",
+          "min": 0,
+          "rule": "logical and behavioral model from the ConOps and architecture (provisional)"
+        },
+        {
+          "type": "SCN",
+          "min": 0
+        },
+        {
+          "type": "FN",
+          "min": 0
+        },
+        {
+          "type": "LOG",
+          "min": 0
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 11,
+      "title": "Physical / Interfaces",
+      "expected": [
+        {
+          "type": "PHY",
+          "min": 0,
+          "rule": "physical architecture and interfaces (provisional)"
+        },
+        {
+          "type": "INFO",
+          "min": 0
+        },
+        {
+          "type": "IF",
+          "min": 0
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 12,
+      "title": "Digital Thread / Verification and Validation",
+      "expected": [
+        {
+          "type": "VER",
+          "min": 0,
+          "rule": "verification plans and the digital thread (provisional)"
+        },
+        {
+          "type": "EVD",
+          "min": 0
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 13,
+      "title": "Trade Study / Analysis",
+      "expected": [
+        {
+          "type": "ANL",
+          "min": 0,
+          "rule": "model-based trade studies and impact analysis (provisional)"
+        },
+        {
+          "type": "DEC",
+          "min": 0
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    },
+    {
+      "week": 14,
+      "title": "Final Presentation",
+      "expected": [
+        {
+          "type": "RID",
+          "min": 0,
+          "rule": "integrated model review and defence (provisional)"
+        }
+      ],
+      "state": "not-started",
+      "aiStatement": "",
+      "notes": {},
+      "exports": []
+    }
+  ],
+  "modelElements": [],
+  "mappings": [],
+  "findings": [],
+  "issued": {
+    "ENT": 1,
+    "MGO": 5,
+    "CHG": 0,
+    "SNP": 0,
+    "PRT": 4,
+    "EXT": 6,
+    "STK": 8,
+    "CON": 8,
+    "NEED": 8,
+    "LNK": 40,
+    "REL": 3
+  },
+  "rev": 0,
+  "changes": [],
+  "integrity": {
+    "algorithm": "SHA-256",
+    "canonicalization": "JSON of the file without the integrity member, keys sorted recursively, no whitespace",
+    "value": "09d8ac9f7e99dac865030285e42fa737b8eb7e8c42524b302f8aeab2e1150fcf"
+  }
+}

@@ -631,7 +631,7 @@ export const WEEK5_SESSION1: Lecture = {
               `Step 4, count. The degrees sum to ${c14.degreeSum}, which is twice ${c14.total}: the check passes. ${c14.pairs} of the ${c14.possiblePairs} possible pairs are joined.`,
             ],
             why: 'Building the chart once by hand, from a list, teaches the mechanics and shows why the paired cells and the empty rows matter. The degrees are left for the students so the next slide is their check, not a lecture.',
-            figure: 'Walk the diagonal, then the operations center row, then the two double cells. Point at the empty degree column: that is the class’s job.',
+            figure: 'Walk the diagonal, then the operations center row and column, then the two double cells. Point at the empty degree column: that is the class’s job.',
             misconceptions: [{ claim: 'Two interfaces between the same pair is a duplicate.', correction: 'An agreement and a data path between the same two elements are different interfaces, of different kinds, verified differently. IF-004 records the work-order procedure; IF-012 carries the status.' }],
             transition: 'What did you get? And what does the chart tell us?',
             timing: '6 min: 1 min the first three cells, 3 min pairs place (slide not yet shown), 1 min check against the slide and count, 1 min walk the result.',

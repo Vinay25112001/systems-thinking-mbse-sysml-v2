@@ -29,11 +29,29 @@ import { WEEK4_S2_FIGURES } from './LectureWeek4S2'
 // --- week05 ---
 import { WEEK5_S1_FIGURES, WEEK5_S2_FIGURES } from './lectureWeek5Figures'
 // --- end week05 ---
+// --- week06 ---
+import { WEEK6_S1_FIGURES, WEEK6_S2_FIGURES } from './lectureWeek6Figures'
+// --- end week06 ---
+// --- week07 ---
+import { WEEK7_S1_FIGURES, WEEK7_S2_FIGURES } from './lectureWeek7Figures'
+// --- end week07 ---
 // --- week08 ---
 import { CodeListing } from './LectureWeek8Code'
 import { WEEK8_LISTING_FIGURES } from './listingRows'
 import { WEEK8_S1_FIGURES, WEEK8_S2_FIGURES } from './lectureWeek8Figures'
 // --- end week08 ---
+// --- week09 ---
+import { CodeListing9 } from './LectureWeek9Code'
+import { WEEK9_LISTING_FIGURES, WEEK9_S1_FIGURES, WEEK9_S2_FIGURES } from './lectureWeek9Figures'
+// --- end week09 ---
+// --- week10 ---
+import { CodeListing10 } from './LectureWeek10Code'
+import { WEEK10_LISTING_FIGURES, WEEK10_S1_FIGURES, WEEK10_S2_FIGURES } from './lectureWeek10Figures'
+// --- end week10 ---
+// --- week11 ---
+import { CodeListing11 } from './LectureWeek11Code'
+import { WEEK11_LISTING_FIGURES, WEEK11_S1_FIGURES, WEEK11_S2_FIGURES } from './lectureWeek11Figures'
+// --- end week11 ---
 
 export type FigureEntry = {
   /** Default title (a slide or lesson gives its own caption). */
@@ -160,11 +178,32 @@ export const FIGURE_REGISTRY: Readonly<Record<string, FigureEntry>> = {
   // --- week05 ---
   ...Object.fromEntries(Object.entries({ ...WEEK5_S1_FIGURES, ...WEEK5_S2_FIGURES }).map(([id, f]): [string, FigureEntry] => [id, plain(f.title, f.C)])),
   // --- end week05 ---
+  // --- week06 ---
+  ...Object.fromEntries(Object.entries({ ...WEEK6_S1_FIGURES, ...WEEK6_S2_FIGURES }).map(([id, f]): [string, FigureEntry] => [id, plain(f.title, f.C)])),
+  // --- end week06 ---
+  // --- week07 ---
+  ...Object.fromEntries(Object.entries({ ...WEEK7_S1_FIGURES, ...WEEK7_S2_FIGURES }).map(([id, f]): [string, FigureEntry] => [id, plain(f.title, f.C)])),
+  // --- end week07 ---
   // --- week08 ---
   // listings: one generic code figure per validated SysML excerpt (src/content/lectures/week08/listings.ts)
   ...Object.fromEntries(Object.entries(WEEK8_LISTING_FIGURES).map(([id, key]): [string, FigureEntry] => [id, { title: 'SysML v2 listing', render: (alt) => createElement(CodeListing, { id: key, alt }) }])),
   ...Object.fromEntries(Object.entries({ ...WEEK8_S1_FIGURES, ...WEEK8_S2_FIGURES }).map(([id, f]): [string, FigureEntry] => [id, plain(f.title, f.C)])),
   // --- end week08 ---
+  // --- week09 ---
+  // listings: one generic code figure per validated SysML excerpt (src/content/lectures/week09/listings.ts)
+  ...Object.fromEntries(Object.entries(WEEK9_LISTING_FIGURES).map(([id, key]): [string, FigureEntry] => [id, { title: 'SysML v2 listing', render: (alt) => createElement(CodeListing9, { id: key, alt }) }])),
+  ...Object.fromEntries(Object.entries({ ...WEEK9_S1_FIGURES, ...WEEK9_S2_FIGURES }).map(([id, f]): [string, FigureEntry] => [id, plain(f.title, f.C)])),
+  // --- end week09 ---
+  // --- week10 ---
+  // listings: one generic code figure per validated SysML excerpt (src/content/lectures/week10/listings.ts)
+  ...Object.fromEntries(Object.entries(WEEK10_LISTING_FIGURES).map(([id, key]): [string, FigureEntry] => [id, { title: 'SysML v2 listing', render: (alt) => createElement(CodeListing10, { id: key, alt }) }])),
+  ...Object.fromEntries(Object.entries({ ...WEEK10_S1_FIGURES, ...WEEK10_S2_FIGURES }).map(([id, f]): [string, FigureEntry] => [id, plain(f.title, f.C)])),
+  // --- end week10 ---
+  // --- week11 ---
+  // listings: one generic code figure per validated SysML excerpt (src/content/lectures/week11/listings.ts)
+  ...Object.fromEntries(Object.entries(WEEK11_LISTING_FIGURES).map(([id, key]): [string, FigureEntry] => [id, { title: 'SysML v2 listing', render: (alt) => createElement(CodeListing11, { id: key, alt }) }])),
+  ...Object.fromEntries(Object.entries({ ...WEEK11_S1_FIGURES, ...WEEK11_S2_FIGURES }).map(([id, f]): [string, FigureEntry] => [id, plain(f.title, f.C)])),
+  // --- end week11 ---
 }
 
 export const isRegisteredFigure = (id: string): boolean => Object.prototype.hasOwnProperty.call(FIGURE_REGISTRY, id)

@@ -1,0 +1,296 @@
+{
+  "tool": {
+    "name": "OMG SysML v2 Pilot Implementation (SysMLInteractive, Jupyter kernel jar)",
+    "release": "2026-08",
+    "kernelVersion": "0.62.0",
+    "kernelJar": "jupyter-sysml-kernel-0.62.0-all.jar",
+    "standardLibrary": "sysml.library bundled in jupyter-sysml-kernel-0.62.0.zip"
+  },
+  "java": {
+    "version": "21.0.12.1+1-LTS",
+    "vendor": "Eclipse Adoptium"
+  },
+  "timestamp": "2026-10-22T10:43:05+00:00",
+  "checks": "parse + name resolution against the standard library + pilot implementation validation rules (errors fail; warnings reported)",
+  "summary": {
+    "files": 19,
+    "PASS": 14,
+    "FAIL": 5,
+    "ERROR": 0
+  },
+  "files": [
+    {
+      "file": "sysml/lectures/week11/aerolink_physical_interfaces_v04.sysml",
+      "sha256": "0bd887d3debea67ea49ca14dfa4e66112b01abb6489e196831ff10a238f655d5",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/binding_delegation.sysml",
+      "sha256": "6c8e797f46617d9ff8bfaf186ea58874dd2434268855f1f58df5f84d5297b1da",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/conjugate_qualified_name.sysml",
+      "sha256": "1dec19668b1f9766a90bbc03af72d90dcb92cca1008b669f85784bff9e0945b8",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/driving_question_two_ports.sysml",
+      "sha256": "3c40482147f736867a1c05ceda577ac39cffd19277e8b3d45b4bad50a49c6bd8",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/exercise_draft_water_kiosk.sysml",
+      "sha256": "45197ee826655f9aaa8e4524e73701a971f9c8995c76618e94a720a9d9da2488",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/interface_requirement_added.sysml",
+      "sha256": "bf28678d06a464991ed6744ce937326d74ee6a94066621c8087674348bff36f4",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/invalid_conjugate_unqualified.sysml",
+      "sha256": "1875ac6a90d39ae458ed4374766de34ac32623d45c42c45ddc60a460a4b13871",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 9,
+          "column": 23,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Type ''~Oxygen port''."
+        },
+        {
+          "severity": "ERROR",
+          "line": 9,
+          "column": 3,
+          "code": "validatePortUsageType_",
+          "message": "A port must be typed by port definitions."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week11/invalid_interface_connects_parts.sysml",
+      "sha256": "c97fb942152fc9284285f041ba4f7d0ddefdeb11a0eee13a5c7c16c51c9e1bf9",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 20,
+          "column": 39,
+          "code": "validatePortUsageType_",
+          "message": "A port must be typed by port definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 20,
+          "column": 39,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Part, Port"
+        },
+        {
+          "severity": "ERROR",
+          "line": 20,
+          "column": 51,
+          "code": "validatePortUsageType_",
+          "message": "A port must be typed by port definitions."
+        },
+        {
+          "severity": "WARNING",
+          "line": 20,
+          "column": 51,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Part, Port"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week11/invalid_interface_part_ends.sysml",
+      "sha256": "73af1040edcf4d49415f547401cc7a0efb0026fdc4fb52f77c93ec0fedd950a2",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 3,
+          "code": "validateInterfaceDefinitionEnd_",
+          "message": "An interface definition end must be a port."
+        },
+        {
+          "severity": "ERROR",
+          "line": 7,
+          "column": 3,
+          "code": "validateInterfaceDefinitionEnd_",
+          "message": "An interface definition end must be a port."
+        },
+        {
+          "severity": "ERROR",
+          "line": 5,
+          "column": 2,
+          "code": "validateAssociationRelatedTypes",
+          "message": "Must have at least two related elements"
+        },
+        {
+          "severity": "ERROR",
+          "line": 6,
+          "column": 3,
+          "code": "validateAssociationEndTypes",
+          "message": "An association end must have exactly one type"
+        },
+        {
+          "severity": "ERROR",
+          "line": 7,
+          "column": 3,
+          "code": "validateAssociationEndTypes",
+          "message": "An association end must have exactly one type"
+        },
+        {
+          "severity": "WARNING",
+          "line": 6,
+          "column": 3,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Part, Port"
+        },
+        {
+          "severity": "WARNING",
+          "line": 7,
+          "column": 3,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of inherited member name 'self' from Part, Port"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week11/invalid_port_undirected_item.sysml",
+      "sha256": "46007d2757fe54ccaf29c7a3b6fea7c15b1db5453ac07e7aeea2d8703dba714b",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 5,
+          "column": 3,
+          "code": "validatePortDefinitionOwnedUsagesNotComposite",
+          "message": "Owned usages of a port definition (other than ports) must be referential."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week11/invalid_qualified_not_dot.sysml",
+      "sha256": "68754ff909a500820248002525d82fabb1e34db2cced3c03baab475850c2a601",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 16,
+          "column": 13,
+          "code": "validateSubsettingFeaturingTypes",
+          "message": "Must be an accessible feature (use dot notation for nesting)"
+        },
+        {
+          "severity": "ERROR",
+          "line": 16,
+          "column": 49,
+          "code": "validateSubsettingFeaturingTypes",
+          "message": "Must be an accessible feature (use dot notation for nesting)"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week11/labtool_collision_model_v04.sysml",
+      "sha256": "1603100536c0ab76144cd26e8b8b9f5539bc41709fe75d1dfd523f2d37d45fe4",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/labtool_stress_model_v04.sysml",
+      "sha256": "7705b53d15117c430f75912beb23b9e42a31a44cef7f9a56664d5132dbc3c01c",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 112,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 119,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/labtool_team07_model_v04.sysml",
+      "sha256": "18dde6b5ba33eaaaf9e6a7e8ddddf6718a209a1a13b54baf7ad013eda1c2c1e4",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/predict_conjugate_end_unprotected.sysml",
+      "sha256": "f2351bc4a8acd4f9e694d916e0e0a0d99975f18f1f2018a95685a230c232a683",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/predict_flow_wrong_direction.sysml",
+      "sha256": "3a67ff48cb3c75b3c7f95919d05f1c196c39e6a2d130833116fc148db79d4f05",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/predict_satisfy_wrong_subject.sysml",
+      "sha256": "5f32e45de0b363730d9ccd98140d24f9baf88f4d50de030bc917064196bf48ee",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 23,
+          "column": 30,
+          "code": "validateBindingConnectorTypeConformance",
+          "message": "Bound features should have conforming types"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week11/warmup_three_drafts.sysml",
+      "sha256": "4d1eba51f8fa9526765a7b53be0a74df72a54883083ed866c4934d9705277c86",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/instructor/week11/exercise_water_kiosk_key.sysml",
+      "sha256": "7fe16e255ae99629ce0c04385712d1322d3953cc9d1ba020b86e3ae81946d08f",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,315 @@
+{
+  "tool": {
+    "name": "OMG SysML v2 Pilot Implementation (SysMLInteractive, Jupyter kernel jar)",
+    "release": "2026-08",
+    "kernelVersion": "0.62.0",
+    "kernelJar": "jupyter-sysml-kernel-0.62.0-all.jar",
+    "standardLibrary": "sysml.library bundled in jupyter-sysml-kernel-0.62.0.zip"
+  },
+  "java": {
+    "version": "21.0.12.1+1-LTS",
+    "vendor": "Eclipse Adoptium"
+  },
+  "timestamp": "2026-10-22T08:49:52+00:00",
+  "checks": "parse + name resolution against the standard library + pilot implementation validation rules (errors fail; warnings reported)",
+  "summary": {
+    "files": 19,
+    "PASS": 15,
+    "FAIL": 4,
+    "ERROR": 0
+  },
+  "files": [
+    {
+      "file": "sysml/lectures/week10/aerolink_logical_behavior_v03.sysml",
+      "sha256": "2f01a38a451c295ab86a3ef5a828800c958cd6c9ed88b0f11e538024209901b7",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/allocate_versus_perform.sysml",
+      "sha256": "b145b87bfd4f7643983663698e6f5c6469b81d61bcafd020ce7da3282581750c",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/driving_question_guard_gap.sysml",
+      "sha256": "34e1d07801ff9c92fd65fc3359b6148d655305d3c81528faf89614596bc01f89",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/exercise_draft_return_ride.sysml",
+      "sha256": "f0c7bae46779b5060b302d804cfd2ce1541c04223f544ae56cb20a01d83bcb84",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/fork_join_turnaround.sysml",
+      "sha256": "48a41cff80181a99b3bafe97395a625009c1ee2faac2ed947e7dd2b575eea760",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/invalid_decide_target_declared.sysml",
+      "sha256": "b1a2a1b8274b030e9044f77f7ae3eb58c894bf2e7af54445d8892eeb67f8904c",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 11,
+          "column": 4,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'if'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 11,
+          "column": 22,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'then'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 12,
+          "column": 4,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "mismatched input 'else' expecting '}'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 14,
+          "column": 3,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "missing EOF at 'then'"
+        },
+        {
+          "severity": "WARNING",
+          "line": 12,
+          "column": 9,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 13,
+          "column": 10,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week10/invalid_guard_before_trigger.sysml",
+      "sha256": "6abb6d15836e1e3ba4f83e0e2600e8924a9c154a06988de8233e0b0611601984",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 3,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'transition'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 14,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "missing '}' at 'dispatch'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 23,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'first'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 43,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'if'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 64,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'accept'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 10,
+          "column": 87,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "no viable alternative at input 'then'"
+        },
+        {
+          "severity": "ERROR",
+          "line": 13,
+          "column": 1,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Syntax",
+          "message": "extraneous input '}' expecting EOF"
+        },
+        {
+          "severity": "WARNING",
+          "line": 5,
+          "column": 16,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 10,
+          "column": 71,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 10,
+          "column": 92,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 11,
+          "column": 9,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week10/invalid_perform_undeclared.sysml",
+      "sha256": "3e728cca435c7357d5f0c37e9e72d6b981927aafcc159ad38968d31a8d78cd64",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 5,
+          "column": 11,
+          "code": "org.eclipse.xtext.diagnostics.Diagnostic.Linking",
+          "message": "Couldn't resolve reference to Feature 'matchRequestToAircraft'."
+        },
+        {
+          "severity": "ERROR",
+          "line": 5,
+          "column": 11,
+          "code": "validatePerformActionUsageReference",
+          "message": "Must reference an action."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week10/invalid_transition_parallel.sysml",
+      "sha256": "8fb81ec088472ca3af262133304d06d688dd7bca67c21ade0f64e79918113132",
+      "status": "FAIL",
+      "diagnostics": [
+        {
+          "severity": "ERROR",
+          "line": 20,
+          "column": 3,
+          "code": "A parallel state cannot have successions or transitions.",
+          "message": "A parallel state cannot have successions or transitions."
+        }
+      ],
+      "expected": "FAIL"
+    },
+    {
+      "file": "sysml/lectures/week10/labtool_collision_model_v03.sysml",
+      "sha256": "2a3936e7406ef2510ae6a2ef5aedcd48c013ef88236a753a856d64b38ec66147",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/labtool_stress_model_v03.sysml",
+      "sha256": "ad46841e177842d3e1a119e159d37faa8789b2a16eefe29f8b6fa74f0a654a97",
+      "status": "PASS",
+      "diagnostics": [
+        {
+          "severity": "WARNING",
+          "line": 103,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        },
+        {
+          "severity": "WARNING",
+          "line": 110,
+          "column": 24,
+          "code": "validateNamespaceDistinguishablity",
+          "message": "Duplicate of other owned member name"
+        }
+      ],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/labtool_team07_model_v03.sysml",
+      "sha256": "9226b9901285453b68536c27ad489208e77770fa144e4783e09bf9304f801b3e",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/predict_cross_region_inside.sysml",
+      "sha256": "8fc9f07b3244856f0f1794abba9c35505ac1ee3d7ae1dafca8d596345754eff9",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/predict_no_initial_state.sysml",
+      "sha256": "bd581a4ee03799d264017bf5920c06b0c665b98ada186a380e1954dcba38978c",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/predict_two_initial_states.sysml",
+      "sha256": "36ed08e966231297432837fb29e9729092bf1d8a00f3c406783f2c3207084c31",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/predict_unreachable_state.sysml",
+      "sha256": "fc22a789065077f1874ee05b0bcee62b5ef46054a5ddbbf58d08932529b8cec8",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/turnaround_include.sysml",
+      "sha256": "92f4e37522d2915cf1691ef2bf1ff4f0df074ab76cee6706cb01973e92111ae2",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/lectures/week10/warmup_three_branches.sysml",
+      "sha256": "a3413a2c3fb7af2304797719180000c1d867fa3727206df77f9d054556a119d3",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    },
+    {
+      "file": "sysml/instructor/week10/exercise_bike_share_key.sysml",
+      "sha256": "07d83b10540338335f09e35de1ac95d600215563f2e720bf323fa9e14c313376",
+      "status": "PASS",
+      "diagnostics": [],
+      "expected": "PASS"
+    }
+  ]
+}

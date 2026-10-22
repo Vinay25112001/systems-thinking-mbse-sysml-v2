@@ -2,8 +2,10 @@ import { useMemo, useState } from 'react'
 import { WEEKS } from '../content/course'
 import { DRAFT_WEEKS } from '../content/draftWeeks'
 import { CURRENT_CONTENT, WEEK_CONTENT } from '../content/weeks'
+import { labReviewId } from '../content/reviewIds'
 import { useApp, type ReviewStatus } from '../state/AppState'
 import { Link } from '../lib/router'
+import { IS_STUDENT_EDITION } from '../lib/edition' // week1-m4a
 import { Badge, Button, Card, PageHeader, ProvenanceBadge } from '../components/ui'
 
 type Item = { id: string; label: string; area: string; provenance?: string; link: string }
@@ -18,9 +20,10 @@ export function reviewableItems(): Item[] {
       .sort((x, y) => x.week - y.week)
       .flatMap((c) => {
         const { area, link } = where(c.week)
+        const labId = labReviewId(c) // w<N>-lab-summary where a lesson block already uses w<N>-lab (Week 11 review m1)
         return [
           ...c.blocks.map((b) => ({ id: b.id, label: b.title, area: `${area} lesson`, provenance: b.provenance, link })),
-          { id: `w${c.week}-lab`, label: `${c.lab.id} — ${c.lab.title}`, area: `${area} lab`, link },
+          { id: labId, label: `${c.lab.id} — ${c.lab.title}`, area: `${area} lab`, link },
           { id: `w${c.week}-assignment`, label: c.assignment.title, area: `${area} assignment`, link },
           ...c.quiz.map((q, i) => ({ id: `quiz-${q.id}`, label: `Q${i + 1}: ${q.prompt}`, area: `${area} knowledge check`, link })),
         ]
@@ -67,10 +70,13 @@ export function InstructorReview() {
         title="Instructor review"
         subtitle="Faculty review workspace for the prototype content. Approve or request changes item by item; decisions are stored in this browser and can be exported as a JSON review log."
       >
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={instructor} onChange={(e) => setInstructor(e.target.checked)} className="h-4 w-4 accent-amber-500" />
-          Show review controls throughout the app
-        </label>
+        {/* week1-m4a: no instructor checkbox in the student edition (NAV-02, X14) */}
+        {!IS_STUDENT_EDITION && (
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={instructor} onChange={(e) => setInstructor(e.target.checked)} className="h-4 w-4 accent-amber-500" />
+            Show review controls throughout the app
+          </label>
+        )}
       </PageHeader>
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>

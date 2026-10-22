@@ -17,7 +17,16 @@
     "export:curriculum": "node scripts/export-curriculum.mjs",
     "build:student": "tsc -b && vite build --mode student --outDir dist-student && node scripts/check-student-build.mjs",
     "lectures:pptx": "node scripts/build-lectures.mjs",
-    "lab:md": "node scripts/build-lab-md.mjs"
+    "lab:md": "node scripts/build-lab-md.mjs",
+    "server": "node server/run.mjs serve",
+    "server:seed": "node server/run.mjs seed",
+    "server:create-admin": "node server/run.mjs create-admin",
+    "server:backup": "node server/run.mjs backup",
+    "server:restore": "node server/run.mjs restore",
+    "server:integrity": "node server/run.mjs integrity",
+    "dev:all": "node scripts/dev-all.mjs",
+    "test:server": "vitest run -c vitest.server.config.ts",
+    "test:e2e:server": "playwright test -c playwright.server.config.ts"
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.3.0",
@@ -27,6 +36,7 @@
     "@radix-ui/react-tabs": "^1.2.0",
     "@radix-ui/react-tooltip": "^1.4.0",
     "@xyflow/react": "^12.12.0",
+    "fflate": "0.8.3",
     "lucide-react": "^1.55.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

@@ -17,7 +17,8 @@
 // proper nouns, IDs, people and external AI services are valid names and ends (the recurring defect of Weeks 1, 2 and 4).
 // Free-text gates ask only for the shortest answer the lecture calls complete (review 2026-10-19 M2): one word where a
 // word is an answer ("TLS", "Power only", "Approved", "None"), two where the lecture asks for an action ("Fail safe",
-// "Charges aircraft"); a criterion with a number or a TBD counts with one token ("2 min", "≤2min", "TBD (Ops)").
+// "Charges aircraft"); a criterion with a value and its unit counts however short ("2 min", "≤2min") and a TBD needs its
+// owner ("TBD (Ops)"). An empty answer ("none", "n/a", "-", "?"; ../emptyAnswer.ts) never counts (confirmation N1, N2).
 // External consumers are valid everywhere (the Week 4 consumer defect is not copied). AeroLink is the instructor's worked
 // example: a record about AeroLink is refused.
 import {
@@ -27,6 +28,9 @@ import {
 } from '../../content/lectures/week05/labBrief'
 import { idsIn as week4IdsIn, importWeek4, recordState as week4State, type Week4Record } from '../week4/record'
 import { isAeroLink } from '../week1/team'
+import { TRIVIAL_CRITERION, valueIn } from '../week2/record'
+import { vagueTermsIn } from '../../activities/week04/quality'
+import { said } from '../emptyAnswer'
 
 export const W5_KEY = 'w5.record'
 export const MODEL_INPUTS_FORMAT = 'week5-model-inputs'
@@ -44,8 +48,27 @@ export const VERIFICATION_METHODS = ['inspection', 'analysis', 'demonstration', 
 export type VerificationMethod = (typeof VERIFICATION_METHODS)[number]
 /** A medium that names a network, link or service the team may not own (hidden-external advisory, R55 p.369). */
 export const UNOWNED_MEDIUM = /network|internet|\bweb\b|online|cloud|link|radio|wireless|satellite|leased|wi-?fi|cellular|mobile|\blte\b|\b[345]g\b|vpn|bluetooth|\bapi\b|saas|third[- ]party|public/i
-/** A criterion counts with a single token when it carries a value or an owned TBD ("2 min" is two tokens anyway). */
-export const criterionOk = (s: string) => words(s) >= MIN_TEXT_WORDS || (words(s) >= 1 && /\d|\btbd\b/i.test(s))
+/** A TBD with its owner, as the lecture writes it: "TBD (Ops)", or "TBD: Ops", "TBD – Ops lead", "TBD owner Ops". */
+const OWNED_TBD = /\btb[dr]\b(?:-\d+)?\s*(?:\(\s*([^)]*)\)|[:–—-]\s*([A-Za-z].*)|owner:?\s+(.+))/i
+/** A population or bound that makes a vague word checkable ("every booking", "within"), as Week 2's criterion gate. */
+const CRITERION_ANCHOR = /[≤≥<>]|\b(every|each|all|zero|any|at least|within|before|after)\b/i
+/** The lecture's criterion rule (labBrief `criterion`): "a value with its unit (“2 min”) or a TBD with an owner
+ *  (“TBD (Ops)”)". A value with its unit counts however short ("2 min", "≤2min", "100%"); any TBD/TBR needs an owner;
+ *  otherwise two words that are not themselves vague. An empty answer, a trivial criterion ("works", "TBD"), a bare
+ *  number ("1") and an unanchored vague one ("Very fast") fail, as in Week 2 (confirmation review 2026-10-19, N2). */
+/** A short answer that counts: at least MIN_PART_WORDS and not an empty answer (protection, its reason, a decision, the
+ *  reason an external has no interface). Not used for the standards, where "none" is a valid answer. */
+export const partSaid = (s: string) => said(s) && words(s) >= MIN_PART_WORDS
+export const criterionOk = (s: string) => {
+  const t = s.trim()
+  if (!said(t) || TRIVIAL_CRITERION.test(t)) return false
+  if (/\btb[dr]\b/i.test(t)) {
+    const m = t.match(OWNED_TBD)
+    return !!m && said(m[1] ?? m[2] ?? m[3] ?? '')
+  }
+  if (valueIn(t)) return true
+  return words(t) >= MIN_TEXT_WORDS && (!vagueTermsIn(t).length || CRITERION_ANCHOR.test(t))
+}
 export { isAeroLink, TABLE_COLUMNS }
 
 export const minimumsOf = (r: Pick<Week5Record, 'threePersonTeam'>): Lab5Minimums => (r.threePersonTeam ? LAB5_MINIMUMS_THREE : LAB5_MINIMUMS)
@@ -62,6 +85,8 @@ export type Week4Snapshot = {
   tpms: { id: string; name: string }[]
   physical: { id: string; name: string; text: string }[]
   externals: { id: string; name: string }[]
+  /** Week 1 context EXT IDs the Week 4 file carries (Week 7 review M3/N1): new Week 5 externals continue after them. */
+  week1Externals: { id: string; name: string }[]
   functions: { id: string; name: string; phy: string; log: string }[]
   information: { id: string; name: string; producers: string[]; consumers: string[]; route: string; sensitivity: string }[]
   ai: { id: string; name: string; host: string }[]
@@ -178,6 +203,7 @@ function normalizeSnapshot(v: unknown): Week4Snapshot | null {
     tpms: objs(v.tpms).map(pair),
     physical: objs(v.physical).map((x) => ({ ...pair(x), text: str(x.text) })),
     externals: objs(v.externals).map(pair),
+    week1Externals: objs(v.week1Externals).map(pair),
     functions: objs(v.functions).map((x) => ({ ...pair(x), phy: upId(x.phy), log: upId(x.log) })),
     information: objs(v.information).map((x) => ({ ...pair(x), producers: list(x.producers), consumers: list(x.consumers), route: str(x.route), sensitivity: str(x.sensitivity) })),
     ai: objs(v.ai).map((x) => ({ ...pair(x), host: upId(x.host) })),
@@ -234,7 +260,8 @@ export function idsOf(r: Week5Record, prefix: IdPrefix): string[] {
 function floorIds(r: Week5Record, prefix: IdPrefix): string[] {
   const own = idsOf(r, prefix)
   if (prefix === 'REQ') return [...own, ...(r.week4?.requirements ?? []).map((q) => q.id).filter((id) => id.startsWith('REQ-SYS-'))]
-  if (prefix === 'EXT') return [...own, ...(r.week4?.externals ?? []).map((x) => x.id)]
+  // the max across every imported earlier-week EXT ID: Week 4's externals and the Week 1 range Week 4 carries (review N1)
+  if (prefix === 'EXT') return [...own, ...(r.week4?.externals ?? []).map((x) => x.id), ...(r.week4?.week1Externals ?? []).map((x) => x.id)]
   return own
 }
 const PREFIX_TEXT: Record<IdPrefix, string> = { CMP: 'CMP', IF: 'IF', REQ: 'REQ-SYS', ICR: 'ICR', EXT: 'EXT' }
@@ -257,6 +284,7 @@ export function snapshotOf(w: Week4Record, sourceVersion: number): Week4Snapshot
     tpms: (w3?.tpms ?? []).map((x) => ({ id: x.id, name: x.name })),
     physical: w.physical.map((x) => ({ id: x.id, name: x.name.trim(), text: x.text.trim() })),
     externals: w.externals.map((x) => ({ id: x.id, name: x.name.trim() })),
+    week1Externals: (w.week1Externals ?? []).map((x) => ({ id: x.id, name: x.name.trim() })),
     functions: w.functions.map((x) => ({ id: x.id, name: x.name.trim(), phy: x.phy, log: x.log })),
     information: w.information.map((x) => ({ id: x.id, name: x.name.trim(), producers: week4IdsIn(x.producers), consumers: week4IdsIn(x.consumers), route: x.route.trim(), sensitivity: x.sensitivity.trim() })),
     ai: w.ai.map((x) => ({ id: x.id, name: x.name.trim(), host: x.host })),
@@ -351,7 +379,7 @@ const collector = <G extends string, A extends string>() => {
 // ---------------------------------------------------------------------------------------------- Part 19: breakdown
 export function assessCard(c: Card): Assessment<CardGateId, never> {
   const g = collector<CardGateId, never>()
-  const rOk = words(c.responsibility) >= MIN_TEXT_WORDS
+  const rOk = said(c.responsibility) && words(c.responsibility) >= MIN_TEXT_WORDS
   g.gate('responsibility', rOk, rOk ? 'responsibility stated' : `say what ${c.phy} is responsible for: an action and what it acts on (at least ${MIN_TEXT_WORDS} words, for example “Charges aircraft”)`)
   const oOk = words(c.owner) >= 1
   g.gate('owner', oOk, oOk ? `owned by ${c.owner.trim()}` : 'name the organization that owns it')
@@ -364,7 +392,7 @@ export function assessComponent(c: Component, r: Week5Record): Assessment<Compon
   const parent = physicalOf(r).find((p) => p.id === c.parent)
   g.gate('parent', !!parent, parent ? `under ${parent.id} ${parent.name}` : 'choose the Week 4 physical element it belongs to')
   g.gate('kind', !!c.kind, c.kind ? componentKindLabel(c.kind) : 'choose its kind')
-  const rOk = words(c.responsibility) >= MIN_TEXT_WORDS
+  const rOk = said(c.responsibility) && words(c.responsibility) >= MIN_TEXT_WORDS
   g.gate('responsibility', rOk, rOk ? 'responsibility stated' : `state its responsibility: an action and what it acts on (at least ${MIN_TEXT_WORDS} words, for example “Raises alarms”)`)
   return g.done()
 }
@@ -408,9 +436,11 @@ export function assessInterface(x: Interface, r: Week5Record): Assessment<Interf
   const oOk = words(x.ownerA) >= 1 && words(x.ownerB) >= 1
   c.gate('owners', oOk, oOk ? `${x.ownerA.trim()} / ${x.ownerB.trim()}` : 'name the owner of each side')
   const reasons = boundaryReasons(x, r)
-  const pOk = !reasons.length || words(x.protection) >= MIN_PART_WORDS || words(x.noProtectionReason) >= MIN_PART_WORDS
-  c.gate('protection', pOk, !reasons.length ? 'crosses no trust boundary' : pOk ? `crosses a trust boundary (${reasons.join(', ')}); ${words(x.protection) >= MIN_PART_WORDS ? 'protection stated' : 'reason for no protection stated'}` : `crosses a trust boundary (${reasons.join(', ')}): state its protection, or the reason it needs none (one word is enough, for example “TLS” or “Power only”)`)
-  const gOk = words(x.degraded) >= MIN_TEXT_WORDS
+  // confirmation review N1: "none", "n/a", "-" or "?" is neither a protection nor a reason for none
+  const protected_ = partSaid(x.protection)
+  const pOk = !reasons.length || protected_ || partSaid(x.noProtectionReason)
+  c.gate('protection', pOk, !reasons.length ? 'crosses no trust boundary' : pOk ? `crosses a trust boundary (${reasons.join(', ')}); ${protected_ ? 'protection stated' : 'reason for no protection stated'}` : `crosses a trust boundary (${reasons.join(', ')}): state its protection, or the reason it needs none (one word is enough, for example “TLS” or “Power only”; “none”, “n/a” or “-” is not an answer)`)
+  const gOk = said(x.degraded) && words(x.degraded) >= MIN_TEXT_WORDS
   c.gate('degraded', gOk, gOk ? 'degraded mode stated' : `say what each side does when it fails (at least ${MIN_TEXT_WORDS} words, for example “Fail safe”)`)
   if (x.kind === 'organizational' && idsIn(x.crosses).some((id) => id.startsWith('INFO-'))) c.adv('org-carries-data', gateShort(INTERFACE_ADVISORIES, 'org-carries-data'))
   if (!words(x.constraint) && !idsIn(x.requirements).length) c.adv('no-constraint', gateShort(INTERFACE_ADVISORIES, 'no-constraint'))
@@ -549,14 +579,14 @@ export function assessChange(x: Change, r: Week5Record): Assessment<ChangeGateId
   const c = collector<ChangeGateId, never>()
   const iOk = r.interfaces.some((y) => y.id === x.interface)
   c.gate('interface', iOk, iOk ? `changes ${x.interface}` : 'choose the interface it changes')
-  const chOk = words(x.change) >= MIN_TEXT_WORDS
+  const chOk = said(x.change) && words(x.change) >= MIN_TEXT_WORDS
   c.gate('change', chOk, chOk ? 'change stated' : `state the change (at least ${MIN_TEXT_WORDS} words, for example “Add encryption”)`)
   const known = new Set([...r.interfaces.map((y) => y.id), ...physicalOf(r).map((p) => p.id), ...allExternals(r).map((e) => e.id), ...r.components.map((y) => y.id), ...snapIds(r, 'requirements'), ...r.requirements.map((q) => q.id)])
   const ids = idsIn(x.impact).filter((id) => IMPACT_PREFIX.test(id))
   const bad = ids.filter((id) => !known.has(id))
   c.gate('impact', ids.length > 0 && !bad.length, bad.length ? `${bad.join(', ')} not in the record` : ids.length ? `reaches ${ids.join(', ')}` : 'name the interfaces, elements or requirements it reaches (read its ends’ N² row and column)')
-  const dOk = words(x.decision) >= MIN_PART_WORDS && words(x.decider) >= 1
-  c.gate('decision', dOk, dOk ? `decided by ${x.decider.trim()}` : 'state the decision (one word is enough, for example “Approved”) and who made it')
+  const dOk = partSaid(x.decision) && words(x.decider) >= 1
+  c.gate('decision', dOk, dOk ? `decided by ${x.decider.trim()}` : 'state the decision (one word is enough, for example “Approved”; “n/a” or “?” is not a decision) and who made it')
   return c.done()
 }
 /** Interfaces linked to a risk that exists in the register, and the security or resilience risks among those links. */
@@ -649,7 +679,7 @@ export function checkInterfacesPart(r: Week5Record): PartCheck {
   const counted = countedInterfaces(r)
   if (counted.length < min.interfaces) issues.push(`At least ${min.interfaces} interfaces that pass every hard gate${three(r)} (${counted.length} so far).`)
   const n = n2Of(r, counted)
-  for (const e of allExternals(r)) if (!n.degrees[e.id] && words(r.externalReasons[e.id] ?? '') < MIN_PART_WORDS) issues.push(`${e.id} ${e.name.trim() || ''}`.trim() + `: ${ruleShort('externals')} (give it an interface, or the reason it has none; a short reason such as “No exchange yet” is enough).`)
+  for (const e of allExternals(r)) if (!n.degrees[e.id] && !partSaid(r.externalReasons[e.id] ?? '')) issues.push(`${e.id} ${e.name.trim() || ''}`.trim() + `: ${ruleShort('externals')} (give it an interface, or the reason it has none; a short reason such as “No exchange yet” is enough).`)
   for (const p of crossingPairs(r)) if (p.status === 'missing' || p.status === 'broken') issues.push(`${p.info} ${p.from} → ${p.to}: ${p.message}.`)
   if (counted.length) for (const k of INTERFACE_KINDS) if (!counted.some((x) => x.kind === k.id)) notes.push(`Advisory: no ${k.label.toLowerCase()} interface; ${ruleShort('kinds')}.`)
   const unknownReq = r.interfaces.flatMap((x) => idsIn(x.requirements).filter((id) => id.startsWith('REQ-') && !snapIds(r, 'requirements').has(id) && !r.requirements.some((q) => q.id === id)).map((id) => `${x.id}: ${id}`))

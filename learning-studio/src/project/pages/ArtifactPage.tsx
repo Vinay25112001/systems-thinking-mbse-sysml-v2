@@ -109,7 +109,7 @@ export function ArtifactPage({ id }: { id: string }) {
         <div className="pj-scope">
           <div className="pj-banner example" role="note">
             <span>
-              <strong>Copied from the AeroLink practice ({a.provenance.copiedFrom.id}).</strong> It does not count toward your minimums until you rewrite it for your enterprise and mark it adapted.
+              <strong>Template from AeroLink — adapt before use (copied from {a.provenance.copiedFrom.id}).</strong> It does not count toward your minimums until you rewrite it for your enterprise and mark it adapted.
             </span>
           </div>
         </div>

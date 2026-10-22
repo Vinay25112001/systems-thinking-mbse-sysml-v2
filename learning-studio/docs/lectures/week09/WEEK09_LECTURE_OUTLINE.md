@@ -195,7 +195,8 @@ Continuity with the earlier draft material: B9.3 and B9.4 rework the requirement
   - A requirement may group other requirements, by reference (`require …`) or by composition (nested requirement usages) (R74 sl.90).
   - By default, grouped requirements take the group's subject; a grouped requirement's subject can also be bound explicitly; grouped requirements are treated as required constraints of the group (R74 sl.90; R83 p.167).
   - So a group is itself a requirement: satisfying it means satisfying every member (R83 p.161) on the one subject the satisfy binds.
-  - Consequence (course reasoning): a group whose members keep different subjects is a collection for organization. No single element conforms to all of them, so it is never satisfied as a whole; satisfy its members instead. The reference model's `systemRequirements` group is of this kind.
+  - Members may have different subjects and the group still be satisfiable, when each member's subject is bound to the group's subject or to one of its features (R83 p.167 engine = vehicle.engine; R74 sl.90). One design then satisfies the group through its parts (the Week 11 pattern).
+  - Consequence (course reasoning): a group whose members keep independently typed subjects, bound neither to the group's subject nor to its features, cannot be satisfied as a whole, because no single satisfy binding reaches all of them; it is a collection for organization, so satisfy its members instead. The reference model's `systemRequirements` group is of this kind until the Week 11 architecture gives its members features to bind to.
 - **Figure.** Two group shapes: "specification group" (one subject, members inherit it) and "organizing group" (members keep their own subjects), each with a one-line rule.
 - **Sources.** R74 sl.90; R83 pp.161, 167. AeroLink: groups `stakeholderRequirements`, `systemRequirements` (v0.2 lines 501–527).
 
@@ -206,7 +207,7 @@ Continuity with the earlier draft material: B9.3 and B9.4 rework the requirement
   - `requirement def LatencyLimit` has two parameters and one required constraint, and no subject (so `Anything`).
   - Each usage declares the ID as short name, the Week 2 statement as doc, its own subject, and binds both parameters: `attribute :>> latency = scheduling.assignmentLatencyP99; attribute :>> latencyLimit = 60 [s];`.
   - Without the redefinition of `latency` as a feature of the subject, the constraint would read nothing the design has, and a later `satisfy` could not connect to any design value.
-  - The group `latencyRequirements` organizes the three; it is never satisfied as a whole (three different subjects).
+  - The group `latencyRequirements` organizes the three; their three subjects are not bound to a group subject or its features, so it cannot be satisfied as a whole as written: satisfy its members.
 - **Figure / SysML v2 example.** The existing listing, lines 16–29 on the slide (definition and REQ-SYS-005); the other two usages in the handout.
 - **Sources.** R74 sl.86–90; R83 pp.161, 165–166. Listing `sysml/week10/aerolink_requirement_def_usage.sysml` (PASS in the 2026-10-11 checker run; FICTIONAL). Reused from the reviewed draft worked example (a).
 

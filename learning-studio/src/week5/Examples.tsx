@@ -10,7 +10,7 @@ import { allSlides } from '../content/lectures/text'
 import type { Lecture, LessonSection } from '../content/lectures/types'
 import {
   ADDED_IDS, CHANGE_REQUEST, COMPONENTS, COUNTS, COUPLING, DIAGONAL, EXISTING_INTERFACE_REQUIREMENTS, EXTERNAL_DISPOSITIONS, FINDINGS, GROUPINGS, ICWG, INTERFACES, INTERFACE_DECISION, INTERFACE_REQUIREMENTS, LATENCY_BUDGET, SHORT,
-  W4_HANDOVERS, boundaryReasons, componentsOf, crossingFlows, directionOf, elementName, flowsOf, functionsAt, groupingCounts, iface, isExternal, isExternalInterface, n2Cell, ownerOf, requirementText, uncoveredPairs,
+  W4_HANDOVERS, componentsOf, crossingText, crossingFlows, directionOf, elementName, flowsOf, functionsAt, groupingCounts, iface, isExternal, isExternalInterface, n2Cell, ownerOf, requirementText, uncoveredPairs,
 } from '../content/lectures/week05/aerolinkCase'
 import { componentKindLabel, interfaceKindLabel } from '../content/lectures/week05/labBrief'
 import { Link } from '../lib/router'
@@ -169,7 +169,7 @@ function Catalogue() {
             x.ends.map((e) => `${e}: ${ownerOf(e)}`).join('; '),
             x.verification.length ? x.verification.join(', ') : `planned: ${x.verificationPlan ?? 'none yet'}`,
             x.standard ?? '—',
-            list(boundaryReasons(x), 'no'),
+            crossingText(x, 'no'),
             x.protection.length ? x.protection.join('; ') : `none needed: ${x.noProtectionReason ?? '—'}`,
             x.degraded,
             list(x.risks),

@@ -10,7 +10,7 @@ import { downloadText } from '../download'
 import { AI_GATES, ALLOCATION_CRITERIA, ALLOCATION_GATES, DECISION_GATES, FUNCTION_ADVISORIES, FUNCTION_GATES, INFO_ADVISORIES, INFO_GATES, VIEWPOINT_ADVISORIES, VIEWPOINT_GATES, VIEW_KINDS } from '../../content/lectures/week04/labBrief'
 import {
   EMPTY_AI, EMPTY_DECISION, EMPTY_EXTERNAL, EMPTY_FN, EMPTY_GROUP, EMPTY_INFO, EMPTY_LOGICAL, EMPTY_PHYSICAL, EMPTY_VIEWPOINT, W4_KEY,
-  allChecks, assessAi, assessAllocation, assessDecision, assessFunction, assessInfo, assessViewpoint, consistency, fileStem, gateShort, importWeek3File, importWeek4, minimumsOf, modelInputs, nextId,
+  allChecks, assessAi, assessAllocation, assessDecision, assessFunction, assessInfo, assessViewpoint, consistency, fileStem, gateShort, importWeek1Externals, withWeek1Externals, importWeek3File, importWeek4, minimumsOf, modelInputs, nextId,
   normalizeRecord, recordMarkdown, recordState, withIssued, withWeek3,
   type AiCard, type Assessment, type Decision, type External, type Fn, type Group, type IdPrefix, type Info, type Logical, type PartCheck, type Physical, type Viewpoint, type Week4Record,
 } from './record'
@@ -160,6 +160,13 @@ export default function Week4LabTool() {
     if ('error' in x) return setMsg({ ok: false, text: x.error })
     edit((r) => withWeek3(r, x.snapshot))
     setMsg({ ok: true, text: `Imported the Week 3 record of ${x.snapshot.enterprise}: ${x.snapshot.capabilities.length} capabilities, ${x.snapshot.scenarios.length} scenarios, ${x.snapshot.requirements.length} requirements.` })
+  }
+  async function onWeek1File(f: File | undefined) {
+    if (!f) return
+    const x = importWeek1Externals(await readFile(f))
+    if ('error' in x) return setMsg({ ok: false, text: x.error })
+    edit((r) => withWeek1Externals(r, x.externals))
+    setMsg({ ok: true, text: `Read ${x.externals.length} external IDs from your Week 1 record: new externals now continue after them.` })
   }
   async function onWeek4File(f: File | undefined) {
     if (!f) return
@@ -340,6 +347,19 @@ export default function Week4LabTool() {
               Add an external system
             </button>
           </div>
+          <p className="w4-help">An external that is one of your Week 1 context systems keeps its Week 1 ID; a new external gets the next ID after every Week 1 one. Load your Week 1 export (optional) so the numbering never reuses a Week 1 ID for a different element.</p>
+          <Field label="Week 1 model-inputs file (optional; only its external IDs are read)">
+            <input type="file" accept=".json,application/json" className="w4-file" data-testid="w4-import-week1" onChange={(e) => void onWeek1File(e.target.files?.[0])} />
+          </Field>
+          {rec.week1Externals.filter((x) => !rec.externals.some((y) => y.id === x.id)).length > 0 && (
+            <div className="w4-btn-row" data-testid="w4-week1-externals">
+              {rec.week1Externals.filter((x) => !rec.externals.some((y) => y.id === x.id)).map((x) => (
+                <button key={x.id} type="button" className="lf-btn small" onClick={() => edit((r) => ({ ...r, externals: [...r.externals, { id: x.id, name: x.name }], issued: withIssued(r, 'EXT', x.id) }))}>
+                  Add {x.id} {x.name} (Week 1)
+                </button>
+              ))}
+            </div>
+          )}
         </fieldset>
         <div className="w4-table-wrap" role="region" aria-label="Allocation" tabIndex={0}>
           <table className="w4-table" data-testid="w4-allocation-table">

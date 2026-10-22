@@ -23,6 +23,13 @@ export type PracticeLinks = {
   partsLabel?: string
   /** Shown after the parts count, e.g. what the counted steps are (sign-off confirmation N4). */
   partsNote?: string
+  // week1-m5 (audit M2): the Week 1 lab tool is the team's own record, so it shows no AeroLink rehearsal: only these
+  // centre views, no model-browser groups listed in hideTreeGroups, no Problems rule listed in hideRules, and its own
+  // brand instead of "Practice workbench" (which also drops the practice-state Export button).
+  views?: string[]
+  hideTreeGroups?: string[]
+  hideRules?: string[]
+  brand?: string
 }
 export const PracticeLinksContext = createContext<PracticeLinks | null>(null)
 export const usePracticeLinks = () => useContext(PracticeLinksContext)

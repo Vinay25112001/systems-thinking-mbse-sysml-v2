@@ -1,7 +1,8 @@
 # Week 5 review dispositions (review of 2026-10-19, package `7ab45a5`)
 
 Input: `_source_cache/review/week05_review.md` (REVISE: blocker 0, major 2, moderate 6, minor 22). Fixes written
-2026-10-19 in the working tree; **nothing is committed** (the course owner commits). Paths are relative to
+2026-10-19 and **committed as `41b2578`** (the course owner commits). The confirmation review's findings (N1–N9, n11)
+are dispositioned in the last section; those fixes were written after `bb842ca`. Paths are relative to
 `learning-studio/`. Every number quoted below is computed in `src/content/lectures/week05/aerolinkCase.ts`; the tests
 named guard it in both directions. Status words: **Fixed** (changed and tested), **Fixed (partial)** (the defect is
 removed; a stated remainder is accepted), **Dispositioned** (not changed, with the reason).
@@ -61,3 +62,21 @@ All changed figures were exported by `npm run lectures:pptx -- --week 5` and ope
 
 Recorded in the final report of the fix session (tsc, oxlint, vitest, vite build, student build, Playwright week1–5,
 week8 flows and lectures-week5).
+
+## Confirmation review dispositions (`_source_cache/review/week05_confirmation.md`, SIGN-OFF, recorded in `bb842ca`)
+
+Fixes written 2026-10-19 after `bb842ca`. The cross-week items (N1–N5) are tabled, gate by gate, in the addendum of
+`docs/lectures/GATE_SWEEP_2026-10-19.md`.
+
+| # | Status | Disposition |
+|---|---|---|
+| N1 (Moderate) | Fixed | One shared empty-answer check (`src/workbench/emptyAnswer.ts`). Week 5 `partSaid` (`record.ts`) gates protection, its reason, the change-request decision and the external reason; "none", "n/a", "-", "?" fail, "TLS", "Power only", "Approved" pass; the standards keep "None apply". The external reason "None" alone now fails (it gives no reason). Degraded mode, responsibility and change also reject an empty answer ("see above"). Tests: `record.test.ts` "N1 (confirmation)", externals rule; `shortAnswers.test.ts` W5 block. |
+| N2 | Fixed | `criterionOk` follows the stated rule: a value with its unit, or a TBD/TBR with an owner; otherwise two non-vague words. Week 2's trivial and vague checks are reused. "2 min", "≤2min", "TBD (Ops)" pass; "TBD", "TBD later", "1", "Very fast" fail. Gate text updated in `labBrief.ts`. |
+| N3 | Fixed | Week 2 criterion "none" fails (`week2/record.ts`). |
+| N4 | Fixed | Week 8 `countOf`: "no idea", "no clue" are not counts. |
+| N5 | Fixed | Week 1 uses the shared regex, so "later" and "todo" are empty answers as in Weeks 2–3. |
+| N6 | Fixed | `labBrief.ts` `name` basis cites the glossary "Component" entry, definition 2 (IEEE 2008), R101 p.1467 (`Guide_to_…_v2_14.txt` under `=== PAGE 1467 ===`); "after 15288" dropped. `WEEK5_LAB_INSTRUCTIONS.md` regenerated. |
+| N7 | Fixed | `crossingText` (`aerolinkCase.ts`) is the one trust-boundary cell for the lesson table and the Examples table: IF-012 reads "possibly: only if a network segment is leased" on both. Test: `aerolinkCase.test.ts` "confirmation N7" (14 crossing, possible IF-012, none IF-004). |
+| N8 | Fixed | The status lines of `WEEK5_MILESTONE_REPORT.md` and this file name `41b2578` (and `bb842ca` for these fixes), not "the working tree". |
+| N9 | Fixed (partial, by design) | `exports/lectures/week04-lesson.md` re-exported (`npm run lectures:pptx -- --week 4`); it now holds the "Supports" row and paragraph. `TeamView.tsx` is left to the P1 commit that owns it. |
+| n11 | Fixed | Worked N² figure walk: "then the operations center row and column" (`session1.ts`). |

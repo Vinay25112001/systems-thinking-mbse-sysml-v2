@@ -92,14 +92,31 @@ export const VOCABULARY: Record<RelationshipType, Rule> = { ...TRACE, ...STRUCTU
 export const RELATIONSHIP_TYPES = Object.keys(VOCABULARY) as RelationshipType[]
 export const isRelationshipType = (x: unknown): x is RelationshipType => typeof x === 'string' && x in VOCABULARY
 
+/** Additional rules for a type already in the vocabulary, in another category (M6, spec §k.1, additive): directive §14's
+ *  "conflicting concerns" is stored as `CON conflicts-with CON` in the trace category (an LNK ID), so it never joins the
+ *  Week 1 REL rows (stakeholder category) or the week1-model-inputs export. Impact none: a concern's edit flags nothing;
+ *  the conflict is shown as related. Symmetric: A conflicts with B is the same record as B conflicts with A. */
+const EXTRA_RULES: { type: RelationshipType; rule: Rule; symmetric?: boolean }[] = [
+  { type: 'conflicts-with', rule: { category: 'trace', from: ['CON'], to: ['CON'], impact: 'none', verb: 'conflicts with' }, symmetric: true },
+]
+/** Every rule of a type (the primary one first). */
+export const rulesOf = (type: RelationshipType): Rule[] => [VOCABULARY[type], ...EXTRA_RULES.filter((x) => x.type === type).map((x) => x.rule)].filter(Boolean)
+/** The rule of a type in a category (null when the type has none there). */
+export const ruleOf = (type: RelationshipType, category: RelationshipCategory): Rule | null => rulesOf(type).find((r) => r.category === category) ?? null
+/** Whether `from type to` and `to type from` are one and the same record (duplicate check both ways). */
+export const isSymmetric = (type: RelationshipType, category: RelationshipCategory) => EXTRA_RULES.some((x) => x.type === type && x.rule.category === category && x.symmetric)
+
 const inSet = (set: readonly ArtifactType[] | 'any', t: ArtifactType) => set === 'any' || set.includes(t)
-export function allowedPair(from: ArtifactType, type: RelationshipType, to: ArtifactType): boolean {
-  const r = VOCABULARY[type]
+/** Whether the pair is allowed for the type in the category (default: the type's primary category). */
+export function allowedPair(from: ArtifactType, type: RelationshipType, to: ArtifactType, category?: RelationshipCategory): boolean {
+  const r = category ? ruleOf(type, category) : VOCABULARY[type]
   return !!r && inSet(r.from, from) && inSet(r.to, to)
 }
 /** "CON satisfies REQ-SYS is not an allowed relationship" (integrity I5). */
 export const pairMessage = (from: string, type: string, to: string) => `${from} ${type} ${to} is not an allowed relationship.`
 /** Reads a relationship as a sentence: "NEED-004 derives from STK-002". */
 export const sentence = (fromId: string, type: RelationshipType | '', toId: string) => `${fromId} ${type ? VOCABULARY[type].verb : '(type not chosen)'} ${toId}`
+/** The category a new relationship of a type between two artifact types takes (the first rule that allows the pair). */
+export const categoryFor = (from: ArtifactType, type: RelationshipType, to: ArtifactType): RelationshipCategory | null => rulesOf(type).find((r) => inSet(r.from, from) && inSet(r.to, to))?.category ?? null
 /** The ID series a relationship of a category takes: REL for Week 1 stakeholder relationships, LNK for every other. */
 export const relPrefix = (c: RelationshipCategory) => (c === 'stakeholder' ? 'REL' : 'LNK')

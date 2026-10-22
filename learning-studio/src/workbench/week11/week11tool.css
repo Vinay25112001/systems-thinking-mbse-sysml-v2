@@ -1,0 +1,21 @@
+/* Week 11 lab tool additions (Week11LabTool.tsx) on top of the Week 8, 9 and 10 tool classes, on the workbench tokens, so
+   light and dark use the validated pairs. Status always carries a glyph and a word, never color alone. */
+.w11-rows {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.w11-rows > li {
+  margin-bottom: 6px;
+}
+/* The sr-only captions inside the scroll wrappers are absolutely positioned; a positioned wrapper keeps them inside the
+   sideways scroll, so the page never scrolls sideways at 400 px. */
+.w11-tool .w8-scroll {
+  position: relative;
+}
+.w11-tool .w8-table td,
+.w11-tool .w8-table th,
+.w11-tool .w9-req-head,
+.w11-tool .w10-hint {
+  overflow-wrap: anywhere;
+}

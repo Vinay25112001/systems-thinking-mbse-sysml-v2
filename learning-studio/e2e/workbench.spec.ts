@@ -1,22 +1,23 @@
-// AeroLink Workbench, Week 1 (rebuilt 2026-10-18: stakeholders, boundary, needs, the team's own record): missions,
-// problems → selection, theme, keyboard, drawers, axe, screenshots. Screenshots go to screenshots/week1-workbench/, so the
-// earlier files in screenshots/workbench/ (shared with another stream) are not touched.
+// The Week 1 workbench (rebuilt 2026-10-18): problems → selection, impact, undo/redo, the team enterprise check, theme,
+// keyboard, drawers, axe, screenshots. Screenshots go to screenshots/week1-workbench/, so the earlier files in
+// screenshots/workbench/ (shared with another stream) are not touched.
+//
+// Since Week 1 M5 (2026-10-21) the AeroLink practice missions 1–4 are no longer in the workbench: Guided Practice is its
+// own page and store (src/week1/practice/, covered by week1-flow.spec.ts and project.spec.ts), and /week/1/practice no
+// longer mounts the workbench. The only route that still mounts the Week 1 workbench is the lab tool
+// (#/week/1/project/tool, the Team enterprise view; instructor edition only since M6, the student edition redirects to the
+// canvas). These tests therefore run on the lab tool. Retired with the practice workbench (their views are not routed):
+// the try-first stakeholder mission, the guided boundary mission and the AeroLink needs writer; the logic behind them keeps
+// its unit tests (src/workbench/**).
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { PREDICTION_OPTIONS } from '../src/content/missions/week01'
-import { CANDIDATES } from '../src/workbench/week1/stakeholders'
 
 const SHOTS = 'screenshots/week1-workbench'
-const VIEWS = [
-  ['stakeholders', 'Stakeholders'],
-  ['boundary', 'Boundary & context'],
-  ['needs', 'Needs'],
-  ['team', 'Team enterprise'],
-] as const
+/** The lab tool shows the Team enterprise view only (src/week1/Workbench.tsx LAB_ONLY). */
+const VIEWS = [['team', 'Team enterprise']] as const
 
-/** Week 1's workbench is embedded in the lecture-first week pages (2026-10-19): the optional AeroLink practice on the
- *  worked-examples page (missions 1–4 first) and the lab tool. Nothing has to be read or answered first. */
-async function fresh(page: Page, path = '/week/1/examples/practice') {
+/** The Week 1 lab tool embeds the workbench under the week navigation. Nothing has to be read or answered first. */
+async function fresh(page: Page, path = '/week/1/project/tool') {
   await page.goto('/#/')
   await page.evaluate(() => window.localStorage.clear())
   await page.goto(`/#${path}`)
@@ -46,69 +47,10 @@ test('the Week 1 workbench opens under the week navigation with every region, an
     await expect(page.getByLabel(name, { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('navigation', { name: 'Main' })).toHaveCount(0) // the classic sidebar is hidden
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
-  await expect(page.getByTestId('week-nav-examples')).toHaveAttribute('aria-current', 'page')
+  // the lab tool belongs to the My Project / Lab stage of the five-stage Week 1 navigation (M4 part A, M6)
+  await expect(page.getByTestId('lab-tool-frame')).toBeVisible()
+  await expect(page.getByTestId('week-nav-project')).toHaveAttribute('aria-current', 'step')
   await expect(page.getByTestId('practice-locked')).toHaveCount(0)
-  expect(errors).toEqual([])
-})
-
-test('try-first mission: the prediction is locked before the sort, then compared with it, with nothing given away early', async ({ page }) => {
-  const errors = trackErrors(page)
-  await fresh(page)
-  const brief = page.getByTestId('mission-brief')
-  await brief.getByLabel(PREDICTION_OPTIONS[0].text).check()
-  await brief.getByRole('button', { name: 'Record: Your prediction' }).click()
-  await expect(page.getByTestId('step-predict')).toHaveAttribute('data-status', 'done')
-  await expect(page.getByTestId('step-identify')).toHaveAttribute('data-status', 'current')
-  const view = page.getByTestId('view-stakeholders')
-  // the key is not shown before the student checks with every candidate marked
-  await expect(page.getByTestId('stk-identify').getByRole('button', { name: 'Check', exact: true })).toBeDisabled()
-  for (const c of CANDIDATES) await view.getByLabel(`Is ${c.name} a stakeholder?`).selectOption(c.name === 'Weather' ? 'yes' : c.stakeholder ? 'yes' : 'no')
-  await expect(view).not.toContainText('a natural system in the context')
-  await page.getByTestId('stk-identify').getByRole('button', { name: 'Check', exact: true }).click()
-  await expect(page.getByTestId('stk-identify-score')).toHaveText(`${CANDIDATES.length - 1} of ${CANDIDATES.length} agree with the key`)
-  await expect(view).toContainText('a natural system in the context')
-  // rebuild review F14: the step is not done while a difference from the key is unread
-  await expect(page.getByTestId('step-identify')).not.toHaveAttribute('data-status', 'done')
-  await expect(page.getByTestId('stk-identify-open')).toContainText('1 to read')
-  await view.getByLabel('I have read why').check()
-  await expect(page.getByTestId('step-identify')).toHaveAttribute('data-status', 'done')
-  const compare = page.getByTestId('step-compare')
-  await expect(compare).not.toContainText('primary source')
-  await compare.getByLabel('Partly').check()
-  await compare.getByRole('button', { name: /Record/ }).click()
-  await expect(page.getByTestId('step-feedback')).toContainText('primary source of needs')
-  expect(errors).toEqual([])
-})
-
-test('guided boundary mission: classify, check against the key, name the criterion', async ({ page }) => {
-  const errors = trackErrors(page)
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await fresh(page)
-  await page.getByRole('button', { name: /^Mission 2: Guided: an AeroLink boundary fit for its question/ }).click()
-  await expect(page.getByTestId('view-boundary')).toBeVisible()
-  await expect(page.getByTestId('step-check')).toHaveCount(0) // guided missions show only the steps reached so far
-  const ex = page.getByTestId('boundary-exercise')
-  const answers: [string, string][] = [
-    ['AeroLink aircraft fleet', 'inside'], ['Vertiport chargers', 'inside'], ['Dispatch and scheduling (operations center)', 'inside'],
-    ['Passenger demand and rider word-of-mouth', 'inside'], ['Electric grid', 'environment'], ['Airspace managed by the air navigation service provider', 'environment'],
-    ['Weather', 'environment'], ['Aircraft cabin interior color scheme', 'irrelevant'], ['Aircraft manufacturer delivery lead time', 'irrelevant'],
-  ]
-  for (const [name, v] of answers) await ex.getByLabel(`Classify ${name}`).selectOption(v)
-  await expect(page.getByTestId('step-classify')).toHaveAttribute('data-status', 'done')
-  await expect(page.getByTestId('step-check')).toHaveAttribute('data-status', 'current')
-  await ex.getByRole('button', { name: 'Check classification' }).click()
-  await expect(page.getByTestId('step-check')).toHaveAttribute('data-status', 'done')
-  await expect(page.getByTestId('step-check')).toContainText('8 of 9 match the instructor key')
-  const crit = page.getByTestId('step-criterion')
-  await crit.getByLabel('Control: AeroLink controls passenger demand').check()
-  await crit.getByRole('button', { name: /Record/ }).click()
-  await expect(crit).toHaveAttribute('data-status', 'current')
-  await expect(page.getByTestId('step-feedback')).toContainText('Not quite')
-  await crit.getByLabel('Model boundary: demand is endogenous to the feedback under study').check()
-  await crit.getByRole('button', { name: /Record again/ }).click()
-  await expect(crit).toHaveAttribute('data-status', 'done')
-  await expect(page.getByRole('status').filter({ hasText: 'Mission complete' })).toBeVisible()
-  await page.screenshot({ path: `${SHOTS}/mission-boundary-complete-1440x900-light.png` })
   expect(errors).toEqual([])
 })
 
@@ -116,24 +58,21 @@ test('problems: a rule violation is listed, clicking it selects the element, fix
   const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
-  await page.getByRole('tab', { name: 'Boundary & context' }).click()
-  const ext = page.getByTestId('ext-form')
-  await ext.getByLabel('External system or actor').fill('Electric utility')
-  await ext.getByLabel('Owner (initials)').fill('JS')
-  await ext.getByRole('button', { name: /Add external system/ }).click()
+  const p = page.getByTestId('team-proposal')
+  await p.getByLabel('Enterprise name').fill('AeroLink vertiport network')
   const problems = page.getByTestId('problems-table')
-  await expect(problems).toContainText('EXT-001 has no labeled exchange')
-  await page.getByRole('button', { name: 'Clear selection' }).click()
-  await page.getByRole('tab', { name: 'Needs' }).click()
-  await problems.getByRole('button', { name: /Select EXT-001/ }).click()
-  await expect(page.getByTestId('tree-EXT-001')).toHaveAttribute('aria-selected', 'true')
-  await expect(page.getByTestId('view-boundary')).toBeVisible() // the problem opened the element's view
-  const props = page.getByTestId('properties')
-  await props.getByLabel('Exchange with the SoI').fill('power')
-  await expect(page.getByTestId('dock')).not.toContainText('EXT-001 has no labeled exchange')
+  await expect(problems).toContainText('The enterprise proposal names AeroLink')
+  // select another element first, so the problem's selection is observable
+  await page.getByTestId('tree-team:charter').click()
+  await expect(page.getByTestId('tree-team:charter')).toHaveAttribute('aria-selected', 'true')
+  await problems.getByRole('button', { name: /Select team:proposal/ }).click()
+  await expect(page.getByTestId('tree-team:proposal')).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByTestId('properties')).toContainText('Team Record, part 2 Enterprise proposal')
+  await p.getByLabel('Enterprise name').fill('Riverside Food Bank Network')
+  await expect(page.getByTestId('dock')).not.toContainText('The enterprise proposal names AeroLink')
   await page.getByRole('tab', { name: /Changes & impact/ }).click()
   await expect(page.getByTestId('changes-list')).toContainText('cleared')
-  await expect(page.getByTestId('changes-list')).toContainText('EXT elements: 0 → 1')
+  await expect(page.getByTestId('changes-list')).toContainText('The enterprise proposal names AeroLink')
   await expect(page.getByTestId('status-bar')).toContainText('0 errors · 0 warnings')
   await page.screenshot({ path: `${SHOTS}/problems-and-impact-1440x900-light.png` })
   expect(errors).toEqual([])
@@ -143,24 +82,25 @@ test('undo / redo: Ctrl+Z reverts a model edit, Ctrl+Shift+Z restores it, and bo
   const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
-  await page.getByRole('tab', { name: 'Boundary & context' }).click()
-  const ext = page.getByTestId('ext-form')
-  await ext.getByLabel('External system or actor').fill('Electric utility')
-  await ext.getByLabel('Owner (initials)').fill('JS')
-  await ext.getByRole('button', { name: /Add external system/ }).click()
-  await expect(page.getByTestId('tree-EXT-001')).toBeVisible()
+  const name = page.getByTestId('team-proposal').getByLabel('Enterprise name')
+  await name.fill('AeroLink vertiport network')
+  await expect(page.getByTestId('problems-table')).toContainText('The enterprise proposal names AeroLink')
+  await name.fill('Riverside Food Bank Network')
+  await expect(page.getByTestId('dock')).not.toContainText('names AeroLink')
   await page.locator('body').click({ position: { x: 700, y: 120 } })
   await page.keyboard.press('Control+z')
-  await expect(page.getByTestId('tree-EXT-001')).toHaveCount(0)
+  await expect(name).toHaveValue('AeroLink vertiport network')
+  await expect(page.getByTestId('problems-table')).toContainText('The enterprise proposal names AeroLink') // its problem is back
   await page.getByRole('tab', { name: /Changes & impact/ }).click()
-  await expect(page.getByTestId('changes-list')).toContainText('Undo of change 1')
+  await expect(page.getByTestId('changes-list')).toContainText(/Undo of change \d+/)
   await expect(page.getByTestId('redo')).toBeEnabled()
   await page.screenshot({ path: `${SHOTS}/undo-1440x900-light.png` })
+  await page.locator('body').click({ position: { x: 700, y: 120 } })
   await page.keyboard.press('Control+Shift+z')
-  await expect(page.getByTestId('tree-EXT-001')).toBeVisible()
-  await expect(page.getByTestId('problems-table')).toContainText('EXT-001 has no labeled exchange') // its problem is back
+  await expect(name).toHaveValue('Riverside Food Bank Network')
+  await expect(page.getByTestId('status-bar')).toContainText('0 errors · 0 warnings') // the problem is cleared again
   await page.getByRole('tab', { name: /Changes & impact/ }).click()
-  await expect(page.getByTestId('changes-list')).toContainText('Redo of change 1')
+  await expect(page.getByTestId('changes-list')).toContainText(/Redo of change \d+/)
   expect(errors).toEqual([])
 })
 
@@ -168,7 +108,7 @@ test('team enterprise: an AeroLink proposal is an error in Problems until the te
   const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
-  await page.getByRole('tab', { name: 'Team enterprise' }).click()
+  await expect(page.getByRole('tab', { name: /Team enterprise/ })).toHaveAttribute('aria-selected', 'true') // the lab tool's only view
   const p = page.getByTestId('team-proposal')
   await p.getByLabel('Enterprise name').fill('AeroLink vertiport network')
   await expect(page.getByTestId('problems-table')).toContainText('The enterprise proposal names AeroLink')
@@ -186,23 +126,22 @@ test('layout at 1440x900: dock folded, Properties folded while nothing is select
   expect(dockH).toBeLessThan(40)
   const propsH = await page.getByLabel('Properties', { exact: true }).first().evaluate((el) => el.getBoundingClientRect().height)
   expect(propsH).toBeLessThan(40)
-  // the brief's current step can be acted on without scrolling inside the brief: its task, its "You enter" / "Done when"
-  // statements and its action button are in view (revised 2026-10-18: the step statements and the labeled mission list
-  // added to the brief move the hint and reference buttons below the fold at this size)
+  // the brief's current step can be acted on without scrolling inside the brief: its task and its "You enter" / "Done
+  // when" statements are in view, and so is its action button where the step has one (the lab tool's Team Record steps
+  // are filled in the centre view, so they carry no button in the brief)
   const brief = page.getByTestId('mission-brief')
   const fits = await brief.evaluate((el) => {
     const bottom = el.parentElement!.getBoundingClientRect().bottom
-    const step = el.querySelector('[data-status="current"]')!
-    const parts = [step.querySelector('[data-testid="step-brief"]'), step.querySelector('button.wb-btn.primary')]
-    return parts.every((x) => !!x && x.getBoundingClientRect().bottom <= bottom)
+    const step = el.querySelector('[data-status="current"]')
+    if (!step) return 'no current step'
+    const stepBrief = step.querySelector('[data-testid="step-brief"]')
+    const button = step.querySelector('button.wb-btn.primary')
+    if (!stepBrief) return 'no step brief'
+    return stepBrief.getBoundingClientRect().bottom <= bottom && (!button || button.getBoundingClientRect().bottom <= bottom)
   })
   expect(fits).toBe(true)
   // a new problem opens the dock
-  await page.getByRole('tab', { name: 'Boundary & context' }).click()
-  const ext = page.getByTestId('ext-form')
-  await ext.getByLabel('External system or actor').fill('Electric utility')
-  await ext.getByLabel('Owner (initials)').fill('JS')
-  await ext.getByRole('button', { name: /Add external system/ }).click()
+  await page.getByTestId('team-proposal').getByLabel('Enterprise name').fill('AeroLink vertiport network')
   await expect.poll(() => page.getByTestId('dock').evaluate((el) => el.getBoundingClientRect().height)).toBeGreaterThan(120)
 })
 
@@ -221,40 +160,6 @@ test('medium width: the model browser opens as an overlay drawer, the centre kee
   await expect(drawer).toHaveCount(0)
 })
 
-test('needs writer (rebuild review F01): structure and trace are gated, subjective points are warnings, the six checks are confirmed by the student', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await fresh(page)
-  await page.getByRole('tab', { name: 'Needs' }).click()
-  const w = page.getByTestId('needs-write')
-  await w.getByLabel('Short name').fill('Fire warning')
-  await w.getByLabel('Need statement').fill('The vertiport shall warn responders of a battery fire.')
-  await w.getByLabel('Rationale (why they need it)').fill('responders must reach a fire quickly and safely')
-  const crit = page.getByTestId('needs-criteria')
-  // A21: rejected for its real defects, a requirement (“shall”) with no registered stakeholder in need
-  await expect(crit).toContainText('marks a requirement')
-  await expect(crit).toContainText('No stakeholder from your register is named')
-  await expect(crit).toContainText('Choose at least one stakeholder')
-  await expect(w.getByRole('button', { name: 'Record need' })).toBeDisabled()
-  // a vague need passes the structure but is warned about, and cannot be recorded without a justification
-  await w.getByLabel('Comes from (stakeholder)').selectOption('STK-006')
-  // A21: the outcome form is a valid need: accepted with a note recommending "The [stakeholders] need the [system] to …"
-  await w.getByLabel('Need statement').fill('Emergency responders need early warning of a battery fire at a vertiport, at any hour of operation.')
-  await expect(crit).toContainText('Accepted: it names the stakeholder and the outcome')
-  await expect(crit).not.toContainText('Fix')
-  await expect(crit).not.toContainText('Warning')
-  await w.getByLabel('Need statement').fill('Emergency responders need the air-taxi service to give good service when possible.')
-  await expect(crit).toContainText('Vague')
-  await expect(crit).not.toContainText('Fix')
-  await w.getByLabel('Need statement').fill('Emergency responders need the air-taxi service to give them early warning of a battery fire at a vertiport, at any hour of operation.')
-  await expect(crit).not.toContainText('Fix')
-  await expect(crit).not.toContainText('Warning')
-  await expect(w.getByRole('button', { name: 'Record need' })).toBeDisabled()
-  const boxes = page.getByTestId('needs-selfcheck').getByRole('checkbox')
-  for (let i = 0; i < 6; i++) await boxes.nth(i).check()
-  await w.getByRole('button', { name: 'Record need' }).click()
-  await expect(page.getByTestId('needs-recorded')).toContainText('STK-006')
-})
-
 test('keyboard: F6 cycles regions, the tree navigates with arrows, ? and Esc open and close dialogs', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page)
@@ -266,9 +171,10 @@ test('keyboard: F6 cycles regions, the tree navigates with arrows, ? and Esc ope
   }
   expect(new Set(seen)).toEqual(new Set(['topbar', 'rail', 'browser', 'view', 'properties', 'brief', 'dock', 'status']))
   const tree = page.getByRole('tree', { name: 'Model browser' })
-  await tree.getByRole('treeitem').first().focus()
+  // the lab tool's tree opens with the Team Record group; from part 1 (the charter) the arrow moves to part 2
+  await tree.getByTestId('tree-team:charter').focus()
   await page.keyboard.press('ArrowDown')
-  await page.keyboard.press('ArrowDown')
+  await expect(tree.getByTestId('tree-team:proposal')).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.getByTestId('tree-team:proposal')).toHaveAttribute('aria-selected', 'true')
   await expect(page.getByTestId('properties')).toContainText('Team Record, part 2 Enterprise proposal')
@@ -277,13 +183,14 @@ test('keyboard: F6 cycles regions, the tree navigates with arrows, ? and Esc ope
   await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog', { name: 'Keyboard shortcuts' })).toHaveCount(0)
   // Read more opens the reference drawer at the step's lesson block; Esc closes it
-  // on the lecture-first path the step first links to the lesson section that teaches it; the drawer keeps the full reviewed text
-  await expect(page.getByTestId('step-predict').getByTestId('step-lesson-link')).toHaveText(/Lesson: Identifying stakeholders/)
-  await expect(page.getByTestId('step-predict').getByTestId('step-lesson-link')).toHaveAttribute('href', '#/week/1/lesson/s1-lesson-stakeholders')
-  await page.getByTestId('step-predict').getByRole('button', { name: 'Full text' }).click()
+  // on the lecture-first path the step first links to the lesson section that teaches it (the earlier lesson URL, which
+  // redirects to its Learn section); the drawer keeps the full reviewed text. The lab tool opens on step 1, the charter.
+  await expect(page.getByTestId('step-charter').getByTestId('step-lesson-link')).toHaveText(/Lesson: Forming your team/)
+  await expect(page.getByTestId('step-charter').getByTestId('step-lesson-link')).toHaveAttribute('href', '#/week/1/lesson/s1-lesson-teams')
+  await page.getByTestId('step-charter').getByRole('button', { name: 'Full text' }).click()
   const drawer = page.getByTestId('reference-drawer')
   await expect(drawer).toBeVisible()
-  await expect(drawer.getByTestId('block-w1-stakeholders')).toBeInViewport()
+  await expect(drawer.getByTestId('block-w1-team')).toBeInViewport()
   await page.keyboard.press('Escape')
   await expect(drawer).toHaveCount(0)
 })
@@ -302,7 +209,8 @@ test('assessments panel: recall quiz, lab and assignment; instructor notes only 
   await expect(panel.getByTestId('lab-panel')).toContainText('L1 — Team charter, enterprise proposal, stakeholder register and initial needs')
   await page.screenshot({ path: `${SHOTS}/assessments-1440x900-light.png` })
   await page.keyboard.press('Escape')
-  await page.getByLabel('Instructor mode').check()
+  // the Week 1 chrome's interim instructor switch (StudentChrome; no switch in the student edition)
+  await page.getByTestId('instructor-switch').locator('input').check()
   await page.getByRole('button', { name: 'Assessments' }).click()
   await page.getByTestId('assessments-panel').getByRole('tab', { name: 'Instructor notes' }).click()
   await expect(page.getByTestId('instructor-notes')).toContainText('Session 1 — concept studio')
@@ -323,18 +231,20 @@ test('theme toggle switches the workbench to its dark tokens and persists', asyn
 })
 
 for (const theme of ['light', 'dark'] as const) {
-  test(`axe: /week/1/practice workbench has no serious or critical violations — ${theme}`, async ({ page }) => {
+  test(`axe: /week/1/project/tool workbench has no serious or critical violations — ${theme}`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await fresh(page)
     await setTheme(page, theme)
     const report: string[] = []
     const scan = async (label: string) => {
       await page.waitForTimeout(250)
+      // a drawer fades in: scan once its opening animation has finished, not a half-transparent frame
+      await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== 'running'), undefined, { timeout: 10_000 })
       const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
       for (const v of r.violations) report.push(`${label} [${v.impact}] ${v.id}: ${v.nodes.length} node(s) — ${v.nodes[0]?.target.join(' ')}`)
     }
     for (const [, title] of VIEWS) {
-      await page.getByRole('tab', { name: title }).click()
+      await page.getByRole('tab', { name: new RegExp(title) }).click()
       await scan(title)
     }
     await page.getByRole('button', { name: 'Reference (lesson)' }).click()
@@ -355,7 +265,7 @@ for (const [w, h] of [[1440, 900], [1024, 768]] as const) {
       await fresh(page)
       await setTheme(page, theme)
       for (const [id, title] of VIEWS) {
-        await page.getByRole('tab', { name: title }).click()
+        await page.getByRole('tab', { name: new RegExp(title) }).click()
         await expect(page.getByTestId(`view-${id}`)).toBeVisible()
         await page.waitForTimeout(350)
         await page.screenshot({ path: `${SHOTS}/${id}-${w}x${h}-${theme}.png` })

@@ -18,23 +18,26 @@ function trackErrors(page: Page): string[] {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
   page.on('console', (m) => {
-    if (m.type() === 'error') errors.push(`console: ${m.text()}`)
+    // the course-server session probe (/api/...) fails when no course server runs (offline mode, M2): the browser logs
+    // the failed resource; that is expected and not an application error
+    if (m.type() === 'error' && !(m.text().startsWith('Failed to load resource') && m.location().url.includes('/api/'))) errors.push(`console: ${m.text()}`)
   })
   return errors
 }
 
 test('dashboard loads with honest status and navigates to Week 1', async ({ page }) => {
   const errors = trackErrors(page)
-  await fresh(page)
+  // the dashboard moved to #/dashboard when the course homepage took #/ (Week 1 M4 part A, spec §a)
+  await fresh(page, '/dashboard')
   // the first test of the run may meet a cold dev server (module graph not yet transformed): a longer first wait (m1)
   await expect(page.getByRole('heading', { name: 'Systems Thinking and MBSE with SysML v2' })).toBeVisible({ timeout: 30_000 })
   await expect(page.getByText('Prototype status — read before you start')).toBeVisible()
   await page.screenshot({ path: `${SHOTS}/01-dashboard-light.png`, fullPage: true })
   await expect(page.getByTestId('start-here')).toBeVisible()
   await page.getByRole('link', { name: 'Open Week 1' }).click()
-  // Week 1 opens on its lecture-first week page (DECISION_LOG A20); the earlier module page is an instructor archive
-  await expect(page.getByRole('heading', { level: 1, name: /Week 1 — Team Formation \/ Needs \/ Identifying Stakeholders/ })).toBeVisible()
-  await expect(page.getByTestId('week1-home')).toBeVisible()
+  // Week 1 opens on its Overview (M4 part A); the earlier module page is an instructor archive
+  await expect(page.getByRole('heading', { level: 1, name: /^Week 1 · Team formation, needs and identifying stakeholders$/ })).toBeVisible()
+  await expect(page.getByTestId('week1-overview')).toBeVisible()
   expect(errors).toEqual([])
 })
 
@@ -182,10 +185,12 @@ test('every week, the roadmap and the reference pages render without errors', as
   for (let n = 1; n <= 14; n++) {
     await page.goto(`/#/week/${n}`)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(new RegExp(`^Week ${n}[: ]`))
-    // Week 1 opens on its lecture-first week page (2026-10-19); the lab, rubric and workload live on its own pages
+    // Week 1 opens on its Overview (M4 part A, 2026-10-21): objectives, what the team creates, and the computed time table
+    // (the stage bar leads to Learn, Guided Practice, My Project / Lab and Review & Submit)
     if (n === 1) {
-      await expect(page.getByTestId('week1-home')).toBeVisible()
-      await expect(page.getByTestId('week1-workload')).toBeVisible()
+      await expect(page.getByTestId('week1-overview')).toBeVisible()
+      await expect(page.getByTestId('ov-time')).toBeVisible()
+      await expect(page.getByTestId('week-nav')).toBeVisible()
       continue
     }
     // Week 2 opens on its lecture-first week page on the same template (2026-10-19); its earlier page is archived
@@ -210,6 +215,42 @@ test('every week, the roadmap and the reference pages render without errors', as
     if (n === 5) {
       await expect(page.getByTestId('week5-home')).toBeVisible()
       await expect(page.getByTestId('week5-workload')).toBeVisible()
+      continue
+    }
+    // Week 6 opens on its lecture-first week page on the same template (A21, A24); its earlier page is archived
+    if (n === 6) {
+      await expect(page.getByTestId('week6-home')).toBeVisible()
+      await expect(page.getByTestId('week6-workload')).toBeVisible()
+      continue
+    }
+    // Week 7 opens on its lecture-first week page on the same template (A21 decision 7, A24); its earlier page is archived
+    if (n === 7) {
+      await expect(page.getByTestId('week7-home')).toBeVisible()
+      await expect(page.getByTestId('week7-workload')).toBeVisible()
+      continue
+    }
+    // Week 9 opens on its lecture-first week page on the same template (A21, A24); its earlier page is archived
+    if (n === 9) {
+      await expect(page.getByTestId('week9-home')).toBeVisible()
+      await expect(page.getByTestId('week9-workload')).toBeVisible()
+      continue
+    }
+    // Week 11 opens on its lecture-first week page on the same template (A21, A24); its earlier page is archived
+    if (n === 11) {
+      await expect(page.getByTestId('week11-home')).toBeVisible()
+      await expect(page.getByTestId('week11-workload')).toBeVisible()
+      continue
+    }
+    // Week 10 opens on its lecture-first week page on the same template (A21, A24); its earlier page is archived
+    if (n === 10) {
+      await expect(page.getByTestId('week10-home')).toBeVisible()
+      await expect(page.getByTestId('week10-workload')).toBeVisible()
+      continue
+    }
+    // Week 8 opens on its lecture-first week page on the same template; its earlier page is archived
+    if (n === 8) {
+      await expect(page.getByTestId('week8-home')).toBeVisible()
+      await expect(page.getByTestId('week8-workload')).toBeVisible()
       continue
     }
     // a converted week opens in the workbench (Week 1: the book-style flow); its classic page keeps the lab, assignment and workload panels

@@ -456,7 +456,8 @@ export function countOf(text: string): number | null {
   const t = text.trim()
   const lead = /^(\d+)(?!\s*[.,]\d)\b/.exec(t)
   if (lead) return Number(lead[1])
-  if (/^(?:none|zero|no(?:ne)?(?: \w+)?|nil)\.?$/i.test(t)) return 0
+  // confirmation review N4: only a stated zero; "no idea" or "no clue" is not a count (was `no(?:ne)?(?: \w+)?`)
+  if (/^(?:none|zero|nil|no(?:\s+(?:items?|entr(?:y|ies)|ids?|elements?))?)\.?$/i.test(t)) return 0
   return null
 }
 export function mappingMatrix(src: ImportSource, manual: ManualRow[] = []): MappingRow[] {

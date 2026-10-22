@@ -1,5 +1,6 @@
 # Week 11 Lecture Outline: Physical / Interfaces
 
+**Superseded in part (2026-10-22).** The week is built; where this outline and the built week differ (workload, exercise, quiz), the built week and `WEEK11_MILESTONE_REPORT.md` govern.
 **Status.** Draft for faculty approval (COURSE_PRODUCTION_PLAN M2, outlines for Weeks 2–14). Written 2026-10-19. New, pending review. Nothing here is in `src/` yet.
 **Governing documents.** DECISION_LOG A19 and A20; COURSE_SCHEDULE.md (Week 11 subject, exact; instructional rules 2, 3, 4 and 6); COURSE_PRODUCTION_PLAN.md (definition of done A–I); the Week 1 template and its review lessons (`../week01/REVIEW_DISPOSITIONS.md`).
 **Format.** Two sessions of 75 minutes each, planned as 69 minutes of content plus a 6-minute buffer.
@@ -519,6 +520,8 @@ B11.2, B11.3, B11.4 and B11.5, applied to the team's own enterprise.
 
 ### 5.7 Realistic per-student workload (budget 8 h)
 
+> **Superseded (2026-10-22, Week 11 review m7).** The figures in this section are the outline's estimate. The built week computes its workload in `src/content/week11Path.ts`: 7.2 h for a team of four (lab 8.4 person-hours, 2.1 h each; exercise 50 min); a team of three carries 7.9 person-hours, 2.6 h each, a week of 7.7 h. See `WEEK11_MILESTONE_REPORT.md` §5.
+
 | Activity | Hours | Basis |
 |---|---|---|
 | Class sessions (2 × 75 min) | 2.5 | Timetable |
@@ -555,6 +558,8 @@ Unseen, non-AeroLink contexts; no reuse of slide, worked-example or warm-up word
 | 12 (SA) | B11.5 | Evaluate | Name two interface errors the checker does not report and how a reviewer finds each | Recorded behavior (lesson table); R71 sl.20, 27 |
 
 ### 6.2 Applied exercise (individual, about 40 min, open book, unseen case)
+
+> **Superseded (2026-10-22).** The built exercise is the water-kiosk case of `src/content/week11Assessment.ts`, 50 minutes, five tasks; the outline below is kept as the planning record.
 - **Case brief** (about 300 words, instructor-authored, FICTIONAL): an *electric-bus depot* with a component list (buses, chargers, depot control system, grid connection), a five-row interface table and three system requirements.
 - **Tasks.**
   1. Model two physical elements with quantity-typed attributes and one usage with a multiplicity. *(B11.2)*

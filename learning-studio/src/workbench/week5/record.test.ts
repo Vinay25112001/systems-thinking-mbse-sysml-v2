@@ -11,7 +11,7 @@ import { modelInputs as week4ModelInputs } from '../week4/record'
 import { WEEK4_JSON, week5Fixture } from './fixture'
 import {
   EMPTY_INTERFACE, EMPTY_RECORD, MODEL_INPUTS_VERSION, allChecks, allExternals, assessCard, cardOwnerOf, hasWork, assessChange, assessComponent, assessInterface, boundaryReasons, componentCount, countedInterfaces, crossingPairs, importWeek4File,
-  importWeek5, modelInputs, n2Cell, n2Of, neighboursOf, nextId, normalizeRecord, pairKey, recordMarkdown, recordState, relayPath, riskLinks, withWeek4, assessRequirement, type Interface, type Week5Record,
+  importWeek5, modelInputs, n2Cell, n2Of, neighboursOf, nextId, normalizeRecord, pairKey, recordMarkdown, recordState, relayPath, riskLinks, withWeek4, assessRequirement, criterionOk, partSaid, type Interface, type Week5Record,
 } from './record'
 
 const fx = () => week5Fixture()
@@ -274,9 +274,14 @@ describe('Week 5 record: Part 20 rules, both directions', () => {
     expect(allChecks(r).interfaces.issues.join(' ')).toMatch(/EXT-005 City bus service: every external element/)
     r.externalReasons['EXT-005'] = '  '
     expect(allChecks(r).interfaces.ok).toBe(false)
-    for (const reason of ['No arrangement yet', 'No exchange yet', 'Natural system: no exchange', 'None']) {
+    for (const reason of ['No arrangement yet', 'No exchange yet', 'Natural system: no exchange', 'None needed: no exchange']) {
       r.externalReasons['EXT-005'] = reason
       expect(allChecks(r).interfaces.ok, reason).toBe(true)
+    }
+    // confirmation review N1: an empty answer is not a reason
+    for (const reason of ['?', 'n/a', '-', 'none', 'None.', 'later']) {
+      r.externalReasons['EXT-005'] = reason
+      expect(allChecks(r).interfaces.ok, reason).toBe(false)
     }
     // an interface that does not count does not satisfy the rule
     const bad = mut((x) => (iface(x, 'IF-007').degraded = ''))
@@ -483,6 +488,44 @@ describe('Week 5 record: review 2026-10-19 (M1 radio advisory, M2 short answers,
     expect(failing(assessInterface({ ...x, protection: '', noProtectionReason: 'Power only' }, r))).toEqual([])
     for (const degraded of ['Fail safe', 'Hold all departures', 'Fall back to radio', 'Switch to manual procedure']) expect(failing(assessInterface({ ...x, degraded }, r)), degraded).toEqual([])
   })
+  it('N1 (confirmation): an empty answer is neither a protection, a reason for none nor a decision', () => {
+    const r = fx()
+    const x = { ...iface(r, 'IF-007') }
+    const EMPTY = ['none', 'None', 'n/a', 'N/A', '-', '?', 'later', 'TBD']
+    for (const v of EMPTY) {
+      expect(failing(assessInterface({ ...x, protection: v, noProtectionReason: '' }, r)), `protection ${v}`).toEqual(['protection'])
+      expect(failing(assessInterface({ ...x, protection: '', noProtectionReason: v }, r)), `reason ${v}`).toEqual(['protection'])
+      expect(failing(assessInterface({ ...x, protection: v, noProtectionReason: v }, r)), `both ${v}`).toEqual(['protection'])
+    }
+    // "none" in Protection with a real reason beside it counts: the reason is the answer
+    expect(failing(assessInterface({ ...x, protection: 'none', noProtectionReason: 'Power only' }, r))).toEqual([])
+    // an interface that crosses no boundary still needs nothing
+    const inside = { ...iface(r, 'IF-001') }
+    expect(failing(assessInterface({ ...inside, protection: 'none', noProtectionReason: '' }, r))).toEqual([])
+    const c = { ...r.changes[0], decider: 'ICWG' }
+    for (const decision of ['n/a', '?', '-', 'none']) expect(failing(assessChange({ ...c, decision }, r)), decision).toEqual(['decision'])
+    for (const decision of ['Approved', 'Rejected', 'Deferred to Q3']) expect(failing(assessChange({ ...c, decision }, r)), decision).toEqual([])
+    expect(failing(assessInterface({ ...x, degraded: 'see above' }, r))).toEqual(['degraded'])
+    expect(failing(assessChange({ ...c, change: 'see above' }, r))).toEqual(['change'])
+  })
+  it('N2 (confirmation): the criterion follows the lecture rule: a value with its unit, or a TBD with an owner', () => {
+    const r = fx()
+    const q = r.requirements[0]
+    for (const criterion of ['2 min', '≤2min', '100%', 'TBD (Ops)', 'TBD: Ops lead', 'TBD-1 (County)', 'TBR (Ops)', 'within five working days', 'Every warning received', q.criterion])
+      expect(failing(assessRequirement({ ...q, criterion }, r)), criterion).toEqual([])
+    for (const criterion of ['TBD', 'TBD later', 'TBD (later)', 'TBD ()', 'TBD-1', 'TBR', 'within TBD min', '1', '42', 'Very fast', 'Fast', 'none', 'n/a', '-', 'works', 'as specified'])
+      expect(failing(assessRequirement({ ...q, criterion }, r)), criterion).toEqual(['criterion'])
+  })
+  it('N2: criterionOk agrees with the requirement gate', () => {
+    expect(criterionOk('2 min')).toBe(true)
+    expect(criterionOk('TBD (Ops)')).toBe(true)
+    expect(criterionOk('TBD')).toBe(false)
+    expect(criterionOk('1')).toBe(false)
+  })
+  it('N1: partSaid is the one short-answer test for protection, reason, decision and external reason', () => {
+    for (const v of ['TLS', 'Approved', 'No data']) expect(partSaid(v), v).toBe(true)
+    for (const v of ['', ' ', 'none', 'n/a', '-', '?']) expect(partSaid(v), v).toBe(false)
+  })
   it('M1: the hidden-external advisory fires for radio, Wi-Fi, cellular, satellite, VPN and the internet unless the box is ticked; not for a cable', () => {
     const r = fx()
     const x = { ...iface(r, 'IF-004') }
@@ -518,5 +561,26 @@ describe('Week 5 record: review 2026-10-19 (M1 radio advisory, M2 short answers,
   it('n18: hasWork says when an import would replace work', () => {
     expect(hasWork(EMPTY_RECORD)).toBe(false)
     expect(hasWork(fx())).toBe(true)
+  })
+})
+
+// Week 7 review N1: the Week 5 tool numbered new externals after Week 4's only, so it reused Week 1's context EXT IDs.
+// New externals now continue after the highest EXT ID in every imported earlier week (Week 4's, and the Week 1 range the
+// Week 4 file carries); an older Week 4 file without that range imports unchanged.
+describe('Week 5 record: external IDs continue after every earlier week (Week 7 review N1)', () => {
+  it('with the Week 1 range in the Week 4 file, the next EXT follows it', async () => {
+    const { importWeek4File, withWeek4, nextId, EMPTY_RECORD } = await import('./record')
+    const w4 = { ...week4ModelInputs(week4Fixture()), week1Externals: [{ id: 'EXT-006', name: 'Electric utility' }, { id: 'EXT-009', name: 'Food safety inspector' }] }
+    const x = importWeek4File(JSON.stringify(w4))
+    if ('error' in x) throw new Error(x.error)
+    expect(nextId(withWeek4(EMPTY_RECORD, x.snapshot), 'EXT')).toBe('EXT-010')
+  })
+  it('negative direction: without the range (an older Week 4 file) the floor is only Week 4’s externals', async () => {
+    const { importWeek4File, withWeek4, nextId, EMPTY_RECORD } = await import('./record')
+    const x = importWeek4File(WEEK4_JSON)
+    if ('error' in x) throw new Error(x.error)
+    expect(x.snapshot.week1Externals).toEqual([])
+    const max = Math.max(...x.snapshot.externals.map((e) => Number(e.id.slice(4))), 0)
+    expect(nextId(withWeek4(EMPTY_RECORD, x.snapshot), 'EXT')).toBe(`EXT-${String(max + 1).padStart(3, '0')}`)
   })
 })

@@ -1,0 +1,281 @@
+/* IF-6 stakeholder ecosystem map and IF-7 progressive trace (spec §d.9, LRN-21, LRN-22; M4 part B). Scoped under the
+   Week 1 textbook (.w1l) and built on the IF-1 classes in studio.css (.w1l-ifig-*). Labels are 15 user units, so the
+   drawings keep 13 px labels inline in the 680 px column and, expanded, never fall below their readable width
+   (FD-f Expand-first rule). Motion: none by default; a 150 ms opacity fade only without prefers-reduced-motion. */
+
+.w1l-chips {
+  border: 0;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.w1l-chips legend {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding: 0;
+}
+.w1l-chip-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 1px solid var(--sc-line-strong);
+  border-radius: 999px;
+  background: var(--sc-panel);
+  font-size: 15px;
+  cursor: pointer;
+}
+.w1l-chip-toggle input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+.w1l-chip-toggle.is-on {
+  border-color: var(--sc-course);
+  background: var(--sc-course-soft);
+  color: var(--sc-ink);
+  font-weight: 600;
+}
+.w1l-chip-toggle.is-on::before {
+  content: '✓';
+  font-weight: 700;
+}
+.w1l-chip-toggle.is-conflict.is-on {
+  border-color: var(--sc-warn);
+  background: var(--sc-warn-soft);
+}
+.w1l-chip-toggle:has(input:focus-visible) {
+  outline: 2px solid var(--sc-course);
+  outline-offset: 2px;
+}
+.w1l-ifig-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 10px 0 4px;
+  font-size: 15px;
+}
+.w1l-ifig-row select {
+  font: inherit;
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1px solid var(--sc-line-strong);
+  border-radius: 6px;
+  background: var(--sc-panel);
+  color: var(--sc-ink);
+  max-width: 100%;
+}
+.w1l-ifig-detail {
+  background: var(--sc-panel);
+  border: 1px solid var(--sc-line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.w1l-ifig-detail p,
+.w1l-ifig-detail li {
+  font-size: 16px !important;
+  margin: 4px 0 !important;
+}
+.w1l-ifig-detail ul,
+.w1l-ifig-detail ol {
+  margin: 4px 0 !important;
+  padding-left: 22px;
+}
+.w1l-ifig-detail h4 {
+  margin: 6px 0 2px;
+  font-size: 15px;
+}
+
+/* IF-6 labels at 16 user units: the 760-unit drawing keeps >= 13 px labels inline in the 680 px column */
+.w1l-eco-svg {
+  font-size: 16px;
+}
+/* phones: the inline drawing gives way to the text variant, but the expanded view shows the drawing at its readable
+   width, scrolling inside the full-viewport dialog (FD-f rule 3) */
+@media (max-width: 599px) {
+  .w1l-dialog-ifig .w1l-ifig-art.is-big {
+    display: block;
+  }
+}
+
+/* Extension reading (optional, not counted): faculty decision 2026-10-21, M4b review packages A–C */
+.w1l-extension {
+  border: 1px dashed var(--sc-line-strong);
+  border-radius: 10px;
+  padding: 4px 16px 6px;
+  margin: 0 0 16px;
+  background: var(--sc-panel);
+}
+.w1l-extension-title {
+  font-size: 14px !important;
+  font-weight: 600;
+  color: var(--sc-muted);
+  letter-spacing: 0.02em;
+  margin: 8px 0 6px !important;
+}
+
+.w1l-ifig-legend {
+  font-size: 15px !important;
+  color: var(--sc-ink-2);
+  margin: 6px 0 0 !important;
+}
+
+/* --- IF-6 drawing */
+.w1l-eco-group {
+  fill: var(--sc-muted);
+  font-weight: 600;
+}
+.w1l-eco-node rect {
+  fill: var(--sc-panel);
+  stroke: var(--sc-line-strong);
+  stroke-width: 1.2;
+}
+.w1l-eco-node text {
+  fill: var(--sc-ink);
+}
+.w1l-eco-node .w1l-eco-id {
+  font-weight: 700;
+  fill: var(--sc-ink-2);
+}
+.w1l-eco-node {
+  cursor: pointer;
+  outline: none;
+}
+.w1l-eco-node.is-linked rect {
+  stroke: var(--sc-course);
+  stroke-width: 2;
+}
+.w1l-eco-node.is-selected rect {
+  fill: var(--sc-course-soft);
+  stroke: var(--sc-course);
+  stroke-width: 3;
+}
+.w1l-eco-node:focus-visible rect {
+  stroke: var(--sc-ink);
+  stroke-width: 3;
+  stroke-dasharray: 5 3;
+}
+.w1l-eco-edge {
+  fill: none;
+  stroke: var(--sc-line-strong);
+  stroke-width: 1.8;
+}
+.w1l-eco-edge.is-linked {
+  stroke: var(--sc-course);
+  stroke-width: 3;
+}
+.w1l-eco-edge.is-conflict {
+  stroke: var(--sc-warn);
+  stroke-width: 3.5;
+  stroke-dasharray: 9 4;
+}
+.w1l-eco-badge circle {
+  fill: var(--sc-panel);
+  stroke: var(--sc-line-strong);
+  stroke-width: 1.4;
+}
+.w1l-eco-badge.is-linked circle {
+  stroke: var(--sc-course);
+  stroke-width: 2.4;
+}
+.w1l-eco-badge.is-conflict circle {
+  fill: var(--sc-warn-soft);
+  stroke: var(--sc-warn);
+  stroke-width: 2.4;
+}
+.w1l-eco-badge text {
+  fill: var(--sc-ink);
+  font-weight: 700;
+}
+.w1l-eco-head {
+  fill: var(--sc-ink-2);
+}
+
+/* --- IF-7 drawing */
+.w1l-trace-node rect {
+  fill: var(--sc-panel);
+  stroke: var(--sc-line-strong);
+  stroke-width: 1.4;
+}
+.w1l-trace-node text {
+  fill: var(--sc-ink);
+}
+.w1l-trace-node .w1l-trace-id {
+  font-weight: 700;
+}
+.w1l-trace-node.is-current rect {
+  fill: var(--sc-course-soft);
+  stroke: var(--sc-course);
+  stroke-width: 3;
+}
+.w1l-trace-node.is-future rect {
+  fill: var(--sc-sunk);
+  stroke-dasharray: 7 4;
+}
+.w1l-trace-node.is-future text {
+  fill: var(--sc-ink-2);
+}
+.w1l-trace-edge {
+  fill: none;
+  stroke: var(--sc-ink-2);
+  stroke-width: 1.8;
+}
+.w1l-trace-edge.is-future {
+  stroke-dasharray: 7 4;
+}
+.w1l-trace-edge.is-current {
+  stroke: var(--sc-course);
+  stroke-width: 3;
+}
+.w1l-trace-label {
+  fill: var(--sc-ink-2);
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--sc-sunk);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+.w1l-trace-label.is-current {
+  fill: var(--sc-course-strong);
+}
+.w1l-trace-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .w1l-eco-edge,
+  .w1l-eco-badge,
+  .w1l-eco-node rect {
+    transition: opacity 150ms ease;
+  }
+  .w1l-trace-new {
+    animation: w1l-fade-in 150ms ease;
+  }
+}
+@keyframes w1l-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media print {
+  .w1l-ifig-detail,
+  .w1l-chips,
+  .w1l-ifig-row,
+  .w1l-trace-buttons {
+    display: none !important;
+  }
+}

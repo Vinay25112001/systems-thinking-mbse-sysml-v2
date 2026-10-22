@@ -31,7 +31,8 @@ export async function sha256Hex(text: string): Promise<string | null> {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-export type ExportOptions = { exportedBy: string; includesHistory?: boolean; at?: string; changes?: ChangeSet[] }
+/** `edition`: which edition wrote the file (the course server stamps 'server'; default: this bundle's edition). */
+export type ExportOptions = { exportedBy: string; includesHistory?: boolean; at?: string; changes?: ChangeSet[]; edition?: 'student' | 'instructor' | 'server' }
 export type ProjectFile = Record<string, unknown> & { format: string; schemaVersion: number; integrity?: { algorithm: string; canonicalization: string; value?: string } }
 
 /** The export document (without serialising it). */
@@ -44,7 +45,7 @@ export async function buildExport(docIn: ProjectDoc, o: ExportOptions): Promise<
     schemaVersion: PROJECT_FORMAT_VERSION,
     exportedAt: o.at ?? new Date().toISOString(),
     exportedBy: o.exportedBy,
-    app: { name: 'sysml-learning-studio', version: APP_VERSION, edition: IS_STUDENT_EDITION ? 'student' : 'instructor' },
+    app: { name: 'sysml-learning-studio', version: APP_VERSION, edition: o.edition ?? (IS_STUDENT_EDITION ? 'student' : 'instructor') },
     scope: 'full',
     includesHistory,
     project: doc.project,

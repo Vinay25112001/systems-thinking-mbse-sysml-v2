@@ -1,0 +1,23 @@
+/* Week 10 lab tool additions (Week10LabTool.tsx) on top of the Week 8 and Week 9 tool classes, on the workbench
+   tokens, so light and dark use the validated pairs. Status always carries a glyph and a word, never color alone. */
+.w10-h3 {
+  margin: 14px 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.w10-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--wb-muted);
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+/* The sr-only captions inside the scroll wrappers are absolutely positioned; a positioned wrapper keeps them inside the
+   sideways scroll, so the page never scrolls sideways at 400 px. */
+.w10-tool .w8-scroll {
+  position: relative;
+}
+.w10-tool .w8-table td,
+.w10-tool .w8-table th {
+  overflow-wrap: anywhere;
+}

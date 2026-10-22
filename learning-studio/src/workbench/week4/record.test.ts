@@ -6,7 +6,7 @@ import { LAB4_MINIMUMS, LAB4_MINIMUMS_THREE, REQUIRED_VIEW_KINDS } from '../../c
 import { WEEK3_JSON, week4Fixture } from './fixture'
 import {
   EMPTY_RECORD, MODEL_INPUTS_FORMAT, MODEL_INPUTS_VERSION, allChecks, assessAi, assessAllocation, assessDecision, assessFunction, assessInfo, assessViewpoint, consistency, importWeek3File, importWeek4,
-  lines, modelInputs, nextId, normalizeRecord, recordMarkdown, recordState, unallocatedSystemRequirements, withWeek3, type Week4Record,
+  lines, modelInputs, nextId, normalizeRecord, recordMarkdown, recordState, unallocatedSystemRequirements, withWeek3, importWeek1Externals, withWeek1Externals, type Week4Record,
 } from './record'
 
 const fx = () => week4Fixture()
@@ -274,5 +274,37 @@ describe('Week 4 record: IDs, export and teammate import', () => {
   it('the Markdown record names every part and the consistency checks', () => {
     const md = recordMarkdown(fx(), '2026-10-19')
     for (const h of ['## 15.', '## 16.', '## 17.', '## 18.', '## Consistency checks']) expect(md).toContain(h)
+  })
+})
+
+// Week 7 review M3: Week 4 used to number new externals from EXT-001 without seeing Week 1's context EXT IDs, so every team
+// following the instructions reused a Week 1 ID for a different element. New IDs now continue after the highest Week 1 ID
+// when the Week 1 file is loaded; an external that IS a Week 1 system keeps its ID; existing records are never renumbered.
+describe('Week 4 record: external IDs continue after Week 1 (Week 7 review M3)', () => {
+  const W1 = JSON.stringify({ format: 'week1-model-inputs', version: 3, team: '07', enterprise: { name: 'Riverside Food Bank Network' }, systemOfInterest: { statement: 'the cold chain' }, context: [{ id: 'EXT-001', name: 'Grocery store donors', kind: 'actor' }, { id: 'EXT-006', name: 'Electric utility', kind: 'actor' }], stakeholders: [], concerns: [], needs: [] })
+  it('reads the Week 1 external IDs and the next new external is EXT-007, not EXT-001', () => {
+    const x = importWeek1Externals(W1)
+    if ('error' in x) throw new Error(x.error)
+    expect(x.externals.map((e) => e.id)).toEqual(['EXT-001', 'EXT-006'])
+    const r = withWeek1Externals({ ...EMPTY_RECORD, externals: [] }, x.externals)
+    expect(nextId(r, 'EXT')).toBe('EXT-007')
+    // persisted through the export and a teammate import
+    const back = normalizeRecord(JSON.parse(JSON.stringify({ ...modelInputs(r), externals: [] })))
+    expect(nextId(back, 'EXT')).toBe('EXT-007')
+  })
+  it('negative direction: without the Week 1 file the old numbering (EXT-001) is what a new record would give', () => {
+    expect(nextId({ ...EMPTY_RECORD, externals: [] }, 'EXT')).toBe('EXT-001')
+  })
+  it('an old record whose externals already collide imports unchanged (flagged in Week 7, never renumbered here)', () => {
+    const r = fx()
+    const ids = r.externals.map((e) => e.id)
+    const x = importWeek1Externals(W1)
+    if ('error' in x) throw new Error(x.error)
+    expect(withWeek1Externals(r, x.externals).externals.map((e) => e.id)).toEqual(ids)
+  })
+  it('refuses a non-Week-1 file and an AeroLink record', () => {
+    expect('error' in importWeek1Externals('{"format":"week3-model-inputs","version":1}')).toBe(true)
+    expect('error' in importWeek1Externals('not json')).toBe(true)
+    expect('error' in importWeek1Externals(W1.replace('Riverside Food Bank Network', 'AeroLink Urban Mobility'))).toBe(true)
   })
 })

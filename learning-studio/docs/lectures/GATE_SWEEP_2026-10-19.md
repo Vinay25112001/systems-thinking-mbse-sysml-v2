@@ -229,3 +229,34 @@ Week 5 block of `src/workbench/shortAnswers.test.ts`. Dispositions: `docs/lectur
 | Purpose ≥ 15 words (`state.ts`) | Lab step "Purpose first": "Write one paragraph … (at least 15 words)", and the readiness label. |
 | Dispositions written (non-empty only) | Already non-empty only. |
 | Coverage, relationships, exports | Counts and generated content, not lengths. |
+
+## Addendum (2026-10-19, after the Week 5 confirmation review)
+
+The independent confirmation (`_source_cache/review/week05_confirmation.md`, after `41b2578`) audited this sweep. It
+found one over-relaxation that breaks the sweep's own rule above ("where 'none'/'n/a'/'later' can never be a valid
+answer, such empty answers are still rejected") and four minor inconsistencies. All five are fixed; every fix is tested
+in both directions, and the mutation probe (Week 5 `partSaid` without the empty-answer check) fails 21 tests.
+
+**One shared empty-answer check.** `src/workbench/emptyAnswer.ts` now holds the single `EMPTY_ANSWER` (ok, fine, yes, no,
+n/a, none, nil, nothing, "-", "?", tbd, todo, later, see above) with `isEmptyAnswer` and `said`. Weeks 1, 2 and 3 import
+it and re-export it under their old name `EMPTY_ANSWER`, so no public API changed (`shortAnswers.test.ts` asserts the
+three exports are the same object). Week 5 imports `said` from it. Week 8 does not use it: its only free-text gate is a
+count, where "none" means 0 (N4 below).
+
+### Week dispositions
+
+| Week | Finding | Gate (file:line) | Before | After | Tests (accept / reject) |
+|---|---|---|---|---|---|
+| W1 | N5 Minor | `EMPTY_ANSWER` (`week1/team.ts:45`, now the shared regex) | lacked `later` and `todo`: charter decision rules "later" counted | rejected, as in Weeks 2–3; "Majority vote", "Consensus" still pass | `shortAnswers.test.ts` W1 block: + "later", "todo" rejected |
+| W2 | N3 Minor | Requirement criterion (`week2/record.ts:500`) | "none" counted (it anchors a phrase such as "none spoiled", and `TRIVIAL_CRITERION` lacked it) | an empty answer ("none", "None.", "-") fails like a trivial criterion; "2 min", "Every delivery", "≤ 4 °C" pass | W2 block: + "none", "None.", "-" rejected |
+| W3 | — | `EMPTY_ANSWER` (`week3/record.ts:38`) | own copy | the shared regex (identical content: no behaviour change) | identity test |
+| W4 | — | none | — | unchanged (the confirmation found no over-relaxation) | — |
+| W5 | **N1 Moderate** | Protection and its reason (`week5/record.ts:435`), change-request decision (`:583`), external reason (`:677`), all through `partSaid` (`:61`) | ≥ 1 word: protection "none", "n/a", "-", reason "?", decision "n/a"/"?", external reason "?" counted | written and not an empty answer. "TLS", "Power only", "Approved", "No exchange yet" pass; "none" in Protection beside a real reason passes (the reason is the answer); the standards keep "None"/"None apply" (a valid answer there). The external reason "None" alone now fails: it does not say why there is no interface ("None needed: no exchange" passes) | `record.test.ts` "N1 (confirmation)" and externals-rule test; W5 block of `shortAnswers.test.ts` |
+| W5 | (same) | Degraded mode (`:438`), responsibility (`:377`, `:390`), change (`:577`) | 2 words: "see above" counted | also not an empty answer | "see above" rejected for degraded and change |
+| W5 | N2 Minor | Requirement criterion (`criterionOk`, `week5/record.ts:62`) | any one token with a digit or "tbd" ("TBD", "TBD later", "1"), or any two words ("Very fast") | the lecture's rule (labBrief `criterion`): a value with its unit counts however short ("2 min", "≤2min", "100%", "five working days"); any TBD/TBR needs an owner ("TBD (Ops)", "TBD: Ops lead"); otherwise two words not themselves vague unless anchored ("Every warning received"); Week 2's `TRIVIAL_CRITERION`, `valueIn` and `vagueTermsIn` are reused | `record.test.ts` "N2 (confirmation)": rejects "TBD", "TBD later", "TBD (later)", "TBD-1", "within TBD min", "1", "42", "Very fast", "none", "works" |
+| W8 | N4 Minor | `countOf` (`week8/skeleton.ts:460`) | `no(?:ne)?(?: \w+)?` read "no idea", "no clue" as 0 | 0 only for "none", "zero", "nil", "no", "no items/entries/IDs/elements" | W8 block: + "no idea", "no clue", "No Idea.", "not sure" rejected; "no", "No items", "no entries", "nil" accepted |
+
+The gate texts that a student sees now say so: `labBrief.ts` protection ("“none”, “n/a” or “-” is not an answer"),
+decision ("“n/a” or “?” is not a decision") and criterion (the full rule), regenerated into
+`week05/WEEK5_LAB_INSTRUCTIONS.md` (`node scripts/build-lab-md.mjs 5`). Export formats and versions are unchanged.
+The Week 5 fixture still rates ready.

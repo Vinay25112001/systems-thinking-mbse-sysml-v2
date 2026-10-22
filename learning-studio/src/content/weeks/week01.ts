@@ -384,7 +384,7 @@ const week01: WeekContent = {
       'AeroLink is FICTIONAL. The reference stakeholders, concerns and ratings are instructor teaching values, not a survey of real organizations; the FAA appears only as the approving authority role in a teaching case.',
       'SEBoK page numbers in citations are PDF page indices (DECISION_LOG W1); printed page numbers in the PDF differ.',
       'R39a and R39b (SEBoK glossary entries for stakeholder and system-of-interest) were added to the verified register for this rebuild and await faculty confirmation.',
-      'Workload (new, pending review; lecture-first path, 2026-10-19): per-student hours. The counted rows total 8.0 h, the 8 h syllabus estimate exactly (2 × 75 min in class, the detailed lesson, the readings, the candidate enterprise, the Team Record share, the quiz, the graduate review and the time log). The lesson row is computed from the lesson word count and the Team Record and quiz rows from the mission minutes (src/content/week1Path.ts WORKLOAD); the AeroLink practice missions 1–4 are optional and shown but not counted (faculty-default decision 3).',
+      'Workload (new, pending review; lecture-first path, 2026-10-19): per-student hours. The counted rows total 8.0 h, the 8 h syllabus estimate exactly (2 × 75 min in class, the detailed lesson, the readings, the candidate enterprise, the Team Record share, the quiz, the graduate review and the time log). The lesson row is computed from the lesson word count and the Team Record and quiz rows from the mission minutes (src/content/week1Path.ts WORKLOAD); the AeroLink practice missions 1–4 are optional and shown but not counted (faculty-default decision 3). Week 1 Overview (M4 part A, 2026-10-21): with the Learn row computed from the textbook (13,311 words, 1.48 h) the required total was 8.1 h, accepted by faculty 2026-10-21 (DECISION_LOG A26). After M4 part B the textbook has 17,309 required words plus 1,212 words of extension reading (optional, not counted; DECISION_LOG A27), so the Learn row is 1.92 h and the computed required total is 8.5 h; the Overview shows the honest computed total.',
     ],
     review: PENDING,
   },
@@ -403,7 +403,7 @@ const week01: WeekContent = {
     { activity: 'Readiness quiz Q1, per student', hours: 0.2, review: PENDING },
     { activity: 'Graduate needs review (individual): four of the team’s needs revised, at most 250 words', hours: 0.4, review: PENDING },
     { activity: 'Time log, per student', hours: 0.1, review: PENDING },
-    { activity: 'Optional practice: AeroLink missions 1–4 on the worked-examples page (try it yourself), per student', hours: 1.1, review: PENDING, optional: true },
+    { activity: 'Optional practice: Guided Practice on AeroLink, six tasks (about 96 min), per student', hours: 1.6, review: PENDING, optional: true },
   ],
   references: [{ reading: 'R38' }, { reading: 'R39a' }, { reading: 'R39b' }, { reading: 'R07', pages: '815' }, { reading: 'R53', pages: '296' }],
   review: {

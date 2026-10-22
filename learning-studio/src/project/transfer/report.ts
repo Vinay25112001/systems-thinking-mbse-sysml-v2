@@ -64,7 +64,7 @@ export function projectReport(doc: ProjectDoc, changes: ChangeSet[] = [], today 
   for (const a of flags) if (a.review.state === 'needs-review') L.push(`- ${a.id}: ${a.review.causes.map((c) => `${c.changedId} changed (${c.change}, via ${c.path.join(' → ')})`).join('; ')}`)
   L.push('')
   const pv = buildPreview(doc, today)
-  L.push('## Week 8 mapping preview (not yet confirmed)', '', MAPPING_STATUSES.map((s) => `${MAPPING_STATUS_LABEL[s]}: ${pv.counts[s]}`).join(' · '), '')
+  L.push('## Week 8 mapping preview', '', MAPPING_STATUSES.map((s) => `${MAPPING_STATUS_LABEL[s]}: ${pv.counts[s]}`).join(' · '), '', pv.counts.mapped ? `Mapped: confirmed by the team in the Week 8 lab tool (${pv.counts.mapped}). Every other status is a proposal or a gap, not yet confirmed.` : 'No mapping is confirmed yet: the statuses are proposals and gaps until the team confirms them in the Week 8 lab tool.', '')
   L.push('## Recent changes', '')
   for (const c of changes.slice(-20).reverse()) L.push(`- ${c.at.slice(0, 16).replace('T', ' ')} · ${c.by || 'not recorded'} (self-declared) · ${c.source} · ${cell(c.summary)}${c.rationale ? ` — rationale: ${cell(c.rationale)}` : ''}`)
   if (!changes.length) L.push('No changes recorded yet.')

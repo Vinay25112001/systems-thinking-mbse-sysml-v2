@@ -1,0 +1,32 @@
+/* Week 9 pages: the Week 8 code panel and table rules (week8.css, imported by Week9App) applied to the Week 9 worked-
+   examples page, so its lesson tables wrap at narrow widths and the page never scrolls sideways at 400 px. */
+[data-testid='week9-examples'] .wk-lesson .lec-table,
+[data-testid='week9-examples'] [data-testid='example-matrix-table'] .lec-table {
+  table-layout: fixed;
+  width: 100%;
+}
+[data-testid='week9-examples'] .wk-lesson .lec-table :is(th, td, caption),
+[data-testid='week9-examples'] [data-testid='example-matrix-table'] .lec-table :is(th, td, caption) {
+  overflow-wrap: anywhere;
+}
+[data-testid='week9-examples'] .lec-table-wrap {
+  max-width: 100%;
+}
+[data-testid='week9-examples'] .lf-prose code {
+  overflow-wrap: anywhere;
+}
+[data-testid='week9-examples'] details > summary {
+  cursor: pointer;
+  list-style: none;
+}
+[data-testid='week9-assessment'] .lec-table :is(th, td) {
+  overflow-wrap: anywhere;
+}
+
+/* Links inside running prose are underlined, not told apart by colour alone (WCAG 1.4.1; axe link-in-text-block). */
+[data-testid='week9-assessment'] .lf-prose a,
+[data-testid='week9-lab'] .lf-prose a,
+[data-testid='week9-home'] .lf-prose a,
+[data-testid='week9-examples'] .lf-prose a {
+  text-decoration: underline;
+}

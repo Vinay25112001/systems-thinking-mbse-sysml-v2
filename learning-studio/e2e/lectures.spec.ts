@@ -7,7 +7,8 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 import { WEEK01_SESSION1 } from '../src/content/lectures/week01/session1'
 import { WEEK1_SESSION2 } from '../src/content/lectures/week01/session2'
-import type { Lecture, LessonBlock } from '../src/content/lectures/types'
+import type { Lecture } from '../src/content/lectures/types'
+import { LEGACY_TO_SECTION } from '../src/week1/route'
 
 const SHOTS = 'screenshots/lectures'
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
@@ -25,9 +26,16 @@ function trackErrors(page: Page): string[] {
   return errors
 }
 
+/** Since Week 1 M4 part A the Week 1 lecture viewer and handout are instructor-only (week1LectureGate: the instructor
+ *  edition with instructor mode on; a student is sent to Learn, covered in week1-flow.spec.ts). These tests review the
+ *  lecture pipeline as the instructor: instructor mode is stored before the app loads (a reload makes it read it). */
 async function fresh(page: Page, path: string) {
   await page.goto('/#/')
-  await page.evaluate(() => window.localStorage.clear())
+  await page.evaluate(() => {
+    window.localStorage.clear()
+    window.localStorage.setItem('sysml-studio:v1:instructor', 'true')
+  })
+  await page.reload()
   await page.goto(`/#${path}`)
 }
 
@@ -40,7 +48,10 @@ test('viewer: keyboard navigation, outline, counter, footer caption and citation
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page, '/week/1/lecture/1')
   await expect(page.getByTestId('fixture-banner')).toHaveCount(0)
-  await expect(page.getByTestId('week-nav-lecture')).toHaveAttribute('aria-current', 'page')
+  // the Week 1 navigation is the five-stage bar (M4 part A); the lecture viewer is not one of the stages
+  await expect(page.getByTestId('week-nav')).toBeVisible()
+  for (const stage of ['overview', 'learn', 'practice', 'project', 'review']) await expect(page.getByTestId(`week-nav-${stage}`)).toBeVisible()
+  await expect(page.getByTestId('week-nav-lecture')).toHaveCount(0)
   await expect(counter(page)).toHaveText(`Slide 1 of ${N}`)
   await expect(face(page)).toHaveAttribute('data-slide-id', SLIDES[0].id)
 
@@ -137,46 +148,31 @@ test('handout: every slide in order; faculty notes only when asked for', async (
   await page.emulateMedia({ media: 'screen' })
 })
 
-test('reader: both sessions in one TOC, shared figure and caption, citations to the sources route, slide links', async ({ page }) => {
+// The Week 1 single-column lesson reader is retired (Week 1 M4 part B: the Learn digital textbook replaces the lesson,
+// spec §d.1). The reader itself stays covered on Weeks 2–9 (lectures-week*.spec.ts); here: every earlier Week 1 reader
+// URL lands on the textbook section that absorbed it, never on a 404, and the textbook carries the lesson's citations.
+test('reader (retired for Week 1): the lesson and each of its sections redirect to the Learn section that absorbed it', async ({ page }) => {
   const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
   await fresh(page, '/week/1/lesson')
-  const reader = page.getByTestId('lesson-reader')
-  await expect(page.getByTestId('week-nav-lesson')).toHaveAttribute('aria-current', 'page')
-  const toc = page.getByRole('navigation', { name: 'Table of contents' })
-  await expect(toc.getByRole('link')).toHaveCount(LESSON.length)
-  for (const { section } of LESSON) await expect(reader.getByRole('heading', { level: 2, name: section.title, exact: true })).toBeVisible()
-
-  // a figure shared with a slide carries the slide's caption and alt text
-  const shared = LESSON.flatMap(({ lecture, section }) => section.blocks.filter((b): b is Extract<LessonBlock, { kind: 'figure'; slide: string }> => b.kind === 'figure' && 'slide' in b).map((b) => slidesOf(lecture).find((s) => s.id === b.slide)!))[0]
-  const figure = reader.getByTestId(`lecture-figure-${shared.figure!.id}`).first()
-  await expect(figure.locator('figcaption')).toContainText(shared.figure!.caption.slice(0, 60))
-  await expect(figure.getByRole('img').first()).toHaveAttribute('aria-label', shared.figure!.alt)
-
-  // TOC link deep-links to a section
-  const third = LESSON[2].section
-  await toc.getByRole('link', { name: third.title, exact: true }).click()
-  await expect(page).toHaveURL(new RegExp(`#/week/1/lesson/${third.id}$`))
-  await expect(page.locator(`#lesson-${third.id}`)).toBeInViewport()
-
-  // a slide link opens the viewer on that slide: every figure shared with a slide links to it (and any explicit
-  // slide-ref block does too); the Week 1 lesson links through its shared figures
-  const ref = LESSON.flatMap(({ lecture, section }) => section.blocks.filter((b): b is Extract<LessonBlock, { slide: string }> => (b.kind === 'slide-ref' || b.kind === 'figure') && 'slide' in b).map((b) => ({ lecture, b })))[0]
-  expect(ref, 'the lesson links at least one slide').toBeTruthy()
-  const idx = slidesOf(ref.lecture).findIndex((s) => s.id === ref.b.slide)
-  await expect(reader.getByTestId('figure-slide-link').first()).toBeVisible()
-  await reader.locator(`a[href="#/week/1/lecture/${ref.lecture.session}/${idx + 1}"]`).first().click()
-  await expect(counter(page)).toHaveText(`Slide ${idx + 1} of ${slidesOf(ref.lecture).length}`)
-
-  // a citation opens the existing sources route at the cited pages
-  await page.goto('/#/week/1/lesson')
-  const cite = LESSON.find((x) => x.section.sources.length)!.section.sources[0]
-  const link = page.getByTestId('lesson-reader').locator(`a[href="#/sources/${cite.reading}/${cite.pages}"]`).first()
+  await expect(page).toHaveURL(/#\/week\/1\/learn$/)
+  await expect(page.getByTestId('learn-reader')).toBeVisible()
+  await expect(page.getByTestId('week-nav-learn')).toHaveAttribute('aria-current', 'step')
+  for (const { section } of LESSON) {
+    const target = LEGACY_TO_SECTION[section.id]
+    expect(target, `${section.id} has a textbook section`).toBeTruthy()
+    await page.goto(`/#/week/1/lesson/${section.id}`)
+    await expect(page, section.id).toHaveURL(target === 'refs' ? /#\/week\/1\/learn\/refs$/ : new RegExp(`#/week/1/learn/${target.slice(0, 4)}#${target}$`))
+    await expect(page.getByTestId('learn-reader'), section.id).toBeVisible()
+  }
+  // a citation in the textbook opens the existing sources route at the cited pages
+  await page.goto('/#/week/1/learn/ch06')
+  const link = page.getByTestId('learn-reader').locator('a[href^="#/sources/"]:visible').first() // the first visible citation (some sit in collapsed details)
   await expect(link).toBeVisible()
+  const href = (await link.getAttribute('href'))!
   await link.click()
-  await expect(page.getByText(new RegExp(`Read more: ${cite.reading}`))).toBeVisible()
-  await page.goto('/#/week/1/lesson')
-  await page.screenshot({ path: `${SHOTS}/reader-1440-light.png` })
+  await expect.poll(() => page.url()).toContain(href)
+  await expect(page.getByText(new RegExp(`Read more: ${href.split('/')[2]}`))).toBeVisible()
   expect(errors).toEqual([])
 })
 
@@ -197,14 +193,16 @@ test('figure canvas: one registered figure on a clean 1600×900 light canvas, ev
 
 test('dashboard: the Week 1 path card links to the slides, the lesson and the .pptx', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await fresh(page, '/')
+  await fresh(page, '/dashboard') // the dashboard moved to #/dashboard when the course homepage took #/ (M4 part A)
   const card = page.getByTestId('week1-path-card')
   await expect(card).toBeVisible()
   await expect(card.getByRole('link', { name: 'Download Session 1 .pptx' })).toHaveAttribute('href', './lectures/week01-session1.pptx')
   await expect(card.getByRole('link', { name: 'Download Session 2 .pptx' })).toHaveAttribute('href', './lectures/week01-session2.pptx')
+  // the Week 1 lesson link lands on Learn, which replaced the lesson (M4 part B)
   await card.getByRole('link', { name: 'Detailed lesson' }).click()
-  await expect(page.getByTestId('lesson-reader')).toBeVisible()
-  await page.goto('/#/')
+  await expect(page).toHaveURL(/#\/week\/1\/learn$/)
+  await expect(page.getByTestId('learn-reader')).toBeVisible()
+  await page.goto('/#/dashboard')
   await page.getByTestId('week1-path-card').getByRole('link', { name: 'Lecture, Session 1' }).click()
   await expect(counter(page)).toHaveText(`Slide 1 of ${N}`)
 })
@@ -235,9 +233,10 @@ for (const theme of ['light', 'dark'] as const) {
     await page.getByLabel('Include faculty notes (instructor)').check()
     await expect(page.getByTestId('lecture-handout').getByTestId('faculty-notes')).toHaveCount(N)
     await scan('handout')
+    // the Week 1 reader is now Learn (M4 part B): /week/1/lesson redirects there
     await page.goto('/#/week/1/lesson')
     await page.waitForLoadState('load')
-    await expect(page.getByTestId('lesson-reader')).toBeVisible()
+    await expect(page.getByTestId('learn-reader')).toBeVisible()
     await page.evaluate(() => document.querySelectorAll('details').forEach((d) => (d.open = true)))
     await scan('reader')
     await page.screenshot({ path: `${SHOTS}/reader-1440-${theme}.png` })
@@ -256,8 +255,8 @@ test('400 px: the viewer falls back to a stacked slide + text and the reader fit
     expect(ratio, 'stacked, not squeezed into 16:9').toBeGreaterThan(9 / 16 + 0.1)
     expect(await noHorizontalScroll(page), `viewer ${theme}`).toBe(true)
     await page.screenshot({ path: `${SHOTS}/viewer-400-${theme}.png`, fullPage: true })
-    await page.goto('/#/week/1/lesson')
-    await expect(page.getByTestId('lesson-reader')).toBeVisible()
+    await page.goto('/#/week/1/lesson') // redirects to Learn (M4 part B)
+    await expect(page.getByTestId('learn-reader')).toBeVisible()
     expect(await noHorizontalScroll(page), `reader ${theme}`).toBe(true)
     await page.screenshot({ path: `${SHOTS}/reader-400-${theme}.png` })
   }

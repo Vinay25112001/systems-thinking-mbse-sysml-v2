@@ -1,4 +1,4 @@
-// Assessment and submission (#/week/1/assessment): readiness quiz Q1, kept separate from the lecture; where the student
+// Review & Submit (#/week/1/review; M4 part A name, rebuilt in M6; formerly Assessment and submission): readiness quiz Q1, kept separate from the lecture; where the student
 // stands by objective (quiz items plus the optional lesson self-checks); the Team Record's submission readiness (not
 // ready, submitted for approval, ready), computed by the same checks as the lab tool; the graduate needs review; and the
 // bridge to Week 2.
@@ -19,8 +19,8 @@ export default function Assessment() {
   return (
     <FlowProvider>
       <div className="wk-page" data-testid="week1-assessment">
-        <p className="lf-kicker">Week 1 · Assessment and submission</p>
-        <h1 className="lf-h1">Assessment and submission</h1>
+        <p className="lf-kicker">Week 1 · Review &amp; Submit</p>
+        <h1 className="lf-h1">Review &amp; Submit</h1>
         <p className="lf-lede lf-column">
           Due {week01.assignment.due.toLowerCase()}. The readiness quiz is individual and formative; the Team Record is submitted once per team. {week01.assignment.weight}
         </p>

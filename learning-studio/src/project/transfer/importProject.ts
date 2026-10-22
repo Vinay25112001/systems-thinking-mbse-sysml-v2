@@ -4,10 +4,11 @@
 // merge (per-item choices), or replace (typed title). Nothing is written without the plan step; never a silent
 // overwrite, deletion, renumbering or acceptance of a checksum mismatch.
 // Accepted in P1: `sysml-studio-project` v1 and `week1-model-inputs` v1–3 (through Week 1's own importer).
+import { cleanMapping } from '../model/mappingShape'
 import { importModelInputs } from '../../workbench/week1/team'
 import { fromTeamRecord } from '../adapters/week1'
 import { displayTitle, makeRelationship } from '../model/create'
-import { formatId, newUid, nextNumber, numOf, prefixOf } from '../model/ids'
+import { formatId, ID_RE, newUid, nextNumber, numOf, prefixOf } from '../model/ids'
 import { validateProject } from '../model/integrity'
 import { fieldDiff, same } from '../model/ops'
 import { isArtifactType, NO_REVIEW, OWN, SCHEMA_VERSION, UNCHECKED, type Artifact, type ChangeSet, type Milestone, type Operation, type ProjectDoc, type Provenance, type Relationship, type Stamp } from '../model/types'
@@ -25,7 +26,7 @@ const str = (x: unknown) => (typeof x === 'string' ? x : '')
 const num = (x: unknown, d = 0) => (typeof x === 'number' && Number.isFinite(x) ? x : d)
 const stampOf = (x: unknown): Stamp => (isObj(x) ? { at: str(x.at), by: str(x.by), change: str(x.change) } : { at: '', by: '', change: '' })
 
-function normArtifact(x: Record<string, unknown>, path: string, issues: ImportIssue[]): Artifact | null {
+export function normArtifact(x: Record<string, unknown>, path: string, issues: ImportIssue[]): Artifact | null {
   if (!isArtifactType(x.type)) {
     issues.push({ severity: 'error', path, message: `“${str(x.type) || '(none)'}” is not an artifact type; the item is left out.` })
     return null
@@ -53,7 +54,7 @@ function normArtifact(x: Record<string, unknown>, path: string, issues: ImportIs
     created: stampOf(x.created), revised: stampOf(x.revised), revision: num(x.revision, 1),
   }
 }
-function normRelationship(x: Record<string, unknown>, path: string, issues: ImportIssue[]): Relationship | null {
+export function normRelationship(x: Record<string, unknown>, path: string, issues: ImportIssue[]): Relationship | null {
   const cat = x.category === 'structure' || x.category === 'stakeholder' ? x.category : x.category === 'trace' ? 'trace' : null
   if (!cat || !str(x.uid) || !str(x.id)) {
     issues.push({ severity: 'error', path, message: 'A relationship without uid, ID or category is left out.' })
@@ -133,8 +134,17 @@ export async function analyzeImport(text: string, file = ''): Promise<Analysis> 
   const mIn = list('milestones').map(({ x }) => x)
   const milestones: Milestone[] = newMilestones().map((m) => {
     const x = mIn.find((y) => y.week === m.week)
-    return x ? { ...m, state: (str(x.state) || 'not-started') as Milestone['state'], ...(isObj(x.approval) ? { approval: x.approval as Milestone['approval'] } : {}), aiStatement: str(x.aiStatement), notes: isObj(x.notes) ? (x.notes as Record<string, string>) : {}, exports: Array.isArray(x.exports) ? (x.exports as Milestone['exports']) : [], ...(typeof x.markedSubmittedAt === 'string' ? { markedSubmittedAt: x.markedSubmittedAt } : {}), ...(typeof x.contentUpdatedAt === 'string' ? { contentUpdatedAt: x.contentUpdatedAt } : {}) } : m
+    return x ? { ...m, state: (str(x.state) || 'not-started') as Milestone['state'], ...(isObj(x.approval) ? { approval: x.approval as Milestone['approval'] } : {}), aiStatement: str(x.aiStatement), notes: isObj(x.notes) ? (x.notes as Record<string, string>) : {}, exports: Array.isArray(x.exports) ? (x.exports as Milestone['exports']) : [], ...(typeof x.markedSubmittedAt === 'string' ? { markedSubmittedAt: x.markedSubmittedAt } : {}), ...(typeof x.contentUpdatedAt === 'string' ? { contentUpdatedAt: x.contentUpdatedAt } : {}), ...(isObj(x.teamReview) && x.teamReview.state === 'ready-for-review' ? { teamReview: { state: 'ready-for-review' as const, by: str(x.teamReview.by), at: str(x.teamReview.at) } } : {}) } : m
   })
+  // M7 review M7-2: mapping records are read field by field (a malformed one never reaches the Week 8 views)
+  const mappings: ProjectDoc['mappings'] = {}
+  for (const { x, path } of list('mappings')) {
+    const { artifactId: _a, ...raw } = x
+    void _a
+    const { mapping, problems } = cleanMapping(raw)
+    for (const m of problems) issues.push({ severity: 'warning', path, message: `Week 8 mapping: ${m}.` })
+    if (mapping) mappings[mapping.uid] = mapping
+  }
   const incoming: ProjectDoc = {
     schemaVersion: 1,
     project: {
@@ -154,7 +164,7 @@ export async function analyzeImport(text: string, file = ''): Promise<Analysis> 
     relationships,
     milestones,
     modelElements: Object.fromEntries(list('modelElements').map(({ x }) => [str(x.uid), x as never])),
-    mappings: Object.fromEntries(list('mappings').map(({ x }) => { const { artifactId: _a, ...m } = x; void _a; return [str(x.uid), m as never] })),
+    mappings,
     findings: list('findings').map(({ x }) => x as never),
     issued: isObj(d.issued) ? Object.fromEntries(Object.entries(d.issued).map(([k, v]) => [k, num(v)])) : {},
     rev: num(d.rev, 0),
@@ -170,6 +180,8 @@ export async function analyzeImport(text: string, file = ''): Promise<Analysis> 
   // counters never below what the file holds
   for (const a of Object.values(incoming.artifacts)) incoming.issued[a.type] = Math.max(incoming.issued[a.type] ?? 0, numOf(a.id))
   for (const r of Object.values(incoming.relationships)) incoming.issued[relPrefix(r.category)] = Math.max(incoming.issued[relPrefix(r.category)] ?? 0, numOf(r.id))
+  // every well-formed MAP ID in the file counts, also a record left out above, so its number is never issued again (I3)
+  for (const { x } of list('mappings')) if (typeof x.id === 'string' && ID_RE('MAP').test(x.id)) incoming.issued.MAP = Math.max(incoming.issued.MAP ?? 0, numOf(x.id))
   const changes = list('changes').map(({ x }) => x as unknown as ChangeSet).filter((c) => typeof c.id === 'string' && Array.isArray(c.ops))
   // checksum
   let checksum: 'ok' | 'mismatch' | 'absent' | 'unavailable' = 'absent'

@@ -37,11 +37,11 @@ export function ExampleBanner({ children, action, testId }: { children?: ReactNo
 
 const time = (iso?: string) => (iso ? new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '')
 export function SaveStatus({ save, storage, onExport }: { save: SaveState; storage: StoreState['storage']; onExport?: () => void }) {
-  const title = 'Your project is saved in this browser only. The export is the copy you keep and submit.'
+  const title = storage === 'http' ? 'Your team’s project is saved on the course server. Saved appears only after the server confirmed the change.' : 'Your project is saved in this browser only. The export is the copy you keep and submit.'
   if (save.kind === 'error')
     return (
       <span className="pj-save error" role="status" data-testid="save-status" title={title}>
-        <X size={14} aria-hidden /> Not saved: {save.reason}
+        <X size={14} aria-hidden /> {storage === 'http' ? 'Save failed' : 'Not saved'}: {save.reason}
         {onExport && (
           <button type="button" className="pj-btn small danger" onClick={onExport}>
             Export now
@@ -49,10 +49,16 @@ export function SaveStatus({ save, storage, onExport }: { save: SaveState; stora
         )}
       </span>
     )
-  if (save.kind === 'saving')
+  if (save.kind === 'conflict')
+    return (
+      <span className="pj-save error" role="status" data-testid="save-status" title={save.reason}>
+        <AlertTriangle size={14} aria-hidden /> Conflict requires review
+      </span>
+    )
+  if (save.kind === 'saving' || save.kind === 'pending')
     return (
       <span className="pj-save" role="status" data-testid="save-status" title={title}>
-        <span className="pj-dot" aria-hidden /> Saving…
+        <span className="pj-dot" aria-hidden /> {save.kind === 'saving' ? 'Saving…' : storage === 'memory' ? 'Kept in this tab only (not saved)' : 'Unsaved changes'}
       </span>
     )
   return (

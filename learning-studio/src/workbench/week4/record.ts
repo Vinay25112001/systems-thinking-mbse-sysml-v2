@@ -19,7 +19,7 @@ import {
   type ViewpointGateId,
 } from '../../content/lectures/week04/labBrief'
 import { importWeek3, recordState as week3State, type Week3Record } from '../week3/record'
-import { isAeroLink } from '../week1/team'
+import { importModelInputs as importWeek1Team, isAeroLink } from '../week1/team'
 
 export const W4_KEY = 'w4.record'
 export const MODEL_INPUTS_FORMAT = 'week4-model-inputs'
@@ -87,6 +87,9 @@ export type Issued = { VP: number; FG: number; FN: number; LOG: number; PHY: num
 export type IdPrefix = keyof Issued
 export type Week4Record = {
   week3: Week3Snapshot | null
+  /** The Week 1 context EXT IDs (optional Week 1 file; Week 7 review M3): new externals continue after the highest, so a
+   *  Week 4 external never reuses a Week 1 ID for a different element; an external that IS a Week 1 system keeps its ID. */
+  week1Externals: { id: string; name: string }[]
   threePersonTeam: boolean
   mission: string
   viewpoints: Viewpoint[]
@@ -106,7 +109,7 @@ export type Week4Record = {
 }
 
 export const EMPTY_ISSUED: Issued = { VP: 0, FG: 0, FN: 0, LOG: 0, PHY: 0, EXT: 0, DEC: 0, INFO: 0, AI: 0 }
-export const EMPTY_RECORD: Week4Record = { week3: null, threePersonTeam: false, mission: '', viewpoints: [], groups: [], functions: [], logical: [], physical: [], externals: [], decisions: [], information: [], ai: [], aiStatement: '', issued: EMPTY_ISSUED }
+export const EMPTY_RECORD: Week4Record = { week3: null, week1Externals: [], threePersonTeam: false, mission: '', viewpoints: [], groups: [], functions: [], logical: [], physical: [], externals: [], decisions: [], information: [], ai: [], aiStatement: '', issued: EMPTY_ISSUED }
 export const EMPTY_VIEWPOINT = (id: string, kind: ViewKind | '' = ''): Viewpoint => ({ id, kind, name: kind ? `${viewKindLabel(kind)} viewpoint` : '', purpose: '', stakeholders: '', concerns: '', serves: '', form: '' })
 export const EMPTY_GROUP = (id: string): Group => ({ id, name: '' })
 export const EMPTY_FN = (id: string): Fn => ({ id, name: '', group: '', inputs: '', outputs: '', capabilities: '', scenarios: '', planning: '', requirements: '', log: '', phy: '', criterion: '', why: '', human: '', ai: false })
@@ -171,6 +174,7 @@ export function normalizeRecord(v: unknown): Week4Record {
   const week3 = normalizeSnapshot(r.week3)
   const rec: Week4Record = {
     week3,
+    week1Externals: objs(r.week1Externals).map((x) => ({ id: upId(x.id), name: str(x.name) })).filter((x) => /^EXT-\d{3}$/.test(x.id)),
     threePersonTeam: typeof r.threePersonTeam === 'boolean' ? r.threePersonTeam : (week3?.threePersonTeam ?? false),
     mission: str(r.mission),
     viewpoints: objs(r.viewpoints).map((x) => ({ id: upId(x.id), kind: oneOf(x.kind, VIEW_IDS), name: str(x.name), purpose: str(x.purpose), stakeholders: str(x.stakeholders), concerns: str(x.concerns), serves: linkText(x.serves), form: str(x.form) })),
@@ -197,7 +201,7 @@ export function normalizeRecord(v: unknown): Week4Record {
     exportedJsonAt: typeof r.exportedJsonAt === 'number' ? r.exportedJsonAt : undefined,
   }
   const issuedIn = isObj(r.issued) ? r.issued : {}
-  for (const k of Object.keys(EMPTY_ISSUED) as IdPrefix[]) rec.issued[k] = Math.max(Number(issuedIn[k]) || 0, 0, ...idsOf(rec, k).map(num))
+  for (const k of Object.keys(EMPTY_ISSUED) as IdPrefix[]) rec.issued[k] = Math.max(Number(issuedIn[k]) || 0, 0, ...floorIds(rec, k).map(num))
   return rec
 }
 
@@ -214,9 +218,14 @@ export function idsOf(r: Week4Record, prefix: IdPrefix): string[] {
     case 'AI': return r.ai.map((x) => x.id)
   }
 }
-/** The next ID for a prefix: one past the highest ever issued or present, so a deleted ID is never reused. */
+/** IDs a new ID must come after: the record's own, plus (EXT) the Week 1 context IDs when the Week 1 file is loaded. */
+function floorIds(r: Week4Record, prefix: IdPrefix): string[] {
+  return prefix === 'EXT' ? [...idsOf(r, prefix), ...(r.week1Externals ?? []).map((x) => x.id)] : idsOf(r, prefix)
+}
+/** The next ID for a prefix: one past the highest ever issued, present or imported, so a deleted ID is never reused and a
+ *  new external never takes a Week 1 ID. */
 export function nextId(r: Week4Record, prefix: IdPrefix): string {
-  return `${prefix}-${pad(Math.max(r.issued[prefix], 0, ...idsOf(r, prefix).map(num)) + 1)}`
+  return `${prefix}-${pad(Math.max(r.issued[prefix], 0, ...floorIds(r, prefix).map(num)) + 1)}`
 }
 export const withIssued = (r: Week4Record, prefix: IdPrefix, id: string): Issued => ({ ...r.issued, [prefix]: Math.max(r.issued[prefix], num(id)) })
 
@@ -269,6 +278,29 @@ export function withWeek3(r: Week4Record, snapshot: Week3Snapshot): Week4Record 
     next = { ...next, viewpoints: [...next.viewpoints, EMPTY_VIEWPOINT(id, k)], issued: withIssued(next, 'VP', id) }
   }
   return next
+}
+
+// ---------------------------------------------------------------------------------------------- Week 1 externals (optional)
+/** Reads the team's Week 1 model-inputs file (Week 1's own importer, read-only) for its context EXT IDs only, so that new
+ *  Week 4 externals continue the numbering (Week 7 review M3: Week 4 used to number from EXT-001 and collide). Refuses other
+ *  files and AeroLink. Never throws. */
+export function importWeek1Externals(text: string): { externals: { id: string; name: string }[] } | { error: string } {
+  let d: unknown
+  try {
+    d = JSON.parse(text)
+  } catch {
+    return { error: 'This file is not valid JSON. Choose your Week 1 export (team-NN-model-inputs.json).' }
+  }
+  if (!isObj(d) || d.format !== 'week1-model-inputs') return { error: 'This is not a Week 1 model-inputs file (format “week1-model-inputs”). This field only reads your Week 1 export, for its external IDs.' }
+  const t = importWeek1Team(text)
+  if ('error' in t) return { error: t.error }
+  if ([t.proposal.name, t.proposal.soi].some(isAeroLink)) return { error: 'This Week 1 record names AeroLink, the instructor’s worked example. Load your team’s own record.' }
+  return { externals: t.context.map((c) => ({ id: c.id.trim().toUpperCase(), name: c.name.trim() })).filter((x) => /^EXT-\d{3}$/.test(x.id)) }
+}
+/** Keeps the Week 1 context EXT IDs and raises the EXT floor above them (nothing already in the record is renumbered). */
+export function withWeek1Externals(r: Week4Record, externals: { id: string; name: string }[]): Week4Record {
+  const next = { ...r, week1Externals: externals }
+  return { ...next, issued: { ...next.issued, EXT: Math.max(next.issued.EXT, ...floorIds(next, 'EXT').map(num), 0) } }
 }
 
 // ---------------------------------------------------------------------------------------------- lookups
@@ -650,6 +682,7 @@ export function modelInputs(r: Week4Record) {
     team: r.week3?.team ?? '',
     status: recordState(r),
     threePersonTeam: r.threePersonTeam,
+    week1Externals: r.week1Externals,
     week3: r.week3,
     mission: r.mission,
     viewpoints: r.viewpoints.map((v) => ({ ...v, serves: idsIn(v.serves), ...gates(assessViewpoint(v, r)), seeds: SEEDS.viewpoint })),

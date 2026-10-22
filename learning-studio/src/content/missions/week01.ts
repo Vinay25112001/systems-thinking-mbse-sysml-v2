@@ -46,7 +46,7 @@ const tryFirst: Mission = {
   goalReview: PENDING,
   minutes: 11,
   objectives: ['B1.4'],
-  workloadLine: 'Optional practice: AeroLink missions 1–4',
+  workloadLine: 'Optional practice: Guided Practice on AeroLink',
   steps: [
     {
       id: 'predict',
@@ -61,7 +61,7 @@ const tryFirst: Mission = {
     {
       id: 'identify',
       brief: b(`Sort the ${CANDIDATE_COUNT_WORD} candidates for the new vertiport’s register.`, 'In the Stakeholders view, part 1, mark each candidate “stakeholder” or “not a stakeholder”, then press Check. For any that differ from the key, read the explanation and tick “I have read why”, or change your answer.', `All ${CANDIDATES.length} are checked, and every difference from the key has been read.`),
-      instruction: `In the Stakeholders view, part 1, decide for each of the ${CANDIDATE_COUNT_WORD} candidates whether it is a stakeholder of AeroLink’s new vertiport. A stakeholder is an individual, group or organization, or a class of them, with an interest in the system or affected by it (Session 1).`,
+      instruction: `In the Stakeholders view, part 1, decide for each of the ${CANDIDATE_COUNT_WORD} candidates whether it is a stakeholder of AeroLink’s new vertiport. A stakeholder is an individual, group or organization, or a class of them, with an interest in the system or affected by it.`,
       hint: 'Ask of each candidate: is it a person, group or organization, and does it have an interest in the vertiport or is it affected by it?',
       view: 'stakeholders',
       focus: 'stk:identify',
@@ -97,7 +97,7 @@ const tryFirst: Mission = {
       },
     },
   ],
-  debrief: 'A list built from the people who pay, use and build misses the approving authorities and the affected public. L4’s three sources find them; mission 3 classifies them.',
+  debrief: 'A list built from the people who pay, use and build misses the approving authorities and the affected public. The three identification methods find them; mission 3 classifies them.',
 }
 
 // ------------------------------------------------------------------------------------------- 2 guided: boundary
@@ -110,7 +110,7 @@ const boundary: Mission = {
   goal: boundaryActivity.purpose,
   minutes: 15,
   objectives: ['B1.2', 'B1.3'],
-  workloadLine: 'Optional practice: AeroLink missions 1–4',
+  workloadLine: 'Optional practice: Guided Practice on AeroLink',
   steps: [
     {
       id: 'classify',
@@ -183,12 +183,12 @@ const stakeholders: Mission = {
   goalReview: PENDING,
   minutes: 22,
   objectives: ['B1.4'],
-  workloadLine: 'Optional practice: AeroLink missions 1–4',
+  workloadLine: 'Optional practice: Guided Practice on AeroLink',
   steps: [
     {
       id: 'classify',
       brief: b('Classify six AeroLink stakeholders.', 'In the Stakeholders view, part 2, choose a role, internal or external, and approving authority (yes or no) for each of the six.', 'All six are fully classified.'),
-      instruction: 'In the Stakeholders view, part 2, classify each of the six stakeholders: its role group, whether it is internal or external to AeroLink Urban Mobility, and whether it is an approving authority (L5).',
+      instruction: 'In the Stakeholders view, part 2, classify each of the six stakeholders: its role group, whether it is internal or external to AeroLink Urban Mobility, and whether it is an approving authority.',
       hint: 'Internal means inside the organization that runs the system (AeroLink Urban Mobility). An approving authority formally certifies, qualifies or approves the system for use.',
       view: 'stakeholders',
       focus: 'stk:classify',
@@ -215,7 +215,6 @@ const stakeholders: Mission = {
       view: 'stakeholders',
       focus: 'stk:row',
       readMore: 'w1-register',
-      rubric: 'RB-1.3 (concerns, influence)',
       check: (ctx) => checkRegisterRow(stakeholderArtefact(ctx.artefacts)),
     },
   ],
@@ -233,13 +232,13 @@ const needs: Mission = {
   goalReview: PENDING,
   minutes: 18,
   objectives: ['B1.5'],
-  workloadLine: 'Optional practice: AeroLink missions 1–4',
+  workloadLine: 'Optional practice: Guided Practice on AeroLink',
   steps: [
     {
       id: 'diagnose',
       brief: b('Diagnose six draft “needs”.', 'In the Needs view, part 1, tick every flaw you see in each draft (none if a draft is acceptable), then press Check.', 'The check has run; the key and the reference rewrite are shown for each draft.'),
       instruction: `In the Needs view, part 1, tick the flaws in each draft: written as a requirement, names a solution, no stakeholder, no condition. Some drafts may be acceptable. The reference rewrites are the case’s needs, in the form “${NEED_FORM}”.`,
-      hint: 'The key is the instructor’s reading of each draft against the course gate taught in Session 2; argue any disagreement from the six checks.',
+      hint: 'The key is the instructor’s reading of each draft against the course gate; argue any disagreement from the six checks.',
       view: 'needs',
       focus: 'needs:diagnose',
       readMore: 'w1-writing-needs',
@@ -253,7 +252,6 @@ const needs: Mission = {
       view: 'needs',
       focus: 'needs:write',
       readMore: 'w1-worked-needs',
-      rubric: 'RB-2.2 (need statements)',
       check: (ctx) => checkTwoNeeds(needsArtefact(ctx.artefacts)),
     },
   ],
@@ -372,7 +370,7 @@ const rules: Rule[] = [
   teamRule('w1-team-concern', 'warning', 'Every stakeholder in the team register has a specific concern', 'B1.4', (a) =>
     teamArtefact(a)
       .stakeholders.filter((s) => s.concerns.some((c) => c.text.trim() && concernIssue(c, s.name)))
-      .map((s) => ({ elementId: `team:${s.id}`, message: `${s.id} has a generic concern`, hint: 'Say what, for whom, and where or when it bites, with at least one concrete detail; “wants safety” scores at the developing level of RB-1.3.' })),
+      .map((s) => ({ elementId: `team:${s.id}`, message: `${s.id} has a generic concern`, hint: 'Say what, for whom, and where or when it bites, with at least one concrete detail; “wants safety” scores at the developing level of the course rubric.' })),
   ),
   teamRule('w1-team-trace', 'warning', 'Every need traces to a stakeholder in the team register', 'B1.5', (a) => {
     const r = teamArtefact(a)

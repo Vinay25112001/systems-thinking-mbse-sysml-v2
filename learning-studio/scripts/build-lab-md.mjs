@@ -4,6 +4,12 @@
 //   docs/lectures/week03/WEEK3_LAB_INSTRUCTIONS.md from src/content/lab/week03Lab.ts
 //   docs/lectures/week04/WEEK4_LAB_INSTRUCTIONS.md from src/content/lab/week04Lab.ts
 //   docs/lectures/week05/WEEK5_LAB_INSTRUCTIONS.md from src/content/lab/week05Lab.ts
+//   docs/lectures/week06/WEEK6_LAB_INSTRUCTIONS.md from src/content/lab/week06Lab.ts
+//   docs/lectures/week07/WEEK7_LAB_INSTRUCTIONS.md from src/content/lab/week07Lab.ts
+//   docs/lectures/week08/WEEK8_LAB_INSTRUCTIONS.md from src/content/lab/week08Lab.ts
+//   docs/lectures/week09/WEEK9_LAB_INSTRUCTIONS.md from src/content/lab/week09Lab.ts
+//   docs/lectures/week10/WEEK10_LAB_INSTRUCTIONS.md from src/content/lab/week10Lab.ts
+//   docs/lectures/week11/WEEK11_LAB_INSTRUCTIONS.md from src/content/lab/week11Lab.ts
 // Loads the TypeScript sources through Vite's SSR loader in middleware mode: no port is opened and no server is left
 // behind. Each week is written independently, so one failing module never blocks the other. Optional arguments select
 // the weeks (`node scripts/build-lab-md.mjs 2`); with none, every week is written. week1.test.tsx and
@@ -20,7 +26,12 @@ const LABS = [
   { week: 3, module: '/src/content/lab/week03Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week03', 'WEEK3_LAB_INSTRUCTIONS.md') },
   { week: 4, module: '/src/content/lab/week04Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week04', 'WEEK4_LAB_INSTRUCTIONS.md') },
   { week: 5, module: '/src/content/lab/week05Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week05', 'WEEK5_LAB_INSTRUCTIONS.md') },
+  { week: 6, module: '/src/content/lab/week06Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week06', 'WEEK6_LAB_INSTRUCTIONS.md') },
+  { week: 7, module: '/src/content/lab/week07Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week07', 'WEEK7_LAB_INSTRUCTIONS.md') },
   { week: 8, module: '/src/content/lab/week08Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week08', 'WEEK8_LAB_INSTRUCTIONS.md') },
+  { week: 9, module: '/src/content/lab/week09Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week09', 'WEEK9_LAB_INSTRUCTIONS.md') },
+  { week: 10, module: '/src/content/lab/week10Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week10', 'WEEK10_LAB_INSTRUCTIONS.md') },
+  { week: 11, module: '/src/content/lab/week11Lab.ts', out: path.join(APP, 'docs', 'lectures', 'week11', 'WEEK11_LAB_INSTRUCTIONS.md') },
 ]
 const wanted = process.argv.slice(2).map(Number).filter(Boolean)
 const server = await createServer({ root: APP, configFile: path.join(APP, 'vite.config.ts'), logLevel: 'warn', appType: 'custom', server: { middlewareMode: true, hmr: false, ws: false } })

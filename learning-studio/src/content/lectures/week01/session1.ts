@@ -1424,7 +1424,7 @@ export const WEEK01_SESSION1: Lecture = {
         },
         {
           kind: 'para',
-          text: `Which method finds which stakeholder can be made checkable with explicit rules. Count a stakeholder as found by the sweep if a Table 1 prompt surfaces it; by the context if it owns an external system or an element of the wider system of interest; and by role class if it clearly matches one of MITRE’s roles or groups or the DoD list. On those rules the sweep finds ${numberWord(count('m1'))} of ${numberWord(N_STK)}, the context ${numberWord(count('m2'))}, and role classes ${numberWord(count('m3'))}. ${SINGLE.map((id) => `The ${nameOf(id).toLowerCase()}`).join(' and ')} are found by one method only, and they are the ones a team is most likely to miss. Agreement across methods raises confidence; a stakeholder found by a single method deserves a second look.`,
+          text: `Which method finds which stakeholder can be made checkable with explicit rules. Count a stakeholder as found by the sweep if a Table 1 prompt surfaces it; by the context if it owns an external system or an element of the wider system of interest; and by role class if it clearly matches one of MITRE’s roles or groups or the DoD list. On those rules the sweep finds ${numberWord(count('m1'))} of ${numberWord(N_STK)}, the context ${numberWord(count('m2'))}, and role classes ${numberWord(count('m3'))}. ${SINGLE.map((id, i) => `${i === 0 ? 'The' : 'the'} ${nameOf(id).toLowerCase()}`).join(' and ')} are found by one method only, and they are the ones a team is most likely to miss. Agreement across methods raises confidence; a stakeholder found by a single method deserves a second look.`,
         },
         coverageTable,
         { kind: 'figure', slide: 's1-answer' },

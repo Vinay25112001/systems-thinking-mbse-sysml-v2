@@ -2,8 +2,10 @@
 
 **Status.** Built 2026-10-19 on the Week 1 template (DECISION_LOG A21), with Week 3 (signed off) as the structural template
 and the Week 4 case as the data source. Every Week 5 file is new-pending-review. The package was committed as `7ab45a5`;
-the fixes for the independent review of 2026-10-19 (`_source_cache/review/week05_review.md`) are in the working tree,
-not yet committed, and are listed finding by finding in `WEEK5_REVIEW_DISPOSITIONS.md`. Where this report and the
+the fixes for the independent review of 2026-10-19 (`_source_cache/review/week05_review.md`) are committed as
+`41b2578`, and are listed finding by finding in `WEEK5_REVIEW_DISPOSITIONS.md`. The confirmation review
+(`_source_cache/review/week05_confirmation.md`, SIGN-OFF, recorded in `bb842ca`) found one moderate and nine minors; their
+fixes were written after `bb842ca` and are listed in the dispositions file's last section. Where this report and the
 dispositions file disagree, the dispositions file is current.
 **Governing documents.** DECISION_LOG A19–A21 (A21 item 6: security and resilience integrated into Weeks 3, 5 and 6);
 COURSE_SCHEDULE.md (Week 5 subject, exact: *Components / Interfaces*; output: "Component breakdown; interface definitions

@@ -185,7 +185,7 @@ export const WEEKS: Week[] = [
     lab: 'L6 Enterprise evolution roadmap',
     output: 'Enterprise evolution roadmap (increments, technology insertion, transition)',
     assessment: 'Readiness quiz Q6',
-    graduateTask: TBD,
+    graduateTask: 'Roadmap sensitivity memo: the trigger or unknown that would move an increment by a full horizon, its impact set across the Weeks 1–5 IDs, and the earlier decision to re-run.',
     draftSources: [{ week: 14, scope: 'enterprise evolution' }],
   },
   {
@@ -202,7 +202,7 @@ export const WEEKS: Week[] = [
     due: 'Systems Thinking Engineering Package',
     output: 'Systems Thinking Engineering Package (Weeks 1–6 integrated) and the Phase I presentation',
     assessment: 'Phase I presentation; no readiness quiz (default; pending faculty decision)',
-    graduateTask: TBD,
+    graduateTask: 'Package trace-audit memo: coverage per trace layer with the counting rule, every orphan and childless parent with its disposition judged for Phase II, the gap that most threatens the Week 8 import traced to the model elements it would corrupt, and what the structural audit cannot see.',
     draftSources: [
       { week: 3, scope: 'checkpoint CP1 (problem definition and ConOps)' },
       { week: 6, scope: 'checkpoint CP2 (requirements baseline, SRR-style review)' },

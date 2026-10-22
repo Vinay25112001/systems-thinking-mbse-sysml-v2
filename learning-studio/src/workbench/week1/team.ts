@@ -24,6 +24,7 @@ import { COURSE_ROLES, MERGED_ROLE } from './logic'
 import { LAB_MINIMUMS, LAB_MINIMUMS_THREE, LEGACY_PRIORITY, NEED_PRIORITIES, NEED_PRIORITY_LABEL, REL_TYPES, REL_VERB, WEEK1_PREFIXES as BRIEF_PREFIXES, type NeedPriority, type RelType } from '../../content/lectures/week01/labBrief'
 import { assessNeed, CRITERION_IDS, notCountingReasons, type CriterionId, type NeedAssessment, type SelfCheck } from './needQuality'
 import { CONCERN_HELP, isSpecificConcern, ROLES, STAGES, roleLabel } from './stakeholders'
+import { EMPTY_ANSWER } from '../emptyAnswer'
 
 export const TEAM_KEY = 'w1.team'
 export const MIN_INSIDE = LAB_MINIMUMS.inside
@@ -41,7 +42,7 @@ export const MIN_AI_WORDS = 12
  *  a length. The 40-word suitability paragraph (MIN_WHY_WORDS) is stated in the lab instructions and stays. */
 export const MIN_STATEMENT_WORDS = 3
 /** Answers that say nothing ("ok", "n/a", "none"): not a rule, a reason or a justification. */
-export const EMPTY_ANSWER = /^(?:ok(?:ay)?|fine|yes|no|n\/?a|none|nil|nothing|-+|\?+|tbd|see above)\.?$/i
+export { EMPTY_ANSWER } // shared with Weeks 1, 2, 3 and 5 (src/workbench/emptyAnswer.ts)
 const said = (s: string) => words(s) >= 1 && !EMPTY_ANSWER.test(s.trim())
 /** The mission's fixed ID; goals take MGO-002 onward (the AeroLink case numbers them the same way). */
 export const MISSION_ID = 'MGO-001'
@@ -55,7 +56,12 @@ export const needsMinimum = (c: Pick<Charter, 'threePersonTeam'>) => (c.threePer
 export type Direction = '' | 'in' | 'out' | 'both'
 export type ContextRow = { id: string; name: string; kind: '' | 'system' | 'actor'; crosses: string; direction: Direction }
 export type ConcernRow = { id: string; text: string }
-export type StakeholderRow = { id: string; name: string; role: string; stage: string; side: '' | 'internal' | 'external'; approving: '' | 'yes' | 'no'; concerns: ConcernRow[]; influence: string; reason: string }
+/** A25 (faculty, 2026-10-21): the level of interest (1–5) with a short reason is required; influence (1–5, with its
+ *  reason) and support (MITRE's scale 1–4) are optional. The three new fields are optional in the type so that records
+ *  and rows written before M6 still type-check; normalizeTeam always fills them. */
+export type StakeholderRow = { id: string; name: string; role: string; stage: string; side: '' | 'internal' | 'external'; approving: '' | 'yes' | 'no'; concerns: ConcernRow[]; influence: string; reason: string; interest?: string; interestReason?: string; support?: string }
+/** MITRE's support scale (R63 pp.236–237): 1 awareness, 2 understanding, 3 buy-in, 4 commitment. */
+export const SUPPORT_LEVELS = ['1', '2', '3', '4'] as const
 /** MITRE's priority categories (labBrief.ts NEED_PRIORITIES, R65 p.325), the lecture's vocabulary (A21 item 1). */
 export type Priority = '' | NeedPriority
 export type NeedRow = { id: string; name: string; text: string; conditions: string; rationale: string; sources: string; concerns: string; goal: string; priority: Priority; selfCheck: SelfCheck; justification: string }
@@ -139,6 +145,9 @@ export function normalizeTeam(v: unknown): TeamRecord {
     concerns: Array.isArray(s.concerns) ? objs(s.concerns).map((k) => ({ id: str(k.id), text: str(k.text) })) : str(s.concern).trim() ? [{ id: str(s.id).replace('STK', 'CON'), text: str(s.concern) }] : [],
     influence: str(s.influence),
     reason: str(s.reason),
+    interest: str(s.interest),
+    interestReason: str(s.interestReason),
+    support: str(s.support),
   }))
   const needs: NeedRow[] = objs(r.needs).map((n) => ({
     ...EMPTY_NEED_ROW(str(n.id)),
@@ -282,6 +291,13 @@ export function approvalOf(p: Proposal, today = todayISO()): Approval {
   return 'none'
 }
 
+/** The proposal's content checks without the instructor's decision (M6: approval is an instructor action on the course
+ *  server, so the canvas shows the content checks and the approval state separately). */
+export function checkProposalContent(p: Proposal): PartCheck {
+  const c = checkProposal({ ...p, decision: 'pending', decidedOn: '' })
+  return result(c.issues, 'The proposal’s content meets the course checks: it can be sent for instructor approval.')
+}
+
 export function checkProposal(p: Proposal, today = todayISO()): PartCheck {
   const issues: string[] = []
   if (!p.name.trim()) issues.push('Name the enterprise.')
@@ -293,12 +309,12 @@ export function checkProposal(p: Proposal, today = todayISO()): PartCheck {
   }
   oneSentence('Problem statement', p.problem)
   oneSentence(`Mission (${MISSION_ID})`, p.purpose)
-  for (const g of p.goals) if (words(g.text) < 1) issues.push(`${g.id || 'A goal'}: state the goal, or remove it.`)
+  for (const g of p.goals) if (words(g.text) < 1) issues.push(`${g.id || 'An objective'}: state the objective, or remove it.`) // A25: students see “objectives” (MGO-002…)
   const goalIds = p.goals.map((g) => g.id)
   const badGoal = goalIds.filter((id) => !/^MGO-\d{3}$/.test(id) || id === MISSION_ID)
-  if (badGoal.length) issues.push(`Goal IDs run from MGO-002 (${MISSION_ID} is the mission): ${badGoal.map((x) => x || '(empty)').join(', ')}.`)
+  if (badGoal.length) issues.push(`Objective IDs run from MGO-002 (${MISSION_ID} is the mission): ${badGoal.map((x) => x || '(empty)').join(', ')}.`)
   const dupGoal = duplicates(goalIds)
-  if (dupGoal.length) issues.push(`Duplicate goal ID ${dupGoal.join(', ')}: each ID once.`)
+  if (dupGoal.length) issues.push(`Duplicate objective ID ${dupGoal.join(', ')}: each ID once.`)
   oneSentence('System of interest', p.soi)
   const inside = p.inside.filter((x) => x.name.trim())
   if (inside.length < MIN_INSIDE) issues.push(`Inside the boundary of the system of interest: at least ${MIN_INSIDE} elements (PRT), ${inside.length} so far.`)
@@ -306,8 +322,8 @@ export function checkProposal(p: Proposal, today = todayISO()): PartCheck {
   if (dupInside.length) issues.push(`Duplicate ID ${dupInside.join(', ')} inside the boundary: each ID once.`)
   if (words(p.why) < MIN_WHY_WORDS) issues.push(`Why it suits a 14-week project: at least ${MIN_WHY_WORDS} words (${words(p.why)} so far).`)
   const date = p.decidedOn.trim()
-  if (!p.decision) issues.push('Record the instructor’s decision: submitted for approval, approved, or revise.')
-  else if (p.decision === 'revise') issues.push('The instructor asked for a revision: revise the proposal, set the decision back to “submitted for approval”, and take it to the instructor again.')
+  if (!p.decision) issues.push('Request instructor approval of the proposal: the instructor’s decision (approved, or revise) is recorded on the course server.')
+  else if (p.decision === 'revise') issues.push('The instructor asked for a revision: revise the proposal and send it for approval again.')
   else if (p.decision === 'approved' && !date) issues.push('Give the date of the instructor’s approval (YYYY-MM-DD).')
   if (date && !isCalendarDate(date)) issues.push(`“${date}” is not a date: write it as YYYY-MM-DD.`)
   else if (date && date > today) issues.push(`The date ${date} is in the future: record the date the decision was made.`)
@@ -361,8 +377,16 @@ export function stakeholderRowIssues(s: StakeholderRow): string[] {
     const x = concernIssue(c, s.name)
     if (x) out.push(x)
   }
-  if (!/^[1-5]$/.test(s.influence.trim())) out.push('an influence rating from 1 to 5')
-  if (!said(s.reason)) out.push('a reason for the rating')
+  // A25: the level of interest with a short reason is required; influence and support are optional, but a value that is
+  // given must be on its scale, and an influence rating still needs its reason (a reviewer must be able to challenge it)
+  if (!/^[1-5]$/.test((s.interest ?? '').trim())) out.push('a level of interest from 1 to 5')
+  if (!said(s.interestReason ?? '')) out.push('a short reason for the level of interest')
+  const infl = s.influence.trim()
+  if (infl && !/^[1-5]$/.test(infl)) out.push('an influence rating from 1 to 5, or leave it empty')
+  if (infl && !said(s.reason)) out.push('a reason for the influence rating')
+  if (!infl && said(s.reason)) out.push('the influence rating the reason explains, or remove the reason')
+  const sup = (s.support ?? '').trim()
+  if (sup && !(SUPPORT_LEVELS as readonly string[]).includes(sup)) out.push('a support level from 1 to 4, or leave it empty')
   return out
 }
 export function checkRegister(r: TeamRecord): PartCheck {
@@ -379,7 +403,7 @@ export function checkRegister(r: TeamRecord): PartCheck {
   const names = r.stakeholders.map((s) => s.name.trim().toLowerCase()).filter(Boolean)
   const dup = names.filter((x, i) => names.indexOf(x) !== i)
   if (dup.length) issues.push(`Each stakeholder once: “${dup[0]}” appears twice.`)
-  if (complete.length < MIN_STAKEHOLDERS) issues.unshift(`At least ${MIN_STAKEHOLDERS} complete stakeholders, each with a specific concern (${complete.length} so far).`)
+  if (complete.length < MIN_STAKEHOLDERS) issues.unshift(`At least ${MIN_STAKEHOLDERS} complete stakeholders, each with a specific concern and a level of interest with a reason (${complete.length} so far).`)
   const roles = new Set(complete.map((s) => s.role))
   if (complete.length >= MIN_STAKEHOLDERS && roles.size < MIN_ROLE_GROUPS) issues.push(`At least ${MIN_ROLE_GROUPS} role groups (only ${[...roles].map(roleLabel).join(', ')}): a register of customers and users only scores at the bottom of RB-1.2.`)
   if (complete.length && !complete.some((s) => s.approving === 'yes')) issues.push('At least one approving authority: who certifies, qualifies or approves your system for use?')
@@ -447,8 +471,8 @@ export function needStatus(n: NeedRow, r: TeamRecord): NeedStatus {
   }
   const goal = n.goal.trim().toUpperCase()
   const goals = [MISSION_ID, ...r.proposal.goals.map((g) => g.id)]
-  if (!goal) team.push(`Trace the need to the mission (${MISSION_ID}) or one of your goals: give its MGO ID.`)
-  else if (!goals.includes(goal)) team.push(`${goal} is not the mission or a goal in Part 2 (${goals.join(', ')}).`)
+  if (!goal) team.push(`Trace the need to the mission (${MISSION_ID}) or one of your objectives: give its MGO ID.`)
+  else if (!goals.includes(goal)) team.push(`${goal} is not the mission or an objective of your proposal (${goals.join(', ')}).`)
   const base = notCountingReasons(assessment, n.selfCheck, n.justification)
   // gates and record fields first, then the self-check and the warnings
   const firstLater = base.findIndex((x) => x.startsWith('Confirm each') || /warning/.test(x))
@@ -465,7 +489,7 @@ export function checkNeedsPart(r: TeamRecord): PartCheck {
   const texts = r.needs.map((n) => n.text.trim().toLowerCase()).filter(Boolean)
   if (texts.some((x, i) => texts.indexOf(x) !== i)) issues.push('Two needs have the same statement: each need once.')
   const three = r.charter.threePersonTeam ? ' (three-person team minimum, pending faculty approval)' : ''
-  if (counting.length < MIN_N) issues.unshift(`At least ${MIN_N} needs that count${three} (${counting.length} so far): each is a valid need statement, attributed to a registered stakeholder, traced to its concern and to the mission or a goal, has its record fields, is confirmed against the six checks, and has every warning rewritten or justified.`)
+  if (counting.length < MIN_N) issues.unshift(`At least ${MIN_N} needs that count${three} (${counting.length} so far): each is a valid need statement, attributed to a registered stakeholder, traced to its concern and to the mission or an objective, has its record fields, is confirmed against the six checks, and has every warning rewritten or justified.`)
   const covered = new Set(counting.flatMap(sourcesOf))
   if (counting.length >= MIN_N && covered.size < MIN_SRC) issues.push(`Trace the needs to at least ${MIN_SRC} different stakeholders${three} (${covered.size} so far).`)
   const authorities = r.stakeholders.filter((s) => s.approving === 'yes').map((s) => s.id)
@@ -540,7 +564,7 @@ export function teamMarkdown(r: TeamRecord, today = todayISO()): string {
     `- Domain: ${p.domain.trim()}`,
     `- Problem statement: ${p.problem.trim()}`,
     `- Mission (${MISSION_ID}): ${p.purpose.trim()}`,
-    `- Goals: ${p.goals.filter((g) => g.text.trim()).map((g) => `${g.id} ${g.text.trim()}`).join('; ') || '(none recorded; every need traces to the mission)'}`,
+    `- Objectives: ${p.goals.filter((g) => g.text.trim()).map((g) => `${g.id} ${g.text.trim()}`).join('; ') || '(none recorded; every need traces to the mission)'}`,
     `- System of interest: ${p.soi.trim()}`,
     `- Inside the boundary of the system of interest (PRT): ${p.inside.filter((x) => x.name.trim()).map((x) => `${x.id} ${x.name.trim()}`).join('; ')}`,
     `- Why it suits a 14-week project: ${p.why.trim()}`,
@@ -554,9 +578,9 @@ export function teamMarkdown(r: TeamRecord, today = todayISO()): string {
     '',
     '## 4. Stakeholder register',
     '',
-    '| ID | Stakeholder | Role | Life-cycle stage | Internal or external | Approving authority | Concerns | Influence | Reason |',
-    '|---|---|---|---|---|---|---|---|---|',
-    ...r.stakeholders.map((s) => `| ${s.id} | ${cell(s.name)} | ${roleLabel(s.role)} | ${s.stage} | ${s.side} | ${s.approving} | ${s.concerns.map((c) => `${c.id}: ${cell(c.text)}`).join('; ')} | ${s.influence} | ${cell(s.reason)} |`),
+    '| ID | Stakeholder | Role | Life-cycle stage | Internal or external | Approving authority | Concerns | Interest | Reason for interest | Influence | Reason | Support |',
+    '|---|---|---|---|---|---|---|---|---|---|---|---|',
+    ...r.stakeholders.map((s) => `| ${s.id} | ${cell(s.name)} | ${roleLabel(s.role)} | ${s.stage} | ${s.side} | ${s.approving} | ${s.concerns.map((c) => `${c.id}: ${cell(c.text)}`).join('; ')} | ${s.interest ?? ''} | ${cell(s.interestReason ?? '')} | ${s.influence} | ${cell(s.reason)} | ${s.support ?? ''} |`),
     '',
     '### Relationships',
     '',
@@ -566,7 +590,7 @@ export function teamMarkdown(r: TeamRecord, today = todayISO()): string {
     '',
     '## 5. Initial stakeholder needs',
     '',
-    '| ID | Name | Need statement | Condition | Rationale | Priority | Source (STK) | Answers (CON) | Goal (MGO) | Six checks confirmed | Warnings kept, with justification |',
+    '| ID | Name | Need statement | Condition | Rationale | Priority | Source (STK) | Answers (CON) | Objective (MGO) | Six checks confirmed | Warnings kept, with justification |',
     '|---|---|---|---|---|---|---|---|---|---|---|',
     ...r.needs.map((n) => {
       const s = needStatus(n, r)
@@ -583,6 +607,11 @@ export function teamMarkdown(r: TeamRecord, today = todayISO()): string {
 }
 
 const NEED_SEEDS = ['requirement def / requirement', 'doc', 'subject', 'stakeholder', 'frame']
+const a25Fields = (s: StakeholderRow) => ({
+  ...((s.interest ?? '').trim() ? { interest: Number(s.interest) || null } : {}),
+  ...((s.interestReason ?? '').trim() ? { interestReason: (s.interestReason ?? '').trim() } : {}),
+  ...((s.support ?? '').trim() ? { support: Number(s.support) || null } : {}),
+})
 export const MODEL_INPUTS_VERSION = 3
 /** The model inputs (JSON, version 3: problem, mission and goals, need → goal, REL rows): every item with its ID, its
  *  source and the SysML v2 element it seeds. Versions 1 and 2 still import (importModelInputs). */
@@ -599,7 +628,9 @@ export function teamModelInputs(r: TeamRecord, today = todayISO()) {
     ],
     systemOfInterest: { statement: r.proposal.soi.trim(), inside: r.proposal.inside.filter((x) => x.name.trim()).map((x) => ({ id: x.id, name: x.name.trim(), seeds: ['part (usage)'] })), seeds: ['part def', 'part (usage)'] },
     context: r.context.map((c) => ({ id: c.id, name: c.name.trim(), kind: c.kind, crosses: c.crosses.trim(), direction: c.direction, seeds: c.kind === 'actor' ? ['actor', 'item def', 'port def'] : ['part (usage) in a context', 'item def', 'port def'] })),
-    stakeholders: r.stakeholders.map((s) => ({ id: s.id, name: s.name.trim(), role: s.role, stage: s.stage, side: s.side, approvingAuthority: s.approving === 'yes', influence: Number(s.influence) || null, influenceReason: s.reason.trim(), concerns: s.concerns.map((c) => c.id), seeds: ['part def', 'stakeholder'] })),
+    // M6 (A25): interest, its reason and support are appended only when recorded, so a record without them exports the
+    // same bytes as before (golden test src/project/__golden__) and importers that ignore unknown keys read both
+    stakeholders: r.stakeholders.map((s) => ({ id: s.id, name: s.name.trim(), role: s.role, stage: s.stage, side: s.side, approvingAuthority: s.approving === 'yes', influence: Number(s.influence) || null, influenceReason: s.reason.trim(), concerns: s.concerns.map((c) => c.id), seeds: ['part def', 'stakeholder'], ...a25Fields(s) })),
     concerns: r.stakeholders.flatMap((s) => s.concerns.map((c) => ({ id: c.id, stakeholders: [s.id], text: c.text.trim(), seeds: ['concern'] }))),
     relationships: r.relationships.map((x) => ({ id: x.id, from: x.from, to: x.to, type: x.type, note: x.note.trim(), seeds: ['connection or dependency between stakeholder parts (course working mapping)'] })),
     needs: r.needs.map((n) => {
@@ -699,6 +730,9 @@ function importUnsafe(text: string): TeamRecord | { error: string } {
       concerns: concernsIn.filter((c) => concernOwner(c) === str(x.id)).map((c) => ({ id: str(c.id), text: str(c.text) })),
       influence: x.influence ? String(x.influence) : '',
       reason: str(x.influenceReason),
+      interest: x.interest ? String(x.interest) : '',
+      interestReason: str(x.interestReason),
+      support: x.support ? String(x.support) : '',
     })),
     relationships,
     needs: objs(d.needs).map((x) => ({

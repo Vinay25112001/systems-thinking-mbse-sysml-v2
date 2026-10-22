@@ -5,6 +5,7 @@ import type { ActivitySpec, LessonBlock, WeekContent } from '../content/schema'
 import { workloadTotal } from '../content/schema'
 import { draftContent, REBUILT_IN_PLACE, weekContent } from '../content/weeks'
 import { getRubric, RATING_SCALE } from '../content/rubrics'
+import { labReviewId } from '../content/reviewIds'
 import { ACTIVITY_REGISTRY } from '../activities/registry'
 import { Link } from '../lib/router'
 import { hasLecture } from '../content/lectures'
@@ -427,7 +428,7 @@ export function LabPanel({ c }: { c: WeekContent }) {
             ))}
           </p>
         )}
-        <ReviewControls id={`w${c.week}-lab`} label={`${l.id} lab`} />
+        <ReviewControls id={labReviewId(c)} label={`${l.id} lab`} />
       </section>
     </Card>
   )

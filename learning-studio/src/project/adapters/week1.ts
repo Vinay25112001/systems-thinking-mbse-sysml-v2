@@ -65,6 +65,9 @@ export function toTeamRecord(doc: ProjectDoc, opts: { excludeUnadapted?: boolean
       concerns: cons.filter((c) => ownerOf.get(c.uid) === x.uid).map((c) => ({ id: c.id, text: c.description })),
       influence: s(x.attributes.influenceText),
       reason: s(x.attributes.influenceReason),
+      interest: s(x.attributes.interest),
+      interestReason: s(x.attributes.interestReason),
+      support: s(x.attributes.support),
     })),
     relationships: bySeq(rels.filter((r) => r.category === 'stakeholder')).map((r) => ({ id: r.id, from: s(r.attributes?.fromText), to: s(r.attributes?.toText), type: r.type, note: r.note ?? '' })),
     needs: of('NEED').map((n) => ({
@@ -147,12 +150,18 @@ export function diffTeamRecord(doc: ProjectDoc, afterIn: TeamRecord, stamp: Stam
   const p = after.proposal
   const approval = { decision: p.decision, decidedOn: p.decidedOn }
   const ent = active.find((a) => a.type === 'ENT')
-  const entFields = { title: p.name, 'attributes.domain': p.domain, 'attributes.problem': p.problem, 'attributes.suitability': p.why, 'attributes.soi': p.soi, 'attributes.approval': approval }
+  // The approval is written only when the record's decision differs from what the stored one projects to: a stored
+  // server decision the record cannot hold (e.g. 'changed-since-approval', projected as no decision) is never rewritten
+  // by an unrelated edit, which the course server would refuse (M6 fix; serverRules.ts APPROVAL_REFUSAL).
+  const storedAp = (ent?.attributes.approval ?? {}) as Record<string, AttrValue>
+  const projectedAp = normalizeTeam({ proposal: { decision: s(storedAp.decision), decidedOn: s(storedAp.decidedOn) } }).proposal
+  const approvalChanged = projectedAp.decision !== p.decision || projectedAp.decidedOn !== p.decidedOn
+  const entFields = { title: p.name, 'attributes.domain': p.domain, 'attributes.problem': p.problem, 'attributes.suitability': p.why, 'attributes.soi': p.soi, ...(approvalChanged ? { 'attributes.approval': approval } : {}) }
   if (ent) update(ent, entFields)
   else if (!anyById.has('ENT-001')) create('ENT', 'ENT-001', { title: p.name, attributes: { domain: p.domain, problem: p.problem, suitability: p.why, soi: p.soi, approval } })
   const m1 = doc.milestones.find((m) => m.week === 1)
   if (m1) {
-    const mf = fieldDiff(m1, { approval: p.decision ? approval : undefined, aiStatement: after.aiStatement })
+    const mf = fieldDiff(m1, { ...(approvalChanged ? { approval: p.decision ? approval : undefined } : {}), aiStatement: after.aiStatement })
     if (mf.length) updates.push({ op: 'update-milestone', week: 1, fields: mf })
   }
   const mission = byId.get('MGO-001')
@@ -184,7 +193,8 @@ export function diffTeamRecord(doc: ProjectDoc, afterIn: TeamRecord, stamp: Stam
     if (e) link('contains', e, uid)
   })
   rows('EXT', after.context, (x) => ({ title: x.name, attributes: { kind: x.kind, crosses: x.crosses, direction: x.direction } }))
-  rows('STK', after.stakeholders, (x) => ({ title: x.name, attributes: { role: x.role, stage: x.stage, side: x.side, approving: x.approving === 'yes' ? true : x.approving === 'no' ? false : null, influence: /^[1-5]$/.test(x.influence.trim()) ? Number(x.influence.trim()) : null, influenceText: x.influence, influenceReason: x.reason } }))
+  // A25 fields (M6): stored as null when empty, so a project written before M6 gets no spurious edit (null = absent)
+  rows('STK', after.stakeholders, (x) => ({ title: x.name, attributes: { role: x.role, stage: x.stage, side: x.side, approving: x.approving === 'yes' ? true : x.approving === 'no' ? false : null, influence: /^[1-5]$/.test(x.influence.trim()) ? Number(x.influence.trim()) : null, influenceText: x.influence, influenceReason: x.reason, interest: x.interest || null, interestReason: x.interestReason || null, support: x.support || null } }))
   const concernRows = after.stakeholders.flatMap((st) => st.concerns.map((c) => ({ ...c, owner: st.id })))
   rows('CON', concernRows, (c) => ({ description: c.text, attributes: {} }), (uid, c) => {
     const o = uidOf(c.owner)
@@ -206,7 +216,9 @@ export function diffTeamRecord(doc: ProjectDoc, afterIn: TeamRecord, stamp: Stam
     const done = !!(from && to && x.type && from !== to && !complete.has(key))
     if (done) complete.add(key)
     const existing = relsNow.find((r) => r.id === x.id)
-    const want = { type: x.type, from, to, note: x.note, draft: !done, 'attributes.fromText': x.from, 'attributes.toText': x.to }
+    // a complete row stores no draft flag (makeRelationship omits it), so re-saving an unchanged record issues no edit
+    // (M6: found by the pre-M6 baseline test; a stored `false` is kept as it is)
+    const want = { type: x.type, from, to, note: x.note, draft: done ? (existing?.draft === false ? false : undefined) : true, 'attributes.fromText': x.from, 'attributes.toText': x.to }
     if (existing) {
       const f = fieldDiff(existing, want)
       if (f.length) relCreates.push({ op: 'update-relationship', uid: existing.uid, fields: f })
@@ -231,7 +243,7 @@ export function diffTeamRecord(doc: ProjectDoc, afterIn: TeamRecord, stamp: Stam
     }
     const typed = goal && !/^MGO-\d{3,4}$/.test(goal) ? [goal] : []
     const existing = Object.values(doc.relationships).filter((r) => r.from === needUid && r.type === 'derives-from' && r.status !== 'retired')
-    for (const r of existing) if (!wanted.has(r.to)) retires.unshift({ op: 'retire-relationship', uid: r.uid, reason: `Removed from ${n.id}’s sources, concerns or goal in the Week 1 lab tool` })
+    for (const r of existing) if (!wanted.has(r.to)) retires.unshift({ op: 'retire-relationship', uid: r.uid, reason: `Removed from ${n.id}’s sources, concerns or objective in My Project` })
     for (const uid of wanted) {
       const target = Object.values(doc.artifacts).find((a) => a.uid === uid)
       if (existing.some((r) => r.to === uid) || (target && target.status !== 'active')) continue

@@ -2,6 +2,7 @@
 // how the week runs, readings, deliverables, entry cards) and the workload computed from the new path. Everything
 // written here is new and flagged for review (PENDING). AeroLink is the instructor's worked example; each team's lab
 // and Team Record are about its own enterprise (DECISION_LOG A16).
+import { PRACTICE_MINUTES_TOTAL } from '../week1/practice/minutes'
 import { WEEKS } from './course'
 import { lecturesOfWeek, weekLesson } from './lectures'
 import { blockText, lectureMinutes, allSlides, wordCount } from './lectures/text'
@@ -137,7 +138,8 @@ export const WORKLOAD = (() => {
     readingHours: round1(REQUIRED_PAGES / READING_RATE_PAGES_PER_HOUR),
     teamHours: missionMinutes('w1-m5-team') / 60,
     quizHours: round1(missionMinutes('w1-m6-recall') / 60),
-    practiceHours: round1(['w1-m1-who', 'w1-m2-boundary', 'w1-m3-stakeholders', 'w1-m4-needs'].reduce((a, id) => a + missionMinutes(id), 0) / 60),
+    // week1-m5 (review M5-15): Guided Practice's six tasks (optional, not counted in the total, A26)
+    practiceHours: round1(PRACTICE_MINUTES_TOTAL / 60),
     total: workloadTotal(week01.workload),
     budget: WORKLOAD_TARGET[1],
   }
@@ -179,5 +181,5 @@ export const WORKLOAD_ROWS = {
 }
 
 export const WORKLOAD_SUMMARY = n(
-  `Hours per student, from the lecture-first path: the two class sessions, the detailed lesson (${WORKLOAD.lessonWords.toLocaleString('en-US')} words at about ${LESSON_WPM} words a minute), the ${WORKLOAD.readingPages} required pages, your share of the Team Record, the quiz, the graduate review and the time log. Total ${WORKLOAD.total.toFixed(1)} h against the ${WORKLOAD.budget} h budget${WORKLOAD.total <= WORKLOAD.budget ? `, ${(WORKLOAD.budget - WORKLOAD.total).toFixed(1)} h under` : `, ${(WORKLOAD.total - WORKLOAD.budget).toFixed(1)} h over`}. The AeroLink practice missions (about ${WORKLOAD.practiceHours.toFixed(1)} h) are optional and not counted. Log your actual hours so the estimate can be tested.`,
+  `Hours per student, from the lecture-first path: the two class sessions, the detailed lesson (${WORKLOAD.lessonWords.toLocaleString('en-US')} words at about ${LESSON_WPM} words a minute), the ${WORKLOAD.readingPages} required pages, your share of the Team Record, the quiz, the graduate review and the time log. Total ${WORKLOAD.total.toFixed(1)} h against the ${WORKLOAD.budget} h budget${WORKLOAD.total <= WORKLOAD.budget ? `, ${(WORKLOAD.budget - WORKLOAD.total).toFixed(1)} h under` : `, ${(WORKLOAD.total - WORKLOAD.budget).toFixed(1)} h over`}. Guided Practice on AeroLink (about ${WORKLOAD.practiceHours.toFixed(1)} h) is optional and not counted. Log your actual hours so the estimate can be tested.`,
 )

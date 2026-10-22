@@ -6,6 +6,7 @@
 // and dark themes are both designed once; meaning is never carried by color alone (dash patterns, outlines, labels).
 // Review status: new-pending-review (revised after the independent review: F02, F04, F12, F19, F25–F28).
 import { useId, type ReactNode } from 'react'
+import { useFigureWording } from './figureWording'
 import { Markers } from './Frame'
 import { CONFLICT, DELIBERATE_GAP, NEEDS, PRIORITY_LABEL, STAKEHOLDERS, SUPPORT_LABEL, TRACE_CORRECTED, coverageMatrix, need, stakeholder, uncoveredStakeholders, type CaseStakeholder } from '../../content/lectures/week01/aerolinkCase'
 import { LAB_MINIMUMS as MIN } from '../../content/lectures/week01/labBrief'
@@ -658,6 +659,7 @@ export function WeakRegisterFigure({ alt }: { alt: string }) {
 
 // ------------------------------------------------------------------------------------------------ S2.15 the corrected reference needs (full width)
 export function NeedsCatalogFigure({ alt }: { alt: string }) {
+  const w = useFigureWording()
   const cols = [
     { h: 'ID', x: 12 },
     { h: 'Need (short name)', x: 138 },
@@ -675,7 +677,7 @@ export function NeedsCatalogFigure({ alt }: { alt: string }) {
         <>
           {cols.map((c) => (
             <text key={c.h} x={c.x} y={28} fontSize={18} fontWeight={700} className="f-label">
-              {c.h}
+              {w(c.h)}
             </text>
           ))}
           <line x1={4} y1={Y0 - 3} x2={1416} y2={Y0 - 3} className="f-axis" />
@@ -710,7 +712,7 @@ export function NeedsCatalogFigure({ alt }: { alt: string }) {
                   {cons.replace(/CON-0*/g, 'C')}
                 </text>
                 <text x={1160} y={cy} dominantBaseline="central" fontSize={18} className="f-label">
-                  {n.mgo.replace('MGO-00', 'G')}
+                  {w(n.mgo.replace('MGO-00', 'G'))}
                 </text>
                 <text x={1270} y={cy} dominantBaseline="central" fontSize={18} fontWeight={n.priority === 'mandatory' ? 700 : 500} className="f-label">
                   {PRIORITY_LABEL[n.priority]}
@@ -719,7 +721,7 @@ export function NeedsCatalogFigure({ alt }: { alt: string }) {
             )
           })}
           <text x={12} y={Y0 + NEEDS.length * RH + 26} fontSize={17} className="f-muted">
-            Shaded: + added need, * subject or source corrected. STK-0nn; C2 = CON-002; G3 = MGO-003. Priorities proposed. FICTIONAL.
+            {w('Shaded: + added need, * subject or source corrected. STK-0nn; C2 = CON-002; G3 = MGO-003. Priorities proposed. FICTIONAL.')}
           </text>
         </>
       )}
@@ -950,6 +952,7 @@ export function SevenDaysFigure({ alt }: { alt: string }) {
 
 // ------------------------------------------------------------------------------------------------ S2.9 anatomy of a need, and the level problem
 export function NeedAnatomyLevelFigure({ alt }: { alt: string }) {
+  const w = useFigureWording()
   const n3 = need('NEED-003')
   const parts: [string, string[], number][] = [
     ['who needs it', ['Communities near vertiports'], 52],
@@ -976,7 +979,7 @@ export function NeedAnatomyLevelFigure({ alt }: { alt: string }) {
               </g>
             )
           })}
-          {[['ID', n3.id], ['Source', 'STK-004, CON-012'], ['Goal', n3.mgo], ['Rationale', 'permit at risk']].map(([k, v], i) => (
+          {[['ID', n3.id], ['Source', 'STK-004, CON-012'], [w('Goal'), n3.mgo], ['Rationale', 'permit at risk']].map(([k, v], i) => (
             <g key={k}>
               <Shape x={212 + i * 162} y={y + 2} w={152} h={58} tone="env" />
               <Lines x={212 + i * 162 + 76} y={y + 31} lines={[k, v]} size={15.5} />
@@ -1000,6 +1003,7 @@ export function NeedAnatomyLevelFigure({ alt }: { alt: string }) {
 
 // ------------------------------------------------------------------------------------------------ S2.14 from draft to need (worked example I)
 export function DraftToNeedFigure({ alt }: { alt: string }) {
+  const w = useFigureWording()
   const n10 = need('NEED-010')
   return (
     <Svg w={860} h={600} alt={alt}>
@@ -1035,10 +1039,10 @@ export function DraftToNeedFigure({ alt }: { alt: string }) {
           </text>
           <Lines x={24} y={326} lines={['keep the power drawn at each vertiport within the agreed', 'connection capacity.']} size={19} anchor="start" lh={1.3} />
           <Lines x={24} y={396} lines={[`Condition: ${n10.condition.replace(/\.$/, '')}`]} size={17} anchor="start" ink="muted" />
-          {[['Source', 'STK-010 via CON-011'], ['Goal', n10.mgo], ['Rationale', 'trips protection or penalty'], ['Priority', `${PRIORITY_LABEL[n10.priority]} (proposed)`]].map(([k, v], i) => (
+          {[['Source', 'STK-010 via CON-011'], [w('Goal'), n10.mgo], ['Rationale', 'trips protection or penalty'], ['Priority', w(`${PRIORITY_LABEL[n10.priority]} (proposed)`)]].map(([k, v], i) => (
             <g key={k}>
               <Shape x={6 + i * 214} y={444} w={206} h={70} tone="env" />
-              <Lines x={6 + i * 214 + 103} y={479} lines={[k, v]} size={15.5} />
+              <Lines x={6 + i * 214 + 103} y={479} lines={[k, ...v.split(String.fromCharCode(10))]} size={15.5} />
             </g>
           ))}
           <text x={8} y={556} fontSize={16} className="f-muted">
@@ -1052,12 +1056,13 @@ export function DraftToNeedFigure({ alt }: { alt: string }) {
 
 // ------------------------------------------------------------------------------------------------ S2.18 the Team Record parts
 export function RecordPartsFigure({ alt }: { alt: string }) {
+  const w = useFigureWording()
   const parts: [string, string[], boolean][] = [
     ['1 Charter', ['roles, tie-break,', 'norms, ID owners'], false],
-    ['2 Proposal', ['problem, mission, goals;', `SoI, PRT ≥ ${MIN.inside} (its parts)`], false],
+    ['2 Proposal', [w('problem, mission, goals;'), `SoI, PRT ≥ ${MIN.inside} (its parts)`], false],
     ['3 Context', [`EXT ≥ ${MIN.context}, each`, 'exchange, direction'], false],
     ['4 Register', [`STK ≥ ${MIN.stakeholders} with CON;`, `REL ≥ ${MIN.relationships}, ${MIN.conflicts} conflict`], false],
-    ['5 Needs', [`NEED ≥ ${MIN.needs} from ≥ ${MIN.needSources} STK,`, 'each → mission or goal;', '≥ 1 authority; audit'], false],
+    ['5 Needs', [`NEED ≥ ${MIN.needs} from ≥ ${MIN.needSources} STK,`, w('each → mission or goal;'), '≥ 1 authority; audit'], false],
     ['6 AI statement', ['every AI-suggested', 'item tagged'], true],
   ]
   return (
@@ -1128,6 +1133,7 @@ export function CharterOwnersFigure({ alt }: { alt: string }) {
 
 // ------------------------------------------------------------------------------------------------ why each method, and what it feeds (A21 item 4)
 export function MethodsWhyFigure({ alt }: { alt: string }) {
+  const w = useFigureWording()
   const RH = 64
   const Y0 = 58
   const cols = [
@@ -1149,13 +1155,13 @@ export function MethodsWhyFigure({ alt }: { alt: string }) {
             return (
               <g key={m.id}>
                 <Shape x={cols[0].x} y={y + 4} w={cols[0].w} h={RH - 8} tone={i < 5 ? 'box' : 'soft'} />
-                <Lines x={cols[0].x + 16} y={y + RH / 2} lines={[m.method]} size={22} weight={700} anchor="start" />
+                <Lines x={cols[0].x + 16} y={y + RH / 2} lines={[w(m.method)]} size={22} weight={700} anchor="start" />
                 <Lines x={cols[1].x + 12} y={y + RH / 2} lines={[m.whyShort]} size={22} anchor="start" />
                 <Lines x={cols[2].x + 12} y={y + RH / 2} lines={[m.feedsShort]} size={22} anchor="start" ink="accent" weight={600} />
               </g>
             )
           })}
-          <Lines x={12} y={Y0 + WEEK1_METHODS.length * RH + 22} lines={['Shaded: taught in Session 2. Each “why” is sourced in the notes; the “feeds” column is course design.']} size={18} anchor="start" ink="muted" />
+          <Lines x={12} y={Y0 + WEEK1_METHODS.length * RH + 22} lines={[w('Shaded: taught in Session 2. Each “why” is sourced in the notes; the “feeds” column is course design.')]} size={18} anchor="start" ink="muted" />
         </>
       )}
     </Svg>

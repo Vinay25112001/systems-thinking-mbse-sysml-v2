@@ -21,6 +21,7 @@ import {
   type Lab2Minimums, type ReqAdvisoryId, type ReqGateId, type ReqTypeId, type ScenarioKindId, type VerMethodId,
 } from '../../content/lectures/week02/labBrief'
 import { importModelInputs, isAeroLink, MISSION_ID, proposalNamesAeroLink, type TeamRecord } from '../week1/team'
+import { EMPTY_ANSWER } from '../emptyAnswer'
 
 export const W2_KEY = 'w2.record'
 export const MODEL_INPUTS_FORMAT = 'week2-model-inputs'
@@ -37,7 +38,7 @@ export const MIN_RATIONALE_WORDS = 6
 export const MIN_SENTENCE_WORDS = 3
 /** An answer that says nothing ("none", "n/a", "later"): not an end state, a reason or a disposition. Used where "none" is
  *  never a valid answer (not for preconditions, where "None" is a valid answer). */
-export const EMPTY_ANSWER = /^(?:ok(?:ay)?|fine|yes|no|n\/?a|none|nil|nothing|-+|\?+|tbd|todo|later|see above)\.?$/i
+export { EMPTY_ANSWER } // shared with Weeks 1, 2, 3 and 5 (src/workbench/emptyAnswer.ts)
 const said = (s: string) => words(s) >= 1 && !EMPTY_ANSWER.test(s.trim())
 /** quality.ts flags a rationale whose content words are mostly the statement's (R13 p.559: why, not what). */
 export const RESTATEMENT_LIMIT = 0.7
@@ -423,7 +424,8 @@ const MAX_TERMS = new Set(['maximize', 'maximise', 'minimize', 'minimise', 'opti
 const ACTION_VERBS =
   'accept|alert|allow|assign|book|calculate|cancel|charge|check|clean|collect|compute|confirm|cool|deliver|detect|discard|dispatch|display|divert|enter|generate|hold|inform|inspect|issue|keep|label|limit|load|log|maintain|measure|monitor|notify|offer|operate|plan|prevent|print|protect|provide|receive|record|refrigerate|reject|remove|repair|replace|report|reroute|respond|retain|return|route|scan|schedule|send|separate|show|sign|sort|store|track|transmit|unload|update|verify|warn|weigh'
 const COMPOUND = new RegExp(`\\b(?:and|or|and\\/or)\\s+(?:then\\s+|also\\s+)?(?:${ACTION_VERBS})(?:s|es|ed)?\\b`, 'i')
-const TRIVIAL_CRITERION = /^(?:it\s+)?(?:works|passes|pass(?:es)? (?:the )?test|is met|meets? (?:the )?requirement|requirement (?:is )?(?:met|satisfied)|verified(?: by \w+)?|as specified|as required|ok|yes|done|tbd|n\/?a|see above|satisfactory)\.?$/i
+/** A criterion that names no pass condition ("works", "TBD"). Exported for Week 5's interface-requirement criterion. */
+export const TRIVIAL_CRITERION = /^(?:it\s+)?(?:works|passes|pass(?:es)? (?:the )?test|is met|meets? (?:the )?requirement|requirement (?:is )?(?:met|satisfied)|verified(?: by \w+)?|as specified|as required|ok|yes|done|tbd|n\/?a|see above|satisfactory)\.?$/i
 
 const escapeRe = (x: string) => x.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')
 const UNMEASURABLE_RE = new RegExp(`(?<![\\w-])(${[...UNMEASURABLE_TERMS].sort((a, b) => b.length - a.length).map(escapeRe).join('|')})(?![\\w-])`, 'gi')
@@ -494,7 +496,8 @@ export function assessRequirement(q: Requirement, r: Week2Record): RequirementAs
   const critProblem =
     // gate sweep 2026-10-19: no word count ("2 min", "Every booking" are criteria); an empty, trivial or vague one fails
     !crit ? 'Write the pass condition a verifier will check (for example “Total fare displayed before the confirmation in every demonstrated booking”).'
-    : TRIVIAL_CRITERION.test(crit) ? `“${crit}” does not say how a verifier decides pass or fail: state what is observed or measured, and the threshold.`
+    // confirmation review N3: an empty answer ("none", "-") is no pass condition either, though "none" anchors a phrase
+    : TRIVIAL_CRITERION.test(crit) || EMPTY_ANSWER.test(crit) ? `“${crit}” does not say how a verifier decides pass or fail: state what is observed or measured, and the threshold.`
     : critVague.length && !critAnchored ? `The criterion is itself vague (${critVague.map((v) => `“${v}”`).join(', ')}): a verifier could not say pass or fail. Give a value, a population (“every …”) or a TBD/TBR.`
     : ''
   gate('criterion', !critProblem, critProblem || 'Criterion recorded.')

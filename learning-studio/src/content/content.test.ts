@@ -80,8 +80,20 @@ describe('course content integrity', () => {
     }
   })
 
-  it('the readings export matches the project register (140 entries, R39m–R39p added for Week 2, R39q–R39s and R61a–c for Week 3, R39t–R39x, R48c and R66 for Week 4, R67–R69 for Week 8, R100–R104 for Week 5; only R30 is a declared exception)', () => {
-    expect(READINGS).toHaveLength(140)
+  it('the readings export matches the project register (154 entries, R39m–R39p added for Week 2, R39q–R39s and R61a–c for Week 3, R39t–R39x, R48c and R66 for Week 4, R67–R69 for Week 8, R100–R104 for Week 5, R105–R109 for Week 6, R39y–R39z and R110–R113 for the Week 1 textbook, R114–R115 for Week 9, R116 for Week 10; only R30 is a declared exception)', () => {
+    // 145 = 140 + R105–R109 (Week 6, 2026-10-21): each verified by verify_readings.py; their approval as register
+    // additions is pending faculty confirmation (see the comment above them in _source_cache/verification/readings.py).
+    // week1-m4b: 150 = 145 + R39y, R39z, R110, R111, R112 (SEBoK glossary entries Emergence, Mission, Purpose,
+    // Operational Environment, Traceability; Week 1 Learn gap prose, 2026-10-21), verified by verify_readings.py as entry
+    // heading lines; approval pending faculty confirmation (learning-studio/docs/week1/M4B_REPORT.md).
+    // week1-m4b review F1: 151 = 150 + R113 (SEBoK glossary 'Systems Thinking', p.1660), verified as an entry heading
+    // line; approval pending faculty confirmation.
+    // week09: 153 = 151 + R114 (SysML v2 Part 1, 9.3.2 Modeling Metadata, pp.555-557) and R115 (9.6 Requirement
+    // Derivation Domain Library, pp.580-583), verified by verify_readings.py as heading lines on their first pages;
+    // approval pending faculty confirmation (docs/lectures/week09/WEEK9_MILESTONE_REPORT.md).
+    // week10: 154 = 153 + R116 (SysML v2 Part 1, 7.25 Use Cases, pp.177-181), verified by verify_readings.py as a heading
+    // line on its first page; approval pending faculty confirmation (docs/lectures/week10/WEEK10_MILESTONE_REPORT.md).
+    expect(READINGS).toHaveLength(154)
     expect(READINGS.filter((r) => !r.verified).map((r) => r.id)).toEqual(['R30'])
   })
 

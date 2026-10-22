@@ -308,6 +308,15 @@ export const HIDDEN_EXTERNAL = INTERFACES.filter((x) => x.medium.includes('PHY-0
 export const RADIO_INTERFACES = INTERFACES.filter((x) => RADIO_MEDIUM.test(x.medium)).map((x) => x.id)
 /** Interfaces over the communications network whose hidden external part depends only on the leasing decision. */
 export const LEASE_DEPENDENT = HIDDEN_EXTERNAL.filter((id) => !RADIO_INTERFACES.includes(id))
+/** The trust-boundary cell every AeroLink interface table shows (lesson, slides, Examples; confirmation review N7): the
+ *  computed reasons, "possibly: only if a network segment is leased" for a lease-dependent interface that crosses for no
+ *  other reason, or `none`. */
+export const POSSIBLE_CROSSING = 'possibly: only if a network segment is leased'
+export function crossingText(x: InterfaceDef, none = 'none'): string {
+  const r = boundaryReasons(x)
+  if (r.length) return r.length < 2 ? r.join('') : `${r.slice(0, -1).join(', ')} and ${r.at(-1)}`
+  return LEASE_DEPENDENT.includes(x.id) ? POSSIBLE_CROSSING : none
+}
 
 // ================================================================================================ the N² chart
 /** The interface N² (symmetric): cell (a, b) lists the interfaces whose two ends are a and b, written once above the

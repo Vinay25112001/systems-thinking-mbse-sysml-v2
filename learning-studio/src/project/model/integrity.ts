@@ -1,7 +1,7 @@
 // Integrity rules (data model §7). checkOp refuses an invalid operation before anything changes (I1–I7, I9, I13);
 // validateProject reports problems of a whole document on load and on import (never throws, never repairs).
 import { ID_RE, numOf, prefixOf } from './ids'
-import { allowedPair, isRelationshipType, pairMessage, relPrefix, VOCABULARY } from './vocabulary'
+import { allowedPair, isRelationshipType, isSymmetric, pairMessage, relPrefix, ruleOf, VOCABULARY } from './vocabulary'
 import { isArtifactType, type Artifact, type Operation, type ProjectDoc, type Relationship } from './types'
 
 /** Paths an update-artifact may change; identity (uid, id, type), status and review have their own operations. */
@@ -25,14 +25,15 @@ function relProblem(doc: ProjectDoc, r: Relationship, issuedAtStart: Record<stri
     return null
   }
   if (!isRelationshipType(r.type)) return `${r.id}: “${r.type || '(none)'}” is not a relationship type of the course vocabulary.`
-  if (VOCABULARY[r.type].category !== r.category) return `${r.id}: ${r.type} belongs to the ${VOCABULARY[r.type].category} category, not ${r.category}.`
+  if (!ruleOf(r.type, r.category)) return `${r.id}: ${r.type} belongs to the ${VOCABULARY[r.type].category} category, not ${r.category}.`
   const a = doc.artifacts[r.from]
   const b = doc.artifacts[r.to]
   if (!a || !b) return `${r.id}: both ends must be artifacts of this project (I4).`
   if (r.from === r.to) return `${r.id}: an artifact cannot be related to itself (I6).`
-  if (!allowedPair(a.type, r.type, b.type)) return pairMessage(a.type, r.type, b.type) + ' (I5)'
+  if (!allowedPair(a.type, r.type, b.type, r.category)) return pairMessage(a.type, r.type, b.type) + ' (I5)'
   if (r.status !== 'retired') {
-    const dup = Object.values(doc.relationships).find((x) => x.uid !== r.uid && !x.draft && x.status !== 'retired' && x.from === r.from && x.to === r.to && x.type === r.type && (x.role ?? '') === (r.role ?? ''))
+    const sym = isSymmetric(r.type, r.category)
+    const dup = Object.values(doc.relationships).find((x) => x.uid !== r.uid && !x.draft && x.status !== 'retired' && x.type === r.type && x.category === r.category && (x.role ?? '') === (r.role ?? '') && ((x.from === r.from && x.to === r.to) || (sym && x.from === r.to && x.to === r.from)))
     if (dup) return `${a.id} ${r.type} ${b.id} already exists as ${dup.id} (I7).`
   }
   return null

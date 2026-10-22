@@ -27,3 +27,8 @@ playwright-report
 
 # generated lecture decks (npm run lectures:pptx)
 public/lectures/*.pptx
+
+# course server (M2): local data never in the repository (SLS_DATA_DIR defaults outside it; second guard)
+.data/
+dist-server
+server/.env

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { getLecture } from '../content/lectures'
+import { getReading } from '../content/readings'
 import { allSlides } from '../content/lectures/text'
 import type { QuizQuestion } from '../content/quizWeek1'
 import type { QuizTaught } from '../content/schema'
 import { useApp } from '../state/AppState'
+import { readableSlideRefs } from './quizText'
 import { Badge, Button, CitationText, ReviewControls } from './ui'
 
 /** "Session 2, slide 9 “What makes a need well formed”; lesson: “Well-formed needs …”" for an item's `lecture`. */
@@ -17,7 +19,12 @@ function taughtIn(t: QuizTaught): string | undefined {
   return `Session ${t.session}, slide ${i + 1} “${slides[i].title}”; lesson: “${sec.title}”`
 }
 
-function Question({ q, index, bloomText }: { q: QuizQuestion; index: number; bloomText: (b: string) => string }) {
+/** `studentSafe` (M6, Review & Submit): the source in words without its register code, no lecture slide pointer. */
+const plainSource = (c: NonNullable<QuizQuestion['cite']>) => {
+  const r = getReading(c.reading)
+  return `${r.sourceTitle}, “${r.title}”, ${r.unit === 'slide' ? 'sl.' : 'p.'}${c.pages ?? r.firstPage}`
+}
+function Question({ q, index, bloomText, studentSafe = false }: { q: QuizQuestion; index: number; bloomText: (b: string) => string; studentSafe?: boolean }) {
   const { quiz, answerQuiz } = useApp()
   const record = quiz[q.id]
   const [choice, setChoice] = useState<string>('')
@@ -46,7 +53,7 @@ function Question({ q, index, bloomText }: { q: QuizQuestion; index: number; blo
               <span>
                 {o.text}
                 {revealed && (o.id === selected || o.correct) && (
-                  <span className="mt-1 block text-xs text-slate-700 dark:text-slate-300">{o.explanation}</span>
+                  <span className="mt-1 block text-xs text-slate-700 dark:text-slate-300">{readableSlideRefs(o.explanation)}</span>
                 )}
               </span>
             </label>
@@ -84,9 +91,9 @@ function Question({ q, index, bloomText }: { q: QuizQuestion; index: number; blo
         {record && <span className="text-xs text-slate-500 dark:text-slate-400">Attempts: {record.attempts}</span>}
       </div>
       <p className="mt-2">
-        {q.cite ? <CitationText c={q.cite} /> : <span className="text-xs text-slate-600 dark:text-slate-300">Source: course convention ({q.courseSource})</span>}
+        {studentSafe ? <span className="text-xs text-slate-600 dark:text-slate-300">Source: {q.cite ? plainSource(q.cite) : 'course convention'}</span> : q.cite ? <CitationText c={q.cite} /> : <span className="text-xs text-slate-600 dark:text-slate-300">Source: course convention ({q.courseSource})</span>}
       </p>
-      {q.lecture && taughtIn(q.lecture) && (
+      {!studentSafe && q.lecture && taughtIn(q.lecture) && (
         <p className="mt-1 text-xs text-slate-600 dark:text-slate-300" data-testid={`quiz-${q.id}-taught`}>
           Taught in: {taughtIn(q.lecture)}
         </p>
@@ -97,7 +104,7 @@ function Question({ q, index, bloomText }: { q: QuizQuestion; index: number; blo
 }
 
 /** `bloomText` maps the stored Bloom label for display (Week 1 passes its American label, review F09). */
-export function Quiz({ questions, bloomText = (b) => b }: { questions: QuizQuestion[]; bloomText?: (b: string) => string }) {
+export function Quiz({ questions, bloomText = (b) => b, studentSafe = false }: { questions: QuizQuestion[]; bloomText?: (b: string) => string; studentSafe?: boolean }) {
   const { quiz, resetQuiz } = useApp()
   // remount questions only on an explicit reset (remounting on answer would drop keyboard focus)
   const [version, setVersion] = useState(0)
@@ -120,7 +127,7 @@ export function Quiz({ questions, bloomText = (b) => b }: { questions: QuizQuest
         </Button>
       </div>
       {questions.map((q, i) => (
-        <Question key={`${q.id}-${version}`} q={q} index={i} bloomText={bloomText} />
+        <Question key={`${q.id}-${version}`} q={q} index={i} bloomText={bloomText} studentSafe={studentSafe} />
       ))}
     </div>
   )

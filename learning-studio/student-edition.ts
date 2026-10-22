@@ -4,12 +4,14 @@
 //      object and its instructor-facing `purpose` string are replaced by empty values before the module is compiled,
 //      so the note text never enters the module graph or the bundle (the TypeScript AST is used, not a regex, so the
 //      edit is exact whatever the strings contain);
-//   2. writeBundle: every PowerPoint deck copied from public/lectures/ into the output has its speaker notes blanked
+//   2. writeBundle: the Week 1 decks copied from public/lectures/ are removed from the output (Week 1 lectures are
+//      instructor-only, A23; spec NAV-13; review M4A F5 and FD-g), and every other deck (Weeks 2–6 and 8, which keep the
+//      lecture-first template until the new navigation reaches them, A24) has its speaker notes blanked
 //      (ppt/notesSlides/*.xml keep their structure; every text run is emptied), so the downloadable deck carries the
-//      slides only.
-// scripts/check-student-build.mjs then proves both: no notes text in dist-student/ (JavaScript or decks), and the same
-// text present in the instructor build dist/.
-import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
+//      slides only. src/lectures/decks.ts decides which download links render.
+// scripts/check-student-build.mjs then proves it: no Week 1 deck or faculty handout file in dist-student/, empty notes in
+// every shipped deck, every rendered .pptx link resolving to a shipped file, and the notes text present in dist/.
+import { readdirSync, readFileSync, rmSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import JSZip from 'jszip'
 import ts from 'typescript'
@@ -79,6 +81,11 @@ export function studentEdition(): Plugin {
       const dir = join(outDir, 'lectures')
       if (!existsSync(dir)) return
       for (const f of readdirSync(dir).filter((x) => x.endsWith('.pptx'))) {
+        if (/^week01-/.test(f)) {
+          rmSync(join(dir, f))
+          this.info?.(`student edition: removed the instructor-only Week 1 deck lectures/${f}`)
+          continue
+        }
         const { buf, slides } = await stripDeckNotes(readFileSync(join(dir, f)))
         writeFileSync(join(dir, f), buf)
         this.info?.(`student edition: blanked the speaker notes of ${slides} slides in lectures/${f}`)

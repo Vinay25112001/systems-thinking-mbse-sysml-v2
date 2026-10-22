@@ -11,7 +11,22 @@ import { Week2Nav } from '../week2/WeekNav'
 import { Week3Nav } from '../week3/WeekNav'
 import { Week4Nav } from '../week4/WeekNav'
 import { Week5Nav } from '../week5/WeekNav'
+// --- week06 ---
+import { Week6Nav } from '../week6/WeekNav'
+// --- end week06 ---
+// --- week07 ---
+import { Week7Nav } from '../week7/WeekNav'
+// --- end week07 ---
 import { Week8Nav } from '../week8/WeekNav'
+// --- week09 ---
+import { Week9Nav } from '../week9/WeekNav'
+// --- end week09 ---
+// --- week10 ---
+import { Week10Nav } from '../week10/WeekNav'
+// --- end week10 ---
+// --- week11 ---
+import { Week11Nav } from '../week11/WeekNav'
+// --- end week11 ---
 
 export function ThemeSelect() {
   const { theme, setTheme } = useApp()
@@ -34,7 +49,12 @@ export function LectureWeekNav({ week, path }: { week: number; path: string }) {
   if (week === 3) return <Week3Nav path={path} />
   if (week === 4) return <Week4Nav path={path} />
   if (week === 5) return <Week5Nav path={path} />
+  if (week === 6) return <Week6Nav path={path} />
+  if (week === 7) return <Week7Nav path={path} /> // week07
   if (week === 8) return <Week8Nav path={path} />
+  if (week === 9) return <Week9Nav path={path} /> // week09
+  if (week === 10) return <Week10Nav path={path} /> // week10
+  if (week === 11) return <Week11Nav path={path} /> // week11
   return null
 }
 

@@ -16,7 +16,7 @@
 // AeroLink Urban Mobility is FICTIONAL; every number below is computed in ./aerolinkCase.ts.
 import type { Lecture, LessonSection } from '../types'
 import {
-  CHANGE_REQUEST, COUNTS, LATENCY_BUDGET, COUPLING, EXTERNAL_DISPOSITIONS, FEEDS_FORWARD_W5, FINDINGS, GROUPINGS, HIDDEN_EXTERNAL, ICWG, INTERFACES, RADIO_INTERFACES, boundaryReasons, groupingCounts, iface, uncoveredPairs,
+  CHANGE_REQUEST, COUNTS, LATENCY_BUDGET, COUPLING, EXTERNAL_DISPOSITIONS, FEEDS_FORWARD_W5, FINDINGS, GROUPINGS, HIDDEN_EXTERNAL, ICWG, INTERFACES, RADIO_INTERFACES, boundaryReasons, crossingText, groupingCounts, iface, uncoveredPairs,
 } from './aerolinkCase'
 import { LAB5_MINIMUMS as MIN, LAB5_MINIMUMS_THREE as MIN3 } from './labBrief'
 
@@ -41,11 +41,7 @@ const verb = (xs: string[], one: string, many: string) => (xs.length === 1 ? one
 const budget = LATENCY_BUDGET.legs.map((l) => l.seconds).join(' + ')
 const finding = (id: string) => FINDINGS.find((f) => f.id === id)!
 
-const crossText = (id: string) => {
-  const r = boundaryReasons(iface(id))
-  if (r.length) return list(r)
-  return HIDDEN_EXTERNAL.includes(id) ? 'possibly: only if a network segment is leased' : 'none'
-}
+const crossText = (id: string) => crossingText(iface(id))
 
 const LESSON: LessonSection[] = [
   {

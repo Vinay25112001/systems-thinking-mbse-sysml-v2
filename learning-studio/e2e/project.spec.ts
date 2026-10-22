@@ -45,8 +45,11 @@ test('demo workflow: lecture → AeroLink practice → My Project → own enterp
   const errors = trackErrors(page)
   await page.setViewportSize({ width: 1440, height: 900 })
 
-  // (1) review the Week 1 lecture, keyboard through the slides
-  await fresh(page, '/week/1/lecture/1')
+  // (1) review the Week 1 lecture, keyboard through the slides. Since M4a the lecture viewer is instructor-only
+  // (week1LectureGate): switch the interim instructor view on first, and off again after this step
+  await fresh(page, '/week/1')
+  await page.getByTestId('instructor-switch').locator('input').check()
+  await page.goto('/#/week/1/lecture/1')
   const counter = page.getByTestId('slide-counter')
   await expect(counter).toHaveText(/^Slide 1 of \d+$/)
   await page.keyboard.press('ArrowRight')
@@ -54,25 +57,28 @@ test('demo workflow: lecture → AeroLink practice → My Project → own enterp
   await expect(page.getByTestId('nav-my-project')).toBeVisible()
   await page.mouse.move(0, 0)
   await shot(page, 'lecture')
+  await page.goto('/#/week/1')
+  await page.getByTestId('instructor-switch').locator('input').uncheck()
 
-  // (2) practise stakeholder analysis on AeroLink: the practice is labeled as the instructor example
+  // (2) practise stakeholder analysis on AeroLink: since M5 the practice is Guided Practice (its own page and store),
+  // labeled as the instructor example; the earlier /week/1/examples/practice redirects there
   await page.goto('/#/week/1/examples/practice')
-  await expect(page.getByTestId('workbench')).toBeVisible({ timeout: 30_000 })
-  await expect(page.getByTestId('example-banner')).toContainText('Practice: AeroLink (instructor example, fictional)')
-  const cand = page.getByTestId('stk-candidates')
-  await expect(cand).toBeVisible()
-  await cand.locator('select').first().selectOption('yes')
-  await cand.locator('select').nth(1).selectOption('yes')
+  await expect(page).toHaveURL(/#\/week\/1\/practice$/)
+  await expect(page.getByTestId('guided-practice')).toBeVisible({ timeout: 30_000 })
+  await expect(page.getByTestId('practice-banner')).toContainText('Instructor example · AeroLink Urban Mobility.')
+  await expect(page.getByTestId('practice-banner')).toContainText('Practice stays here and is never written into your project.')
   await shot(page, 'aerolink-practice')
-  await page.goto('/#/week/1/examples')
+  // the hand-off to the team's own enterprise lives with the Lab brief since M6 (/week/1/examples redirects to Learn)
+  await page.goto('/#/week/1/project/instructions')
   const handoff = page.getByTestId('handoff-panel')
   await handoff.scrollIntoViewIfNeeded()
   await expect(handoff).toContainText('Now apply this engineering method to your own enterprise.')
   await expect(handoff).toContainText('at least 8 stakeholders')
   await handoff.screenshot({ path: `${SHOTS}/${String(++frame).padStart(2, '0')}-handoff-panel.png` })
 
-  // (3) open My Project from the persistent nav link, with the keyboard
-  await page.getByTestId('nav-my-project').first().focus()
+  // (3) open My Project with the keyboard, from the hand-off on the Lab brief page (the Week 1 student chrome has no
+  // separate top-bar link since M4a)
+  await page.getByTestId('handoff-open-project').focus()
   await page.keyboard.press('Enter')
   await expect(page.getByTestId('project-create')).toBeVisible()
   await expect(page.getByTestId('project-create')).toContainText('saved in this browser only')
@@ -142,7 +148,8 @@ test('demo workflow: lecture → AeroLink practice → My Project → own enterp
   await expect(page.getByTestId('export-msg').or(page.getByTestId('transfer-msg'))).toContainText('Exported')
   await shot(page, 'transfer')
 
-  const ctx2 = await browser.newContext({ baseURL: 'http://127.0.0.1:5173', viewport: { width: 1440, height: 900 } })
+  // the suite's own dev server (playwright.config.ts), never a hard-coded port
+  const ctx2 = await browser.newContext({ baseURL: test.info().project.use.baseURL, viewport: { width: 1440, height: 900 } })
   const p2 = await ctx2.newPage()
   const errors2 = trackErrors(p2)
   await p2.goto('/#/project')
@@ -231,24 +238,27 @@ test('the Week 1 lab tool import goes through the plan in project mode, and asks
   await expect(tv(page).getByLabel('Enterprise name')).toHaveValue('Plan Test Enterprise')
 })
 
-test('copy from practice needs the confirmation; copies carry the practice badge and new IDs', async ({ page }) => {
+test('a template copy needs the review, the adapt warning and “I understand”; copies carry the practice badge and new IDs', async ({ page }) => {
   test.setTimeout(120_000)
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/#/')
   await createProject(page, 'Copy Test Enterprise')
-  await page.goto('/#/week/1/examples')
-  const h = page.getByTestId('handoff-panel')
-  await h.getByTestId('copy-from-practice').click()
-  const d = page.getByTestId('copy-dialog')
-  await expect(d).toContainText('They count only after you adapt them')
-  await d.getByRole('checkbox').first().check()
-  await d.getByTestId('copy-next').click()
-  await expect(d.getByTestId('copy-list')).toContainText('Passengers')
+  // week1-m5: the template path is choose → review exactly what is created → adapt warning → "I understand" → confirm
+  await page.goto('/#/week/1/practice/gp-3')
+  await page.getByTestId('step-row').click()
+  await page.getByTestId('template-copy-open').first().click()
+  const d = page.getByTestId('template-dialog')
+  await expect(d).toContainText('Copying AeroLink content without adapting it is not acceptable work.')
+  await d.getByLabel(/STK-001 Passengers/).check()
+  await d.getByTestId('template-review').click()
+  await expect(d.getByTestId('template-plan')).toContainText('Passengers')
+  await expect(d.getByTestId('template-confirm')).toBeDisabled()
+  await d.getByTestId('template-understood').check()
   await shot(page, 'copy-confirm')
-  await d.getByTestId('copy-confirm').click()
-  await expect(page.getByTestId('copy-msg')).toContainText('STK-001')
+  await d.getByTestId('template-confirm').click()
+  await expect(page.getByTestId('template-msg').first()).toContainText('STK-001')
   await page.goto('/#/project/artifacts/STK')
-  await expect(page.getByTestId('row-STK-001')).toContainText('Copied from practice')
+  await expect(page.getByTestId('row-STK-001')).toContainText('Template from AeroLink — adapt before use')
   await page.goto('/#/project/milestones/1')
   await expect(page.getByTestId('milestone-1-detail')).toContainText('0 of 8')
 })
@@ -327,7 +337,7 @@ for (const theme of ['light', 'dark'] as const) {
       await page.getByTestId('create-empty').click()
       await expect(page.getByTestId('project-overview')).toBeVisible()
       await axe('overview')
-      for (const [path, id] of [['/project/milestones', 'project-milestones'], ['/project/milestones/1', 'milestone-1-detail'], ['/project/milestones/9', 'milestone-9-detail'], ['/project/artifacts', 'project-library'], ['/project/artifacts/ENT', 'project-library'], ['/project/artifact/ENT-001', 'artifact-page'], ['/project/history', 'project-history'], ['/project/transfer', 'project-transfer'], ['/project/model', 'project-model-preview'], ['/week/1/examples', 'handoff-panel'], ['/week/1/lab', 'handoff-panel']] as const) {
+      for (const [path, id] of [['/project/milestones', 'project-milestones'], ['/project/milestones/1', 'milestone-1-detail'], ['/project/milestones/9', 'milestone-9-detail'], ['/project/artifacts', 'project-library'], ['/project/artifacts/ENT', 'project-library'], ['/project/artifact/ENT-001', 'artifact-page'], ['/project/history', 'project-history'], ['/project/transfer', 'project-transfer'], ['/project/model', 'project-model-preview'], ['/week/1/project/instructions', 'handoff-panel'] /* m6: the Lab brief page; /week/1/examples redirects to Learn since M4a */] as const) {
         await page.goto(`/#${path}`)
         await expect(page.getByTestId(id)).toBeVisible()
         await axe(path)

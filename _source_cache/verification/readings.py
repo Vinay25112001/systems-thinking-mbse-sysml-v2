@@ -202,6 +202,55 @@ R = [
     ('R102', 'S11', SE, 1643, 1643, 'System Element (glossary)', 'X'),
     ('R103', 'S11', SE, 1640, 1640, 'System Breakdown Structure (glossary)', 'X'),
     ('R104', 'S12', DOD, 104, 104, 'Work Breakdown Structure', 'X'),
+    # Added 2026-10-19 (Week 6 build: Evolution Roadmap; docs/lectures/week06/WEEK06_LECTURE_OUTLINE.md section 9, proposed
+    # additions P6-1..P6-5), PENDING FACULTY CONFIRMATION. Each title is a heading line on the first page: R105 'Technology
+    # Planning' heads MITRE p.528 (the article lies inside the R60 range 523-531, which spans two articles; R60 is cited only
+    # at pp.523-526 by Week 6); R106 'Evolutionary Acquisition' heads p.582 (references p.585); R107 'Implementation, O&M,
+    # and Transition' heads p.447, wrapped over two lines (topic-level article, lessons pp.448-449); R108 is the SEBoK
+    # article 'Development Approach Concepts' (pp.391-393; the knowledge-area page p.390 is not needed); R109 'Architectures
+    # Federation' heads MITRE p.130 (Week 6 cites pp.131-132 only). P6-6 (the architecture glossary) is R39t. The proposed
+    # R26 start correction (p.680) is NOT made here (append-only edit): Week 6 cites R26 only inside pp.681-684.
+    # 2026-10-21: verify_readings.py finds each title as a heading line on its first page (readings_verified.txt), and the
+    # claims Week 6 cites were spot-checked in the page text (R105 pp.529-530, R106 pp.583-584, R107 pp.447-449, R108 p.391,
+    # R109 pp.131-132). Mechanically verified; approval of the five additions is still PENDING FACULTY CONFIRMATION.
+    ('R105', 'S13', MIT, 528, 531, 'Technology Planning', 'E'),
+    ('R106', 'S13', MIT, 582, 585, 'Evolutionary Acquisition', 'E'),
+    ('R107', 'S13', MIT, 447, 449, 'Implementation, O&M, and Transition', 'E'),
+    ('R108', 'S11', SE, 391, 393, 'Development Approach Concepts', 'X'),
+    ('R109', 'S13', MIT, 130, 133, 'Architectures Federation', 'X'),
+    # Added 2026-10-21 (Week 1 Learn textbook, Milestone M4 part B: gap prose for sections 2.4, 4.3, 5.4 and 10.1-10.2;
+    # learning-studio/docs/week1/M4B_REPORT.md), PENDING FACULTY CONFIRMATION. SEBoK glossary entries, each checked as an
+    # entry heading line: Emergence is the SECOND entry on p.1491 (running header 'Ellipsoidal Height or Geodetic Height
+    # (glossary)'); Mission is the SECOND entry on p.1565 (running header 'Milestone (glossary)'); Purpose is the SECOND
+    # entry on p.1599 (running header 'Proving (glossary)'); Operational Environment heads p.1580; Traceability heads
+    # p.1666. The M4b claim extraction found these entries where the Week 1 IA had recorded 'no definition in the
+    # collection' (mission, traceability) or 'emergence only in the INCOSE Fellows wording (R38)'.
+    ('R39y', 'S11', SE, 1491, 1491, 'Emergence (glossary)', 'X'),
+    ('R39z', 'S11', SE, 1565, 1565, 'Mission (glossary)', 'X'),
+    ('R110', 'S11', SE, 1599, 1599, 'Purpose (glossary)', 'X'),
+    ('R111', 'S11', SE, 1580, 1580, 'Operational Environment (glossary)', 'X'),
+    ('R112', 'S11', SE, 1666, 1666, 'Traceability (glossary)', 'X'),
+    # Added 2026-10-21 (Week 1 Learn M4b review F1), PENDING FACULTY CONFIRMATION: the SEBoK glossary entry Systems
+    # Thinking heads p.1660 (three attributed definitions: Checkland 1999; Senge 1990 twice). The IA had recorded 'no
+    # sourced definition' of systems thinking; the review found this entry.
+    ('R113', 'S11', SE, 1660, 1660, 'Systems Thinking (glossary)', 'X'),
+    # Added 2026-10-21 (Week 9 build: Needs / Requirements; docs/lectures/week09/WEEK09_LECTURE_OUTLINE.md section 10,
+    # proposed additions PX8 and PX7), PENDING FACULTY CONFIRMATION. Both are SysML v2.1 Beta 2 Part 1 domain-library
+    # subclauses, each title a heading line on its first page. R114 '9.3.2 Modeling Metadata' heads p.555 (below the 9.3
+    # overview on the same page): Issue, Rationale (p.555-556), Refinement and StatusInfo (p.556), StatusKind (p.557; the
+    # 'tbd' literal's description continues on p.558, inside R86, which the Week 9 lecture does not cite). R115 '9.6
+    # Requirement Derivation Domain Library' heads p.580: the Derivation connection definition (p.580), its constraints
+    # originalImpliesDerived and originalNotDerived (p.581), and the metadata short names derivation, derive and original
+    # (pp.582-583). The Week 9 lecture cites only inside these ranges.
+    ('R114', 'S06', S06, 555, 557, '9.3.2 Modeling Metadata', 'I'),
+    ('R115', 'S06', S06, 580, 583, '9.6 Requirement Derivation Domain Library', 'I'),
+    # Added 2026-10-22 (Week 10 build: Logical / Behavioral Modeling; docs/lectures/week10/WEEK10_LECTURE_OUTLINE.md section
+    # 10, proposed addition PX2), PENDING FACULTY CONFIRMATION. SysML v2.1 Beta 2 Part 1 clause 7.25: the heading '7.25 Use
+    # Cases' is the first line of p.177 (7.24 ends on p.176; R84's range, which predates Week 10, runs one page into 7.25). 7.25.1 overview (p.177: the use case
+    # definition, objective, include use case usage, realization), the notation table (p.178), 7.25.2 Use Case Definitions
+    # and Usages (p.179) and 7.25.3 Include Use Case Usages (p.180), ending on p.181 where 7.26 begins. The Week 10 lecture
+    # cites only inside this range.
+    ('R116', 'S06', S06, 177, 181, '7.25 Use Cases', 'I'),
 ]
 
 # Displayed titles, where the verified first-page heading would mislead about the whole range. The verifier still checks

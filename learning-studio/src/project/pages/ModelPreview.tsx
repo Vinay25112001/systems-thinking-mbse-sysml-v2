@@ -1,11 +1,15 @@
 // Week 8 preview (roadmap §2.2, directive §9), read-only in P1: left, the project's Week 1 artifacts grouped by the course
 // mapping rows (ENT, PRT, EXT, STK, CON, REL, MGO, NEED); right, the target package and construct and the generated
 // SysML v2 skeleton text (the existing Week 8 generator over sourceFromProject); a status per artifact from the five
-// statuses (each its own shape, colour and word). Nothing is stored and nothing is Mapped: that needs a person in Week 8.
+// statuses (each its own shape, colour and word). Nothing is written here: an item is Mapped only when the team
+// confirmed it in the Week 8 lab tool (M7), which stores the mapping in the project. The selected item shows its
+// Week 1 traceability (the §14 relations, course conventions, never SysML keywords).
 import { useMemo, useState } from 'react'
 import { Link } from '../../lib/router'
-import { buildPreview, type PreviewRow } from '../adapters/week8'
+import { buildPreview, week8MappingOf, type PreviewRow } from '../adapters/week8'
 import { MAPPING_STATUSES, MAPPING_STATUS_LABEL, type MappingStatus } from '../model/types'
+import { enterpriseOf } from '../model/create'
+import { WEEK1_RELATIONS, week1Relations } from '../model/week1Relations'
 import { useProjectState } from '../store/ProjectProvider'
 import { EmptyState, MapStatus } from './ui'
 
@@ -17,17 +21,25 @@ export function ModelPreview() {
   const [sel, setSel] = useState<PreviewRow | null>(null)
   const total = MAPPING_STATUSES.reduce((n, s) => n + p.counts[s], 0)
   const selKind = sel ? p.groups.find((g) => g.kind.prefix === sel.prefix)?.kind : undefined
+  const trace = useMemo(() => (sel ? week1Relations(doc).filter((x) => !x.draft && (x.rel.uid === sel.uid || x.rel.from === sel.uid || x.rel.to === sel.uid)) : []), [doc, sel])
+  const enterprise = enterpriseOf(doc)?.title || doc.project.title
+  const selMapRec = sel ? week8MappingOf(doc, sel.uid) : undefined
+  const selMap = selMapRec?.status === 'mapped' ? selMapRec : undefined
   const line = sel ? p.text.split('\n').findIndex((l) => l.includes(`<'${sel.id}'>`)) : -1
   return (
     <div className="pj-stack" data-testid="project-model-preview">
       <div>
-        <p className="pj-caption" style={{ margin: 0 }}>MBSE Studio preview · Week 8</p>
+        <p className="pj-caption" style={{ margin: 0 }}>Week 8 preview: how your Week 1 records will be modelled</p>
         <h1 className="pj-h1">How your Week 1 work becomes a model</h1>
+        <p className="pj-small" style={{ margin: '0 0 4px' }} data-testid="preview-enterprise">
+          Enterprise: <strong>{enterprise}</strong>
+          {doc.team.label ? ` · Team ${doc.team.label}` : ''}
+        </p>
         <p className="pj-lede">Every artifact your team recorded is listed on the left with its original ID; the right shows where the course mapping puts it in the SysML v2 model and the text the Week 8 generator writes from it. Where the record does not say enough to model, the status says so.</p>
       </div>
       <div className="pj-banner status-info" role="note" data-testid="preview-banner">
         <span>
-          <strong>Preview.</strong> In Week 8 you confirm each mapping and run the course checker. Nothing here is saved or marked Mapped; the generated text is not yet checked.
+          <strong>Preview.</strong> Nothing is changed on this page. An item shows as Mapped only after your team confirms its package in the <Link to="/week/8/lab/tool" style={{ textDecoration: 'underline' }}>Week 8 lab tool</Link>; the generated text is not yet checked.
         </span>
       </div>
       <section className="pj-card" aria-labelledby="mp-sum">
@@ -42,6 +54,16 @@ export function ModelPreview() {
             </li>
           ))}
         </ul>
+        {p.skipped.length > 0 && (
+          <p className="pj-caption" style={{ marginBottom: 0 }} data-testid="preview-skipped">
+            Some saved Week 8 mapping records could not be read and are not shown: {p.skipped.join('; ')}.
+          </p>
+        )}
+        {p.partial.length > 0 && (
+          <p className="pj-caption" style={{ marginBottom: 0 }} data-testid="preview-partial">
+            Some saved Week 8 mapping records could be read only in part; they are shown with what could be read: {p.partial.join('; ')}.
+          </p>
+        )}
         {p.unadapted.length > 0 && <p className="pj-caption" style={{ marginBottom: 0 }}>{p.unadapted.join(', ')}: copied from the AeroLink practice and not adapted, so left out of the generated model.</p>}
       </section>
       <div className="pj-three" aria-label="Three different things">
@@ -139,7 +161,26 @@ export function ModelPreview() {
           </div>
           <p className="pj-small">{sel.reason}</p>
           {selKind && <p className="pj-small">Target: {selKind.construct} in package {selKind.pkg} (course mapping, Week {selKind.modeledIn}).</p>}
+          {selKind && selMap?.pkg && selMap.pkg !== selKind.pkg && (
+            <p className="pj-small" data-testid="preview-team-package">
+              Your team chose package <strong>{selMap.pkg}</strong> instead{selMap.statusReason ? `: ${selMap.statusReason}` : ''}.
+            </p>
+          )}
           {line >= 0 && <pre className="pj-code">{p.text.split('\n').slice(Math.max(0, line - 1), line + 3).join('\n')}</pre>}
+          <div data-testid="preview-trace">
+            <h3 className="pj-h3" style={{ margin: '8px 0 4px' }}>Traceability from Week 1</h3>
+            {trace.length === 0 ? (
+              <p className="pj-small" style={{ margin: 0 }}>No Week 1 relation links {sel.id} yet.</p>
+            ) : (
+              <ul className="pj-small" style={{ margin: 0 }}>
+                {trace.map((x) => (
+                  <li key={x.rel.uid}>
+                    <span className="pj-mono">{x.sentence}</span> <span className="pj-muted">({WEEK1_RELATIONS[x.kind].label})</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           {sel.findings.length > 0 && (
             <ul className="pj-small">
               {sel.findings.map((f) => (

@@ -43,7 +43,7 @@ IDs W6.1–W6.3 are kept from `course.ts`; W6.4–W6.5 are proposed additions.
 
 #### S1.2 Driving question: after the Year-2 decision, what comes next? (3 min)
 - **Purpose.** Create a need to know.
-- **Content.** Week 3 decided AeroLink's Year-2 capacity plan (DEC-001: buy 4 aircraft and convert one spoke vertiport into a fourth hub). The board now asks: "Should the next step be remote or autonomous operations, more hubs, or integrated ticketing, and in what order?" Students vote: (A) autonomy first, (B) capacity first, (C) ticketing first, (D) cannot tell yet. Answer withheld until S2.11.
+- **Content.** Week 3 decided AeroLink's Year-2 capacity plan (DEC-001: buy 4 aircraft and convert one spoke vertiport into a fourth hub). The decision is committed, so it is part of the baseline trajectory. The board now asks: "After the Year-2 decision, should the next step be autonomous operations, more capacity, or integrated ticketing, and in what order?" Students vote: (A) autonomy first, (B) more capacity first, (C) ticketing first, (D) none of the three first. Answer withheld until S2.11. *(Revised 2026-10-21, review M1: see §4.)*
 - **Figure.** A fork in a road drawn as a timeline: one branch labeled "autonomy", one "more hubs", one "ticketing", with a question mark at the fork.
 - **Sources.** DEC-001, TECH-003, O-001 from `reference/week06–07.ts` (FICTIONAL). Driving question instructor-authored.
 
@@ -73,7 +73,7 @@ IDs W6.1–W6.3 are kept from `course.ts`; W6.4–W6.5 are proposed additions.
   - An operational need supports end-user activities; an enterprise need supports the enterprise's internal activities and enabling assets (R12 p.861).
   - Capabilities exist to meet mission and enterprise needs. The desired capability is compared with the baseline to find **gaps** and **excesses** (R12 p.862).
   - Gaps can be mapped into future time "buckets" such as near-, mid- and far-term; for long-lasting capabilities SEBoK cites about five, ten and twenty years, and shorter buckets (one, two, three years) for fast-changing ones (R12 p.862).
-  - AeroLink reading: MGO-007 sets a Year-2 capacity objective (300 trips/day by month 24); the baseline gives 240 trips/day (ALT-001), so the near-term gap is 60 trips/day.
+  - AeroLink reading (revised 2026-10-21, review M1): MGO-007 sets a Year-2 capacity objective (300 trips/day by month 24). Measured against the baseline TRAJECTORY, which includes the committed DEC-001 step (320 trips/day by month 24), there is no near-term capacity gap: GAP-001 is an excess of 20 trips/day above the desired level, kept as headroom. Measured against the entry snapshot (240, ALT-001) it would wrongly read as a 60 trips/day gap. Excess means baseline above the desired level; slack on a non-binding limit (chargers 384 vs fleet 320) is not an excess (review Mo1).
 - **Figure.** A gap chart: three columns (near, mid, far), each with a "desired" bar and a "baseline" bar; the near column labeled with AeroLink's 240 versus 300 trips/day.
 - **Sources.** R12 pp.861–862. MGO-007, ALT-001 from `reference/week03.ts`, `week07.ts` (FICTIONAL).
 
@@ -180,7 +180,7 @@ IDs W6.1–W6.3 are kept from `course.ts`; W6.4–W6.5 are proposed additions.
 - **Purpose.** Make what we do not know a managed input to the roadmap.
 - **Content.** SEBoK: when a value is unknown, a requirement carries a TBD; when a value is set but confidence is low, a TBR. Tracking these "TBXs" shows the maturity of the set, and unresolved TBXs can lead to risk; TBX management names the work, the owner and the closure (R13 p.565). The course's known-unknowns record (course convention) gives each unknown its impact, the information needed, and a mitigation, and names the increment it gates.
 - **AeroLink.** U-001 (aircraft weather limits, TBD-01) and U-002 (vertiport grid connection, TBD-02). U-002 gates the fourth hub (DEC-001 condition; R-005).
-- **Figure.** A four-column record (unknown, impact, information need, mitigation) with two AeroLink rows and an arrow from U-002 to "Increment 1".
+- **Figure.** A four-column record (unknown, impact, information need, mitigation) with two AeroLink rows: U-009 (storage integration) gating Increment 1 and U-004 gating Increment 3 (revised 2026-10-21).
 - **Sources.** R13 p.565. U-001, U-002 from `reference/week02.ts`, `week04.ts` (FICTIONAL). Course convention (record fields).
 
 #### S1.20 Think-pair-share: place AeroLink items on the horizons (3 min)
@@ -266,6 +266,15 @@ IDs W6.1–W6.3 are kept from `course.ts`; W6.4–W6.5 are proposed additions.
 - **Content.** The course's roadmap (course convention) has: horizons (near, mid, far, each with an end state); lanes (capability, technology, architecture and interfaces, operations and people); increments with content, entry trigger, dependencies, off-ramp and transition approach; and a link from each increment to the gap, need or MGO it serves and to the risks and unknowns that gate it.
 - **Figure.** An empty roadmap grid: three horizon columns, four lanes, increment bars spanning lanes, a trigger diamond at each bar's start.
 - **Sources.** Course convention, built on R12 pp.862–863 and P6-1 p.530.
+
+> **Revision 2026-10-21 (review M1, integrator decision; faculty may revisit).** S2.8–S2.11 below are the original plan.
+> As built: S2.8 is Increment 0, the baseline TRAJECTORY (entry snapshot 240 plus the committed Year-2 step, 320 by month
+> 24); S2.9 is the committed Year-2 step and its computed transition order (hub first; the wrong order is Week 3's R-001);
+> S2.10 is Increments 1–3: Increment 1 "Resilient hubs" (storage at the four hubs, one first; overnight charger leasing;
+> mid term), Increment 2 "Data-ready, integrated network" (AI-001, workload evidence, ticketing, the capacity step above
+> 256 trips/day; mid term, in parallel), Increment 3 autonomy (far term). S2.11's answer is (D) none of the three first:
+> resilience first, then data, ticketing and capacity on their triggers, then autonomy. Horizons: years 3–5 and 6–10.
+> The data, every number and the tests are in `src/content/lectures/week06/aerolinkCase.ts` and its test.
 
 #### S2.8 Worked example I: Increment 0, the baseline (3 min)
 - **Purpose.** Every roadmap starts from an honest "as is".
@@ -365,6 +374,11 @@ IDs W6.1–W6.3 are kept from `course.ts`; W6.4–W6.5 are proposed additions.
 ## 4. AeroLink worked example (summary table for the lesson)
 
 All content is FICTIONAL. Horizons and Increment 2–3 content are **(proposed, instructor to confirm)**.
+
+> **Superseded 2026-10-21 (review M1).** The table below is the original plan. As built, Increment 0 is the baseline
+> trajectory including the committed Year-2 step (row 1 below), Increment 1 is "Resilient hubs" (storage, leasing),
+> Increment 2 is "Data-ready, integrated network" (AI-001, workload evidence, ticketing, capacity step), Increment 3 is
+> autonomy. The authoritative values are generated from `aerolinkCase.ts` (see the lesson and the worked-examples page).
 
 | Increment | Horizon | Content | Gap / need / MGO served | Entry trigger | Gating unknowns and risks | Off-ramp | Transition approach |
 |---|---|---|---|---|---|---|---|

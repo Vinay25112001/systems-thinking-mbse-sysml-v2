@@ -30,7 +30,7 @@ const file = (name: string, text: string) => ({ name, mimeType: 'application/jso
 
 test('dashboard: Week 5 is available, with its path card and an "Available" badge', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await fresh(page, '/')
+  await fresh(page, '/dashboard') // the dashboard moved to #/dashboard when the course homepage took #/ (Week 1 M4 part A)
   const card = page.getByTestId('week5-path-card')
   await expect(card).toBeVisible()
   await expect(card).toContainText('Available')

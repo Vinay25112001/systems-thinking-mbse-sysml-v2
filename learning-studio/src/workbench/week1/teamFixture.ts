@@ -4,7 +4,20 @@
 // Not imported by application code, so it is not part of the shipped bundle. Sign-off review 2026-10-19: the needs are
 // in the lecture's form "The [stakeholders] need the [system] to …" (M1), each traced to the mission or a goal (M3),
 // with a problem statement, goals and three REL rows including one conflict (Mo1).
-import { EMPTY_TEAM, type NeedRow, type TeamRecord } from './team'
+import { EMPTY_TEAM, type NeedRow, type StakeholderRow, type TeamRecord } from './team'
+
+// A25 (M6): the level of interest with a short reason is required; support is optional (recorded for two stakeholders).
+const INTEREST: Record<string, [string, string, string?]> = {
+  'STK-001': ['5', 'fresh food for their children depends on it', '3'],
+  'STK-002': ['4', 'food safety in the county is their duty', '2'],
+  'STK-003': ['3', 'back-room space and waste costs'],
+  'STK-004': ['4', 'their time and the shifts they signed up for'],
+  'STK-005': ['4', 'their daily work and stock losses'],
+  'STK-006': ['3', 'evidence that their grants reach people'],
+  'STK-007': ['3', 'sleep and street noise near their homes'],
+  'STK-008': ['2', 'clean loads at the composting site'],
+}
+const withInterest = (rows: StakeholderRow[]): StakeholderRow[] => rows.map((s) => ({ ...s, interest: INTEREST[s.id]?.[0] ?? '', interestReason: INTEREST[s.id]?.[1] ?? '', support: INTEREST[s.id]?.[2] ?? '' }))
 
 const ALL_CONFIRMED = { form: true, 'solution-free': true, attributed: true, traced: true, condition: true, rationale: true } as const
 const need = (n: number, name: string, text: string, rationale: string, priority: NeedRow['priority'], goal: string): NeedRow => ({
@@ -62,7 +75,7 @@ export const TEAM_FIXTURE: TeamRecord = {
     { id: 'EXT-005', name: 'Road network', kind: 'system', crosses: 'delivery routes and travel times', direction: 'in' },
     { id: 'EXT-006', name: 'Electric utility', kind: 'actor', crosses: 'power for cold storage', direction: 'in' },
   ],
-  stakeholders: [
+  stakeholders: withInterest([
     { id: 'STK-001', name: 'Families using partner pantries', role: 'user', stage: 'Operation', side: 'external', approving: 'no', concerns: con(1, 'Families arriving after work find the shelves empty of fresh produce by 5 p.m.'), influence: '2', reason: 'little leverage alone, but they decide demand' },
     { id: 'STK-002', name: 'County health department', role: 'authority', stage: 'Concept', side: 'external', approving: 'yes', concerns: con(2, 'Cold-chain temperatures above 5 °C during delivery could make donated food unsafe to distribute.'), influence: '5', reason: 'it can suspend the food permit' },
     { id: 'STK-003', name: 'Grocery store donors', role: 'supplier', stage: 'Operation', side: 'external', approving: 'no', concerns: con(3, 'Store managers want surplus collected before closing so it does not fill their back rooms overnight.'), influence: '4', reason: 'they decide how much is donated' },
@@ -71,7 +84,7 @@ export const TEAM_FIXTURE: TeamRecord = {
     { id: 'STK-006', name: 'Funders and grant makers', role: 'customer', stage: 'Concept', side: 'external', approving: 'no', concerns: con(6, 'Grant reports have to show pounds delivered per county district each quarter.'), influence: '4', reason: 'they fund staff and vans' },
     { id: 'STK-007', name: 'Neighbors of the warehouse', role: 'public', stage: 'Operation', side: 'external', approving: 'no', concerns: con(7, 'Residents on Mill Street are woken by van loading before 6 a.m.'), influence: '2', reason: 'they can complain to the zoning board' },
     { id: 'STK-008', name: 'Waste hauler', role: 'supplier', stage: 'Disposal', side: 'external', approving: 'no', concerns: con(8, 'Spoiled food mixed with packaging is refused at the composting site.'), influence: '2', reason: 'disposal costs rise when loads are refused' },
-  ],
+  ]),
   relationships: [
     { id: 'REL-001', from: 'STK-007', to: 'STK-004', type: 'conflicts-with', note: 'Neighbors want no loading before 6 a.m.; volunteer drivers need early starts to finish within their shifts.' },
     { id: 'REL-002', from: 'STK-002', to: 'STK-005', type: 'regulates', note: 'Food-safety inspections of the warehouse and cold storage' },

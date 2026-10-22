@@ -1,26 +1,16 @@
-// Page frame of every Week 1 page outside the lecture viewer and reader: the course top bar (brand, week, instructor
-// mode, theme) with the week sub-navigation, then the page. `app` gives the embedded workbench the full viewport.
-import { useEffect, type ReactNode } from 'react'
-import { WEEKS } from '../content/course'
-import { TopBar } from '../flow/Chrome'
+// Page frame of every Week 1 student page (M4 part A): the one student chrome (StudentChrome) with the Week 1 stage bar.
+// Reading pages (Overview, Review & Submit) get the expanded app rail; work pages (Learn, Guided Practice, the lab tool)
+// get the compact rail (NAV-06). `app` gives an embedded workbench the full remaining viewport.
+import type { ReactNode } from 'react'
+import { StudentChrome, type Crumb } from './chrome/StudentChrome'
 import { WeekNav } from './WeekNav'
 
-export function WeekShell({ path, title, app = false, children }: { path: string; title: string; app?: boolean; children: ReactNode }) {
-  useEffect(() => {
-    document.title = `Week 1 · ${title} · SysML Learning Studio`
-  }, [title])
-  const w = WEEKS[0]
+export function WeekShell({ path, title, app = false, compact = false, crumbs, children }: { path: string; title: string; app?: boolean; compact?: boolean; crumbs?: Crumb[]; children: ReactNode }) {
   return (
-    <div className={`lf-root${app ? ' is-app' : ''}`} data-testid="week1-page">
-      <a href="#lf-main" className="lf-skip" onClick={(e) => (e.preventDefault(), document.getElementById('lf-main')?.focus())}>
-        Skip to content
-      </a>
-      <TopBar title={`Week ${w.number} — ${w.title}`}>
-        <WeekNav path={path} />
-      </TopBar>
-      <main id="lf-main" tabIndex={-1} className={`lf-main${app ? ' is-workbench' : ''}`}>
+    <div data-testid="week1-page" className="contents">
+      <StudentChrome current="course" title={`Week 1 · ${title}`} compact={compact || app} app={app} crumbs={crumbs ?? [{ label: 'Week 1', to: '/week/1' }, { label: title }]} stageBar={<WeekNav path={path} />}>
         {children}
-      </main>
+      </StudentChrome>
     </div>
   )
 }

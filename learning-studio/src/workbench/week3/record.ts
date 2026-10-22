@@ -22,6 +22,7 @@ import {
 } from '../../content/lectures/week03/labBrief'
 import { importWeek2, recordState as week2State, type Week2Record } from '../week2/record'
 import { isAeroLink, MISSION_ID } from '../week1/team'
+import { EMPTY_ANSWER } from '../emptyAnswer'
 
 export const W3_KEY = 'w3.record'
 export const MODEL_INPUTS_FORMAT = 'week3-model-inputs'
@@ -34,7 +35,7 @@ export const MIN_AI_WORDS = 12
 export const MIN_TEXT_WORDS = 5
 export const MIN_PART_WORDS = 3
 /** An answer that says nothing: not a reason, a basis, an action or an event. */
-export const EMPTY_ANSWER = /^(?:ok(?:ay)?|fine|yes|no|n\/?a|none|nil|nothing|-+|\?+|tbd|todo|later|see above)\.?$/i
+export { EMPTY_ANSWER } // shared with Weeks 1, 2, 3 and 5 (src/workbench/emptyAnswer.ts)
 const said = (t: string) => t.split(/\s+/).filter(Boolean).length >= 1 && !EMPTY_ANSWER.test(t.trim())
 /** How close a reversal point stated in the sensitivity note must be to a computed one (the reversal-number advisory). */
 export const REVERSAL_TOLERANCE = 0.02
