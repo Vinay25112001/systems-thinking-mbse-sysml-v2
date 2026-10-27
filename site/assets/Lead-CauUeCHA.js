@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-D3jfb0Ew.js";var t=e();function n({children:e}){return(0,t.jsx)(`p`,{className:`m-0 max-w-[90ch] text-[13px] text-wb-muted`,children:e})}export{n as t};

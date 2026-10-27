@@ -1,0 +1,1 @@
+var e=`new-pending-review`;export{e as t};

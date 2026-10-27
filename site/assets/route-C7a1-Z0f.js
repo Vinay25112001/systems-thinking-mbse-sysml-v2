@@ -1,0 +1,1 @@
+var e=e=>e===`Analyse`?`Analyze`:e;export{e as t};
