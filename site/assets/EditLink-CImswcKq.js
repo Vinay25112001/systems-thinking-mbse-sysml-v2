@@ -1,0 +1,1 @@
+import{a as e,n as t,t as n}from"./jsx-runtime-D3jfb0Ew.js";import{S as r}from"./airtaxi-VRXC6Olp.js";import"./index-DhINpWV3.js";import{n as i}from"./usePublishedContent-CC5Dzq0R.js";var a=e(t(),1);n();function o({itemId:e,label:t=`Edit this section`,className:n=`pub-edit`}){return r(),(0,a.useContext)(i),null}function s(){return r(),null}export{o as n,s as t};
