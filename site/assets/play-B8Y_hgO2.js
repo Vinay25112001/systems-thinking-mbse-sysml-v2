@@ -1,0 +1,1 @@
+import{O as e}from"./index-D861zP51.js";var t={name:`chevron-down`,size:24,node:[[`path`,{d:`m6 9 6 6 6-6`,key:`qrunsl`}]]};t.node;var n=e(t),r={name:`play`,size:24,node:[[`path`,{d:`M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z`,key:`10ikf1`}]]};r.node;var i=e(r);export{n,i as t};

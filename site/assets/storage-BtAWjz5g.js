@@ -1,0 +1,1 @@
+var e=`sysml-studio:v1:`;function t(t,n){try{let r=window.localStorage.getItem(e+t);return r===null?n:JSON.parse(r)}catch{return n}}function n(t,n){try{return window.localStorage.setItem(e+t,JSON.stringify(n)),!0}catch{return!1}}function r(t){try{window.localStorage.removeItem(e+t)}catch{}}var i=e;export{n as i,t as n,r,i as t};
