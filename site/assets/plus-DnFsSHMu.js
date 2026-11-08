@@ -1,1 +1,0 @@
-import{P as e}from"./index-CmwgR2BW.js";var t={name:`circle`,size:24,node:[[`circle`,{cx:`12`,cy:`12`,r:`10`,key:`1mglay`}]]};t.node;var n=e(t),r={name:`plus`,size:24,node:[[`path`,{d:`M5 12h14`,key:`1ays0h`}],[`path`,{d:`M12 5v14`,key:`s699le`}]]};r.node;var i=e(r);export{n,i as t};

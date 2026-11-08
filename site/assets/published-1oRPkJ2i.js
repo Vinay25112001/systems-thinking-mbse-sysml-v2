@@ -1,0 +1,1 @@
+var e=null,t=new Set,n=()=>e;function r(n){e=n;for(let e of t)e()}function i(e){return t.add(e),()=>void t.delete(e)}var a=t=>!!e&&e.withdrawn.has(t);export{i,a as n,r,n as t};
