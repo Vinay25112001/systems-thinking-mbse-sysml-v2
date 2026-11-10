@@ -1,1 +1,0 @@
-import{a as e,n as t,t as n}from"./jsx-runtime-D3jfb0Ew.js";import{f as r}from"./backend-CGJJCDNG.js";import{n as i}from"./usePublishedContent-hQpI0813.js";import"./index-1lTkIWVt.js";var a=e(t(),1);n();function o({itemId:e,label:t=`Edit this section`,className:n=`pub-edit`}){return r(),(0,a.useContext)(i),null}function s(){return r(),null}export{o as n,s as t};
