@@ -1,1 +1,0 @@
-var e=/^week01-/,t=t=>!e.test(t);export{t};
