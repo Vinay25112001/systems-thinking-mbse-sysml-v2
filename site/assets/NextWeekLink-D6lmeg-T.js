@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-D3jfb0Ew.js";import{_t as t,rt as n,vn as r,xn as i}from"./index-B0fBf84N.js";var a=e();function o({week:e,path:o}){let s=i(),c=t(e,o??s);return c?(0,a.jsxs)(r,{to:c.to,className:`lf-btn`,"data-sched":``,children:[c.label,` `,(0,a.jsx)(n,{size:15,"aria-hidden":!0})]}):null}export{o as t};
