@@ -1,1 +1,0 @@
-var e=/^week01-/,t=/^week\d\d-session\d$/,n=n=>t.test(n)&&!e.test(n);export{n as t};
